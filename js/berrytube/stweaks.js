@@ -224,6 +224,7 @@ $(document).ready(function() {
 
     function start() {
         //append the css files
+        $("head").append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"');
 
         //modifyView();
 
