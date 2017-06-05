@@ -276,8 +276,6 @@ $(document).ready(function() {
 
         createButtons();
 
-        buttons.forEach(function(btn) { $("#st-button-" + btn).addClass("st-window-hidden") });
-
         observer.observe(document.body, { childList: true, attributes: true, characterData: true });
     };
 
