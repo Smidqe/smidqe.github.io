@@ -1,0 +1,61 @@
+.st-buttons-container {
+    display: inline-block;
+    position: fixed;
+}
+
+.st-window-open {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.st-window-default {
+    display: none;
+}
+
+.st-button {
+    width: 0%;
+    z-index: 3;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    align-items: center;
+    display: inline-block;
+    font-size: 12px;
+}
+
+.st-button:hover {
+    background-color: aliceblue;
+}
+
+body.st-running .floatinner {
+    width: 80%;
+}
+
+.st-element-hidden {
+    display: hidden;
+}
+
+.st-running {}
+
+.st-maltweaks-patch {}
+
+#st-window-about {}
+
+#st-window-timers {}
+
+#st-window-rules {}
+
+#st-window-header {}
+
+#st-window-footer {}
+
+#st-window-polls {}
+
+#st-window-messages {}
+
+#st-window-login {}
+
+#st-window-playlist {}
