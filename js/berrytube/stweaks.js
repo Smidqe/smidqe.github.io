@@ -103,9 +103,10 @@ $(document).ready(function() {
         }
 
         if ($(".st-window-open")[0])
-            $(".st-window-open").removeClass("st-window-open");
+            $(".st-window-open").addClass("st-window-default").removeClass("st-window-open");
         else
-            view.addClass("st-window-open");
+            view.removeClass("st-window-default").addClass("st-window-open");
+
     }
 
     //temporary for the javascript, will be moved into css file when finished
@@ -244,9 +245,9 @@ $(document).ready(function() {
 
                     //when the headwrap-div appears the site has finished loading, after that inject classes
                     if (mutation.addedNodes[i].id === "headwrap") {
-                        $("head").append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css">');
+                        $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
 
-                        Object.keys(btnsv2).forEach(element => $(btnsv2[element].path).addClass(".st-window-default"));
+                        Object.keys(btnsv2).forEach(element => $(btnsv2[element].path).addClass("st-window-default"));
 
                         //more things to come
 
