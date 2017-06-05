@@ -244,7 +244,7 @@ $(document).ready(function() {
 
                     //when the headwrap-div appears the site has finished loading, after that inject classes
                     if (mutation.addedNodes[i].id === "headwrap") {
-                        $("head").append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css>"');
+                        $("head").append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css">');
 
                         Object.keys(btnsv2).forEach(element => $(btnsv2[element].path).addClass(".st-window-default"));
 
