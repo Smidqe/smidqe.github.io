@@ -12,7 +12,7 @@
 }
 
 .st-window-default {
-    display: none;
+    display: none !important;
 }
 
 .st-button {
