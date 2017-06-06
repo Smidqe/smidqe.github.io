@@ -102,9 +102,12 @@ $(document).ready(function() {
                 return;
         }
 
-        if ($(".st-window-open")[0])
+        if ($(".st-window-open")[0]) {
             $(".st-window-open").addClass("st-window-default").removeClass("st-window-open");
-        else
+            if (btn === "st-button-header")
+                $("#headwrap .floatinner").removeClass("st-window-default");
+
+        } else
             view.removeClass("st-window-default").addClass("st-window-open");
 
     }
