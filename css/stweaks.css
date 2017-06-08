@@ -79,10 +79,14 @@
     padding-left: 2px;
 }
 
-#chatpane.st-chat #chatinput {
+#chatpane.st-chat #chatinput:not(.right) {
     width: calc(100% - 130px);
     right: 0px;
     left: auto;
+}
+
+.st-logged {
+    width: 100%;
 }
 
 #chatpane.st-chat #chatlist {
