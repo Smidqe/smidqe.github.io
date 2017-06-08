@@ -67,12 +67,30 @@
     width: 100%;
 }
 
+#chatpane.st-chat #connectedCountWrapper {
+    display: none;
+}
+
+
+/*Not a registered user*/
+
+#chatpane.st-chat input {
+    text-align: left;
+    padding-left: 2px;
+}
+
 #chatpane.st-chat #chatinput {
-    width: 100%;
+    width: calc(100% - 130px);
+    right: 0px;
 }
 
 #chatpane.st-chat #chatlist {
     display: none;
+}
+
+#chatpane.st-chat .setNick {
+    bottom: 0px;
+    top: none !important;
 }
 
 .st-video {}
