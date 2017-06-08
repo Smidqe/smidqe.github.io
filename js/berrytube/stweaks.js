@@ -70,7 +70,7 @@ $(document).ready(function() {
 
         Object.keys(btnsv2).forEach(function(element) {
             //create the button and the 
-            btnContainer.append($('<button>', { class: 'st-button', text: element, id: "st-button-" + element, 'data-key': element })
+            btnContainer.append($('<button>', { class: 'st-button', id: "st-button-" + element, 'data-key': element })
                 .css({ "width": "75px", "height": window.innerHeight / Object.keys(btnsv2).length + "px" })
                 .click(function() {
                     if ($(this).attr('data-key') === "about")
