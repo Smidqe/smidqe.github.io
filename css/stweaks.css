@@ -82,6 +82,7 @@
 #chatpane.st-chat #chatinput {
     width: calc(100% - 130px);
     right: 0px;
+    left: auto;
 }
 
 #chatpane.st-chat #chatlist {
