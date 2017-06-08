@@ -9,7 +9,6 @@
 $(document).ready(function() {
 
     //list of buttons
-    const buttons = ["about", "settings", "rules", "header", "footer", "polls", "messages", "login", "playlist"];
     const btnsv2 = {
         "about": { "id": "st-button-about", "path": "", "classes": [] },
         "settings": { "id": "st-button-settings", "path": "", "classes": [] },
@@ -67,12 +66,12 @@ $(document).ready(function() {
 
     function createButtons() {
         //create the buttonarea first
-        btnContainer = $('<div>', { for: 'st-buttons-container' });
+        btnContainer = $('<div>', { class: 'st-buttons-container' });
 
         Object.keys(btnsv2).forEach(function(element) {
             //create the button and the 
-            btnContainer.append($('<button>', { for: 'st-button', text: element, id: "st-button-" + element, 'data-key': element })
-                .css({ "width": "75px", "height": window.innerHeight / buttons.length + "px" })
+            btnContainer.append($('<button>', { class: 'st-button', text: element, id: "st-button-" + element, 'data-key': element })
+                .css({ "width": "75px", "height": window.innerHeight / Object.keys(btnsv2).length + "px" })
                 .click(function() {
                     if ($(this).attr('data-key') === "about")
                         window.open("http://berrytube.tv/about.php", "_blank");
@@ -85,7 +84,6 @@ $(document).ready(function() {
         })
 
         //move to css eventually
-        btnContainer.css({ "display": "block", "position": "fixed", "top": "0", "left": "0", "width": "75px" });
         $('body').append(btnContainer);
     }
 
