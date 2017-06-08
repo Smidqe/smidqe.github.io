@@ -9,17 +9,17 @@
 $(document).ready(function() {
 
     //list of buttons
-    const buttons = ["about", "timers", "rules", "header", "footer", "polls", "messages", "login", "playlist"];
+    const buttons = ["about", "settings", "rules", "header", "footer", "polls", "messages", "login", "playlist"];
     const btnsv2 = {
-        "about": { "id": "st-button-about", "path": ".floatinner > .wrapper" },
-        "timers": { "id": "st-button-timers", "path": ".floatinner > .dynarea" },
-        "rules": { "id": "st-button-rules", "path": "#motdwrap" },
-        "header": { "id": "st-button-header", "path": "#headwrap .floatinner" },
-        "footer": { "id": "st-button-footer", "path": "#main #footwrap" },
-        "polls": { "id": "st-button-polls", "path": "#pollbox" },
-        "messages": { "id": "st-button-messages", "path": "#mailboxDiv" },
-        "login": { "id": "st-button-login", "path": ".wrapper #headbar" },
-        "playlist": { "id": "st-button-playlist", "path": "#main #leftpane" }
+        "about": { "id": "st-button-about", "path": "", "classes": [] },
+        "settings": { "id": "st-button-settings", "path": "", "classes": [] },
+        "rules": { "id": "st-button-rules", "path": "#motdwrap", "classes": ["st-window-open", "st-window-rules"] },
+        "header": { "id": "st-button-header", "path": "#headwrap", "classes": ["st-window-open", "st-window-header"] },
+        "footer": { "id": "st-button-footer", "path": "#main #footwrap", "classes": ["st-window-open", "st-window-footer"] },
+        "polls": { "id": "st-button-polls", "path": "#pollbox", "classes": ["st-window-open", "st-window-polls"] },
+        "messages": { "id": "st-button-messages", "path": "#mailboxDiv", "classes": ["st-window-open", "st-window-messages"] },
+        "login": { "id": "st-button-login", "path": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"] },
+        "playlist": { "id": "st-button-playlist", "path": "#main #leftpane", "classes": ["st-window-open", "st-window-playlist"] }
     };
 
 
@@ -29,6 +29,7 @@ $(document).ready(function() {
     var settings = {};
     var started = false;
     var btnContainer = null;
+    var prevWindow = null;
 
     const categories = {
         "General": {
@@ -50,102 +51,35 @@ $(document).ready(function() {
         }
     };
 
+    function view(btn) {
+        var elem = $(btnsv2[btn]["path"]);
+        var open = $(".st-window-open")[0] !== undefined;
 
+        //close all the open windows (should be no more than 1 at a time)
+        if (open || prevWindow === btn)
+            $(".st-window-open").removeClass("st-window-open");
 
-    function toggleView(btn) {
+        if (prevWindow !== btn || !open)
+            btnsv2[btn]["classes"].forEach(c => elem.addClass(c));
 
-        var view = null;
-        switch (btn) {
-            case "st-button-timers":
-                {
-                    view = $(".floatinner > .wrapper");
-                    break;
-                }
-            case "st-button-rules":
-                {
-                    view = $("#motdwrap");
-                    break;
-                }
-
-            case "st-button-header":
-                {
-                    view = $("body > #headwrap");
-                    break;
-                }
-            case "st-button-footer":
-                {
-                    view = $("#footwrap");
-                    break;
-                }
-            case "st-button-polls":
-                {
-                    view = $("#pollbox");
-                    break;
-                }
-            case "st-button-messages":
-                {
-                    view = $("#mailboxDiv");
-                    break;
-                }
-            case "st-button-login":
-                {
-                    view = $(".wrapper #headbar");
-                    break;
-                }
-            case "st-button-playlist":
-                {
-                    view = $("#main #leftpane");
-                    break;
-                }
-
-            default:
-                return;
-        }
-
-        $(".st-window-open").removeClass("st-window-open").addClass("st-window-default");
-
-        if (btn === "st-button-header")
-            $("#headwrap .floatinner").removeClass("st-window-default");
-
-        view.addClass("st-window-open");
-
+        prevWindow = btn;
     }
 
-    //temporary for the javascript, will be moved into css file when finished
-    function modifyView() {
-        mvRight = { "left": "75px", "position": "fixed" };
-
-        $("#headwrap").css(mvRight);
-        $("body > #headwrap").css({ "display": "none" });
-        $("body > .wrapper").css(mvRight);
-        $("#videobg").css(mvRight);
-        $("#videobg").css({ "top": "0", "width": "100%" })
-
-
-        //needs maltweaks compatible method
-        if (!$('body').hasClass("tweaked")) {
-            //handles all maltweaks controlled areas
-
-            $("body > #main > #leftpane").css({ "display": "none" })
-        }
-
-    }
-
-    //creates the button area and the buttons with their functionalities
     function createButtons() {
         //create the buttonarea first
         btnContainer = $('<div>', { for: 'st-buttons-container' });
 
-        var button = $('<div>');
-        buttons.forEach(function(element) {
+        Object.keys(btnsv2).forEach(function(element) {
             //create the button and the 
-            btnContainer.append($('<button>', { for: 'st-button', text: element, id: "st-button-" + element })
+            btnContainer.append($('<button>', { for: 'st-button', text: element, id: "st-button-" + element, 'data-key': element })
                 .css({ "width": "75px", "height": window.innerHeight / buttons.length + "px" })
                 .click(function() {
-                    if (element === "about")
+                    if ($(this).attr('data-key') === "about")
                         window.open("http://berrytube.tv/about.php", "_blank");
+                    else if ($(this).attr('data-key') === "settings")
+                        showConfigMenu(true);
                     else
-                        toggleView($(this).attr('id'))
+                        view($(this).attr('data-key'))
                 })
             );
         })
@@ -258,6 +192,13 @@ $(document).ready(function() {
 
 
 
+                    }
+
+                    //handle the new messages
+                    if (mutation.addedNodes[i].id = "mailButtonDiv" && mutation.addedNodes[i].className === "new") {
+                        console.log("got a new message");
+                        //add a new class to the messages button
+                        $(btnsv2["messages"]["path"]).addClass("st-button-change");
                     }
 
                     //handle the settings window

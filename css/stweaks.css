@@ -1,24 +1,38 @@
 .st-buttons-container {
-    display: inline-block;
+    display: block;
     position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 75px;
 }
 
 .st-window-open {
     background-color: rgba(0, 0, 0, 0.6);
-    width: 100%;
+    width: calc(100% - 75px);
     height: 100%;
     justify-content: center;
     align-items: center;
     z-index: 3;
-    display: block !important;
+    display: flex !important;
+    top: 0px;
+    left: 75px;
+    position: fixed;
 }
 
 .st-window-default {
     display: none;
 }
 
+.st-window-open .floatinner {
+    pointer-events: auto;
+    max-height: calc(100% - 100px);
+    max-width: calc(100% - 100px);
+    overflow: auto;
+    position: relative;
+}
+
 .st-button {
-    width: 70px;
+    width: 75px;
     z-index: 3;
     border: none;
     text-align: center;
@@ -26,10 +40,25 @@
     align-items: center;
     display: inline-block;
     font-size: 12px;
+    background-image: url(//berrymotes.com/assets/bp.png);
+}
+
+@keyframes btn-change {
+    0% {
+        background-color: black;
+    }
+    100% {
+        background-color: red;
+    }
 }
 
 .st-button:hover {
     background-color: aliceblue;
+}
+
+.st-button-change {
+    animation-name: btn-change;
+    animation-duration: 5s;
 }
 
 .st-element-hidden {
@@ -38,31 +67,6 @@
 
 .st-maltweaks-patch {}
 
-#st-window-timers {
-    width: 50%;
-}
-
-#st-window-rules {}
-
-#st-window-header {}
-
-#st-window-footer {
-    width: 100%;
-    height: 100%;
-}
-
-#st-window-polls {
-    width: 30%;
-}
-
-#st-window-messages {
-    width: 20%;
-}
-
-#st-window-login {
-    width: 20%;
-}
-
-#st-window-playlist {
-    width: 20%;
+.st-window-open #footwrap {
+    max-width: 690px;
 }
