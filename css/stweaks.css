@@ -90,7 +90,7 @@
 
 #chatpane.st-chat .setNick {
     bottom: 0px;
-    top: none !important;
+    top: auto !important;
 }
 
 .st-video {}
