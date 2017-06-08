@@ -10,20 +10,21 @@ $(document).ready(function() {
 
     //list of buttons
     const btnsv2 = {
-        "about": { "id": "st-button-about", "path": "", "classes": [] },
+        "about": { "id": "st-button-about", "path-maltweaks": "", "classes": [] },
         "settings": { "id": "st-button-settings", "path": "", "classes": [] },
-        "rules": { "id": "st-button-rules", "path": "#motdwrap", "classes": ["st-window-open", "st-window-rules"] },
-        "header": { "id": "st-button-header", "path": "#headwrap", "classes": ["st-window-open", "st-window-header"] },
-        "footer": { "id": "st-button-footer", "path": "#main #footwrap", "classes": ["st-window-open", "st-window-footer"] },
-        "polls": { "id": "st-button-polls", "path": "#pollbox", "classes": ["st-window-open", "st-window-polls"] },
-        "messages": { "id": "st-button-messages", "path": "#mailboxDiv", "classes": ["st-window-open", "st-window-messages"] },
-        "login": { "id": "st-button-login", "path": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"] },
-        "playlist": { "id": "st-button-playlist", "path": "#main #leftpane", "classes": ["st-window-open", "st-window-playlist"] }
+        "rules": { "id": "st-button-rules", "path-maltweaks": "#motdwrap", "path-original": "", "classes": ["st-window-open", "st-window-rules"] },
+        "header": { "id": "st-button-header", "path-maltweaks": "#headwrap", "classes": ["st-window-open", "st-window-header"] },
+        "footer": { "id": "st-button-footer", "path-maltweaks": "#main #footwrap", "classes": ["st-window-open", "st-window-footer"] },
+        "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "classes": ["st-window-open", "st-window-polls"] },
+        "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "classes": ["st-window-open", "st-window-messages"] },
+        "login": { "id": "st-button-login", "path-maltweaks": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"] },
+        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "classes": ["st-window-open", "st-window-playlist"] }
     };
 
 
     //will hold the settings node/eleemnt
     var observer = null;
+    var maltweaks = false;
     var settingsGUI = null;
     var settings = {};
     var started = false;
@@ -51,7 +52,8 @@ $(document).ready(function() {
     };
 
     function view(btn) {
-        var elem = $(btnsv2[btn]["path"]);
+
+        var elem = $(btnsv2[btn][maltweaks ? "path-maltweaks" : "path-original"]);
         var open = $(".st-window-open")[0] !== undefined;
 
         //close all the open windows (should be no more than 1 at a time)
@@ -71,7 +73,7 @@ $(document).ready(function() {
         Object.keys(btnsv2).forEach(function(element) {
             //create the button and the 
             btnContainer.append($('<button>', { class: 'st-button', id: "st-button-" + element, 'data-key': element })
-                .css({ "width": "75px", "height": window.innerHeight / Object.keys(btnsv2).length + "px" })
+                .css({ "width": "75px", "height": Math.floor(window.innerHeight / Object.keys(btnsv2).length) + "px" })
                 .click(function() {
                     if ($(this).attr('data-key') === "about")
                         window.open("http://berrytube.tv/about.php", "_blank");
@@ -159,6 +161,7 @@ $(document).ready(function() {
 
     function start() {
         //append the css files
+        $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
 
         //modifyView();
 
@@ -174,29 +177,23 @@ $(document).ready(function() {
 
                     if (mutation.addedNodes[i].type === "text/css" && mutation.addedNodes[i].id === "tweakhack") {
                         console.log("maltweaks is being used");
-                        //patchMaltweaks();    
+                        maltweaks = true;
                     }
 
                     //when the headwrap-div appears the site has finished loading, after that inject classes
+                    //this only happens in maltweaks
                     if (mutation.addedNodes[i].id === "headwrap") {
-                        $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
+                        Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-maltweaks"]).addClass("st-window-default"));
 
-                        Object.keys(btnsv2).forEach(element => $(btnsv2[element].path).addClass("st-window-default"));
-
+                        $("#chatpane").addClass("st-chat");
                         //more things to come
-
-
-
-
-
-
                     }
 
-                    //handle the new messages
-                    if (mutation.addedNodes[i].id = "mailButtonDiv" && mutation.addedNodes[i].className === "new") {
+                    //handle the new messages, since the original div is hidden, works similarly but with animation
+                    if (mutation.addedNodes[i].id === "mailButtonDiv" && mutation.addedNodes[i].className === "new") {
                         console.log("got a new message");
                         //add a new class to the messages button
-                        $(btnsv2["messages"]["path"]).addClass("st-button-change");
+                        //$(btnsv2["messages"]["path"]).addClass("st-button-change");
                     }
 
                     //handle the settings window

@@ -1,5 +1,5 @@
 .st-buttons-container {
-    display: block;
+    display: grid;
     position: fixed;
     top: 0px;
     left: 0px;
@@ -41,6 +41,7 @@
     display: inline-block;
     font-size: 12px;
     background-image: url(https://smidqe.github.io/images/button-about.png);
+    background-position: center;
 }
 
 @keyframes btn-change {
@@ -51,6 +52,30 @@
         background-color: red;
     }
 }
+
+#chatpane.st-chat {
+    right: 0px;
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    height: 100%;
+    width: 30%;
+}
+
+#chatpane.st-chat #chatbuffer {
+    height: calc(100% - 52px) !important;
+    width: 100%;
+}
+
+#chatpane.st-chat #chatinput {
+    width: 100%;
+}
+
+#chatpane.st-chat #chatlist {
+    display: none;
+}
+
+.st-video {}
 
 .st-button:hover {
     background-color: aliceblue;
