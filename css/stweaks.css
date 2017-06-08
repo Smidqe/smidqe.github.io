@@ -78,7 +78,10 @@
 #chatpane.st-chat #chatinput:not(.right) input {
     text-align: left;
     padding-left: 2px;
-    width: 100%;
+}
+
+#chatpane.st-chat #chatinput:not(.right) {
+    width: 100% - 130px;
     left: 0px;
 }
 
