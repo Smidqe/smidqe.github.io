@@ -42,6 +42,7 @@
     font-size: 12px;
     background-image: url(https://smidqe.github.io/images/button-about.png);
     background-position: center;
+    background-repeat: no-repeat;
 }
 
 @keyframes btn-change {
