@@ -81,7 +81,7 @@
 }
 
 #chatpane.st-chat #chatinput:not(.right) {
-    width: 100% - 130px;
+    width: 100%;
     left: 0px;
 }
 
