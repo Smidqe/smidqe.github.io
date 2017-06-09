@@ -1,13 +1,27 @@
 .st-buttons-container {
     display: inline-block;
     position: fixed;
+    bottom: 0px;
+    left: 0px;
     height: 75px;
 }
+
+
+/*
+    this will have sub windows that override the current values
+    not absolutely sure where I shall keep the windows
+    polls and playlist can go over the chat due to their nature
+    and header/footer can go over the video because they are transparent
+    
+    or
+
+    every window will be on top of video (transparency)
+*/
 
 .st-window-open {
     background-color: rgba(0, 0, 0, 0.6);
     width: 70%;
-    height: 100%;
+    height: calc(100% - 75px);
     justify-content: center;
     align-items: center;
     z-index: 3;
@@ -30,7 +44,8 @@
 }
 
 .st-button {
-    height: 75px;
+    height: inherit;
+    width: 125px;
     z-index: 3;
     text-align: center;
     text-decoration: none;
