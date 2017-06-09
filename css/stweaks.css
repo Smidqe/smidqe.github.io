@@ -1,21 +1,19 @@
 .st-buttons-container {
-    display: grid;
+    display: inline-block;
     position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 75px;
+    height: 75px;
 }
 
 .st-window-open {
     background-color: rgba(0, 0, 0, 0.6);
-    width: calc(100% - 75px);
+    width: 70%;
     height: 100%;
     justify-content: center;
     align-items: center;
     z-index: 3;
     display: flex !important;
     top: 0px;
-    left: 75px;
+    left: 0px;
     position: fixed;
 }
 
@@ -32,9 +30,8 @@
 }
 
 .st-button {
-    width: 75px;
+    height: 75px;
     z-index: 3;
-    border: none;
     text-align: center;
     text-decoration: none;
     align-items: center;
@@ -104,7 +101,11 @@
     top: auto !important;
 }
 
-.st-video {}
+.st-video {
+    width: calc(70%);
+    position: fixed;
+    height: calc(100% - 75px);
+}
 
 .st-button:hover {
     background-color: aliceblue;
@@ -118,8 +119,6 @@
 .st-element-hidden {
     display: hidden;
 }
-
-.st-maltweaks-patch {}
 
 .st-window-open #footwrap {
     max-width: 690px;

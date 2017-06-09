@@ -178,6 +178,7 @@ $(document).ready(function() {
                     if (mutation.addedNodes[i].type === "text/css" && mutation.addedNodes[i].id === "tweakhack") {
                         console.log("maltweaks is being used");
                         maltweaks = true;
+                        //probably show an alert or something the first time this script is run
                     }
 
                     //when the headwrap-div appears the site has finished loading, after that inject classes
@@ -212,6 +213,8 @@ $(document).ready(function() {
                 }
             })
         });
+
+
 
         createButtons();
 
