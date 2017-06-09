@@ -102,9 +102,11 @@
 }
 
 .st-video {
-    width: calc(70%);
+    width: calc(70%) !important;
     position: fixed;
-    height: calc(100% - 75px);
+    top: 0px;
+    left: 0px;
+    height: calc(100% - 75px) !important;
 }
 
 .st-button:hover {

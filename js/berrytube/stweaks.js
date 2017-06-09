@@ -187,6 +187,7 @@ $(document).ready(function() {
                         Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-maltweaks"]).addClass("st-window-default"));
 
                         $("#chatpane").addClass("st-chat");
+                        $("#videowrap").addClass("st-video");
                         //more things to come
                     }
 
