@@ -87,8 +87,11 @@
 
 /* the button that's on the messagebox */
 
-#mailboxDiv:nth-child(2) {
-    text-align: right;
+#mailboxDiv div:nth-child(2) {
+    position: absolute;
+    /* text-align: right; */
+    bottom: 0px;
+    right: 0px;
 }
 
 
