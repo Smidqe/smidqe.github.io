@@ -85,6 +85,13 @@
 }
 
 
+/* the button that's on the messagebox */
+
+#mailboxDiv:nth-child(2) {
+    text-align: right;
+}
+
+
 /*Not a registered user*/
 
 #chatpane.st-chat #chatinput:not(.right) input {
