@@ -189,7 +189,6 @@ $(document).ready(function() {
                         $("#chatpane").addClass("st-chat");
                         $("#videowrap").addClass("st-video");
                         $("#playlist").addClass("st-window-playlist");
-
                         //more things to come
                     }
 
