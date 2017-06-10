@@ -75,6 +75,13 @@
     width: 30%;
 }
 
+
+/* to eliminate too large gap between elements in the header */
+
+.wrapper #dyn_header iframe {
+    height: auto;
+}
+
 #chatpane.st-chat #chatbuffer {
     height: calc(100% - 52px) !important;
     width: 100%;
