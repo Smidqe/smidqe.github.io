@@ -45,7 +45,7 @@
 
 .st-button {
     height: inherit;
-    width: 125px;
+    width: 100px;
     z-index: 3;
     text-align: center;
     text-decoration: none;
@@ -158,22 +158,13 @@
     max-width: 690px;
 }
 
-.st-window-playlist {
-    right: 0px;
-    position: fixed;
-    top: auto;
-    left: auto;
-    height: 100%;
-    width: 30%;
-}
-
-.st-window-polls {
-    width: 30%;
-    height: 100%;
+.st-window-overlap {
     right: 0px;
     top: 0px;
     left: auto;
     position: fixed;
+    height: 100%;
+    width: 30%;
 }
 
 .st-window-polls #pollpane {
@@ -184,10 +175,6 @@
 
 .st-window-polls #pollpane .poll {
     width: 100%;
-}
-
-#mailDiv {
-    display: none;
 }
 
 #chatControls {

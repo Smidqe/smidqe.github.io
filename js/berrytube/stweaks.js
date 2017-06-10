@@ -15,11 +15,12 @@ $(document).ready(function() {
         "rules": { "id": "st-button-rules", "path-maltweaks": "#motdwrap", "path-original": "", "classes": ["st-window-open", "st-window-rules"] },
         "header": { "id": "st-button-header", "path-maltweaks": "#headwrap", "classes": ["st-window-open", "st-window-header"] },
         "footer": { "id": "st-button-footer", "path-maltweaks": "#main #footwrap", "classes": ["st-window-open", "st-window-footer"] },
-        "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "classes": ["st-window-open", "st-window-polls"] },
-        "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "classes": ["st-window-open", "st-window-messages"] },
+        "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "classes": ["st-window-open", "st-window-overlap"] },
+        "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "classes": ["st-window-open", "st-window-overlap"] },
         "login": { "id": "st-button-login", "path-maltweaks": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"] },
-        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "classes": ["st-window-open", "st-window-playlist"] },
-        "users": { "id": "st-button-users", "path-maltweaks": "#chatlist", "classes": ["st-window-open", "st-window-users"] }
+        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "classes": ["st-window-open", "st-window-overlap"] },
+        "users": { "id": "st-button-users", "path-maltweaks": "#chatlist", "classes": ["st-window-open", "st-window-users"] },
+        "toast": { "id": "st-button-toast", "path-maltweaks": "", "classes": [] }
     };
 
 
@@ -53,9 +54,8 @@ $(document).ready(function() {
     };
 
     function view(btn) {
-
-        var elem = $(btnsv2[btn][maltweaks ? "path-maltweaks" : "path-original"]);
-        var open = $(".st-window-open")[0] !== undefined;
+        const elem = $(btnsv2[btn][maltweaks ? "path-maltweaks" : "path-original"]);
+        const open = $(".st-window-open")[0] !== undefined;
 
         //close all the open windows (should be no more than 1 at a time)
         if (open || prevWindow === btn)
@@ -74,14 +74,17 @@ $(document).ready(function() {
         Object.keys(btnsv2).forEach(function(element) {
             //create the button and the 
             btnContainer.append($('<button>', { class: 'st-button', id: "st-button-" + element, 'data-key': element })
-                .css({ "width": "75px", "height": Math.floor(window.innerHeight / Object.keys(btnsv2).length) + "px" })
                 .click(function() {
-                    if ($(this).attr('data-key') === "about")
+                    const key = $(this).attr('data-key');
+
+                    if (key === "about")
                         window.open("http://berrytube.tv/about.php", "_blank");
-                    else if ($(this).attr('data-key') === "settings")
+                    else if (key === "settings")
                         showConfigMenu(true);
+                    else if (key === "toast")
+                        toggle();
                     else
-                        view($(this).attr('data-key'))
+                        view(key);
                 })
             );
         })
@@ -115,12 +118,12 @@ $(document).ready(function() {
         settings = loadSettings();
 
         //attach a listener to every setting, so that they will be saved everytime a change happens
-        var keys = Object.keys(categories);
+        const keys = Object.keys(categories);
         var container = null;
 
         for (var i = 0; i < keys.length; i++) {
             settingsGUI.append(container = $('<div>', { for: 'st-settings-category' }).append($("<label>", { text: keys[i] })));
-            var titles = categories[keys[i]].titles;
+            const titles = categories[keys[i]].titles;
 
             //append the titles and their methods
             for (var j = 0; j < titles.length; j++) {
@@ -176,19 +179,17 @@ $(document).ready(function() {
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     console.log(mutation.addedNodes[i]);
 
-                    if (mutation.addedNodes[i].type === "text/css" && mutation.addedNodes[i].id === "tweakhack") {
-                        console.log("maltweaks is being used");
-                        maltweaks = true;
-                        //probably show an alert or something the first time this script is run
-                    }
-
                     //when the headwrap-div appears the site has finished loading, after that inject classes
                     //this only happens in maltweaks
                     if (mutation.addedNodes[i].id === "headwrap") {
+                        maltweaks = true;
+
                         Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-maltweaks"]).addClass("st-window-default"));
 
                         $("#chatpane").addClass("st-chat");
                         $("#videowrap").addClass("st-video");
+                        $("#playlist").addClass("st-window-playlist");
+
                         //more things to come
                     }
 
