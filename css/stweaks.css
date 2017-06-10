@@ -79,7 +79,7 @@
 /* to eliminate too large gap between elements in the header */
 
 .wrapper #dyn_header iframe {
-    height: auto;
+    height: auto !important;
 }
 
 #chatpane.st-chat #chatbuffer {
@@ -156,4 +156,60 @@
 
 .st-window-open #footwrap {
     max-width: 690px;
+}
+
+.st-window-playlist {
+    right: 0px;
+    position: fixed;
+    top: auto;
+    left: auto;
+    height: 100%;
+    width: 30%;
+}
+
+.st-window-polls {
+    width: 30%;
+    height: 100%;
+    right: 0px;
+    top: 0px;
+    left: auto;
+    position: fixed;
+}
+
+.st-window-polls #pollpane {
+    width: 100%;
+    height: 100%;
+    background-color: #444;
+}
+
+.st-window-polls #pollpane .poll {
+    width: 100%;
+}
+
+#mailDiv {
+    display: none;
+}
+
+#chatControls {
+    width: 100%;
+}
+
+.st-window-users {
+    width: 30%;
+    height: calc(100% - 50px);
+    right: inherit;
+    left: auto;
+    /* top: 20px; */
+    /* z-index: inherit; */
+    overflow: scroll;
+    overflow-x: hidden;
+    /* position: fixed !important; */
+    box-sizing: border-box;
+    border-bottom: 1px solid #BBBBBB !important;
+}
+
+.st-window-users ul {
+    top: 0px;
+    position: absolute;
+    width: 100%;
 }

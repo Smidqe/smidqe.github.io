@@ -18,7 +18,8 @@ $(document).ready(function() {
         "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "classes": ["st-window-open", "st-window-polls"] },
         "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "classes": ["st-window-open", "st-window-messages"] },
         "login": { "id": "st-button-login", "path-maltweaks": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"] },
-        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "classes": ["st-window-open", "st-window-playlist"] }
+        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "classes": ["st-window-open", "st-window-playlist"] },
+        "users": { "id": "st-button-users", "path-maltweaks": "#chatlist", "classes": ["st-window-open", "st-window-users"] }
     };
 
 
