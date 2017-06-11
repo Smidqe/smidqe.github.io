@@ -195,7 +195,7 @@ $(document).ready(function() {
 
                         Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-maltweaks"]).addClass("st-window-default"));
 
-                        $("#leftpane").css({ "height": "100% !important" });
+                        $("#leftpane").css("height", "100% !important");
 
                         $("#chatpane").addClass("st-chat");
                         $("#videowrap").addClass("st-video");
