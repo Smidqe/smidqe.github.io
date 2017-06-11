@@ -165,7 +165,7 @@ $(document).ready(function() {
 
     function start() {
         //append the css files
-        $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
+
 
         //modifyView();
 
@@ -179,12 +179,23 @@ $(document).ready(function() {
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     console.log(mutation.addedNodes[i]);
 
+
+                    if (mutation.addedNodes[i].id === "tweakhack") { //thanks mal
+                        //move the maltweak style thingy away to rightful place
+                        $("#tweakhack").insertBefore("head > title");
+
+                        //add my own maltweaks compatible stylesheet
+                        $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
+                    }
+
                     //when the headwrap-div appears the site has finished loading, after that inject classes
                     //this only happens in maltweaks
                     if (mutation.addedNodes[i].id === "headwrap") {
                         maltweaks = true;
 
                         Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-maltweaks"]).addClass("st-window-default"));
+
+                        $("#leftpane").css({ "height": "100% !important" });
 
                         $("#chatpane").addClass("st-chat");
                         $("#videowrap").addClass("st-video");

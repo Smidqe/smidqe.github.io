@@ -163,8 +163,8 @@
     top: 0px;
     left: auto;
     position: fixed;
-    height: 100%;
-    width: 30%;
+    height: 100% !important;
+    width: 30% !important;
 }
 
 .st-window-polls #pollpane {
