@@ -177,7 +177,7 @@
     width: 100%;
 }
 
-#leftpane {
+body #leftpane {
     height: 100% !important;
 }
 
