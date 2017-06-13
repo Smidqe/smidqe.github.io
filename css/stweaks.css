@@ -127,7 +127,7 @@
 
 .st-video {
     width: calc(70%) !important;
-    position: fixed;
+    position: fixed !important;
     top: 0px;
     left: 0px;
     height: calc(100% - 75px) !important;
@@ -188,6 +188,10 @@ body #leftpane {
 }
 
 #mailButtonDiv {
+    display: none;
+}
+
+#chevronButtonDiv {
     display: none;
 }
 

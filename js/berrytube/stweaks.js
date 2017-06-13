@@ -23,14 +23,11 @@ $(document).ready(function() {
         "toast": { "id": "st-button-toast", "path-maltweaks": "", "classes": [] }
     };
 
-
-    //will hold the settings node/eleemnt
     var observer = null;
     var styler = null;
     var maltweaks = false;
     var settingsGUI = null;
     var settings = {};
-    var started = false;
     var btnContainer = null;
     var prevWindow = null;
 
@@ -175,8 +172,6 @@ $(document).ready(function() {
         $(".berryemote").hover(function() {
             console.log("hovering over berrymote");
         }, function() { console.log("exiting") });
-
-        //modifyView();
 
         //create the settings observation settings window
         observer = new MutationObserver(function(mutations) {
