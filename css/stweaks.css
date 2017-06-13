@@ -44,11 +44,10 @@
     align-items: center;
     display: inline-block;
     font-size: 12px;
-    /*
-    background-image: url(https://smidqe.github.io/images/button-about.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    */
+    text-transform: capitalize;
+}
+
+.st-button:first-letter {
     text-transform: capitalize;
 }
 
