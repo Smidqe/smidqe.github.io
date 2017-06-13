@@ -71,7 +71,7 @@ $(document).ready(function() {
 
         Object.keys(btnsv2).forEach(function(element) {
             //create the button and the 
-            btnContainer.append($('<button>', { class: 'st-button', id: "st-button-" + element, 'data-key': element })
+            btnContainer.append($('<button>', { class: 'st-button', id: "st-button-" + element, 'data-key': element, "text": element })
                 .click(function() {
                     const key = $(this).attr('data-key');
 
@@ -232,13 +232,10 @@ $(document).ready(function() {
             })
         });
 
-
-
         createButtons();
 
         observer.observe(document.body, { childList: true, attributes: true, characterData: true });
     };
 
     start();
-
 });
