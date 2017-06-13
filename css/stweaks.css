@@ -6,18 +6,6 @@
     height: 75px;
 }
 
-
-/*
-    this will have sub windows that override the current values
-    not absolutely sure where I shall keep the windows
-    polls and playlist can go over the chat due to their nature
-    and header/footer can go over the video because they are transparent
-    
-    or
-
-    every window will be on top of video (transparency)
-*/
-
 .st-window-open {
     background-color: rgba(0, 0, 0, 0.6);
     width: 70%;
@@ -33,6 +21,10 @@
 
 .st-window-default {
     display: none;
+}
+
+#headwrap.st-window-open .floatinner .wrapper {
+    background: none;
 }
 
 .st-window-open .floatinner {
@@ -141,6 +133,11 @@
     height: calc(100% - 75px) !important;
 }
 
+#videowrap #ytapiplayer iframe {
+    width: 100%;
+    height: 100%;
+}
+
 .st-button:hover {
     background-color: aliceblue;
 }
@@ -186,8 +183,16 @@ body #leftpane {
     height: inherit !important;
 }
 
+#chatControls {
+    width: calc(100% - 5px);
+}
+
+#mailButoonDiv {
+    display: none;
+}
+
 .st-window-users {
-    width: 30% !important;
+    width: 35% !important;
     height: calc(100% - 50px) !important;
     right: inherit !important;
     left: auto;

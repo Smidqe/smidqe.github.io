@@ -26,6 +26,7 @@ $(document).ready(function() {
 
     //will hold the settings node/eleemnt
     var observer = null;
+    var styler = null;
     var maltweaks = false;
     var settingsGUI = null;
     var settings = {};
@@ -82,9 +83,15 @@ $(document).ready(function() {
                     else if (key === "settings")
                         showConfigMenu(true);
                     else if (key === "toast")
-                        toggle();
+                        toggle(); //thanks toast for this descriptive function name :P
                     else
                         view(key);
+
+                    //force the refresh without actually touching it
+                    if (key === "playlist") {
+                        smartRefreshScrollbar();
+                        scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2, 0));
+                    }
                 })
             );
         })
@@ -165,7 +172,9 @@ $(document).ready(function() {
 
     function start() {
         //append the css files
-
+        $(".berryemote").hover(function() {
+            console.log("hovering over berrymote");
+        }, function() { console.log("exiting") });
 
         //modifyView();
 
@@ -179,13 +188,11 @@ $(document).ready(function() {
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     console.log(mutation.addedNodes[i]);
 
-
                     if (mutation.addedNodes[i].id === "tweakhack") { //thanks mal
-                        //move the maltweak style thingy away to rightful place
-                        $("#tweakhack").insertBefore("head > title");
 
-                        //add my own maltweaks compatible stylesheet
-                        $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
+                        //add my own maltweaks compatible stylesheet after the maltweaks
+                        //this is due to maltweaks wont' work if it's in the head for some odd reason
+                        $('body').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
                     }
 
                     //when the headwrap-div appears the site has finished loading, after that inject classes
@@ -194,12 +201,15 @@ $(document).ready(function() {
                         maltweaks = true;
 
                         Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-maltweaks"]).addClass("st-window-default"));
-
+                        //disables the maltweaks and hides the tweaked mode button
+                        $("body").removeClass("tweaked");
                         $("#leftpane").css("height", "100% !important");
 
                         $("#chatpane").addClass("st-chat");
                         $("#videowrap").addClass("st-video");
                         $("#playlist").addClass("st-window-playlist");
+
+
                         //more things to come
                     }
 
