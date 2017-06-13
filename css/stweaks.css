@@ -215,3 +215,7 @@ body #leftpane {
     position: absolute;
     width: 100%;
 }
+
+.ponypen_btns {
+    top: 0px;
+}
