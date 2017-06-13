@@ -211,6 +211,7 @@ body #leftpane {
 
 .st-window-users ul {
     top: 0px;
+    right: 0px;
     position: absolute;
     width: 100%;
 }
