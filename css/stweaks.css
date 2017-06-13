@@ -187,7 +187,7 @@ body #leftpane {
     width: calc(100% - 5px);
 }
 
-#mailButoonDiv {
+#mailButtonDiv {
     display: none;
 }
 
