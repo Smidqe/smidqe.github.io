@@ -226,7 +226,7 @@ body #leftpane {
     padding: 0px;
 }
 
-#mailboxDiv div button.btn {
+#mailboxDiv .btn {
     right: 0px;
     top: 0px;
     position: absolute;
