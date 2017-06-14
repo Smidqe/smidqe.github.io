@@ -225,3 +225,9 @@ body #leftpane {
     overflow-y: auto;
     padding: 0px;
 }
+
+#mailboxDiv div button.btn {
+    right: 0px;
+    top: 0px;
+    position: absolute;
+}
