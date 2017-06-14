@@ -30,6 +30,7 @@ $(document).ready(function() {
     var settings = {};
     var btnContainer = null;
     var prevWindow = null;
+    var stylesheet = null;
 
     const categories = {
         "General": {
@@ -173,6 +174,11 @@ $(document).ready(function() {
             console.log("hovering over berrymote");
         }, function() { console.log("exiting") });
 
+        //add the css for the vanilla berrytube
+        stylesheet = $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks-vanilla.css"/>');
+
+
+
         //create the settings observation settings window
         observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
@@ -187,7 +193,9 @@ $(document).ready(function() {
 
                         //add my own maltweaks compatible stylesheet after the maltweaks
                         //this is due to maltweaks wont' work if it's in the head for some odd reason
-                        $('body').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
+                        //remove the original(vanilla) css
+                        //stylesheet.remove();
+                        stylesheet = $('body').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks-maltweaks.css"/>');
                     }
 
                     //when the headwrap-div appears the site has finished loading, after that inject classes
@@ -199,6 +207,7 @@ $(document).ready(function() {
                         //disables the maltweaks and hides the tweaked mode button
                         $("body").removeClass("tweaked");
                         $("#leftpane").css("height", "100% !important");
+
 
                         $("#chatpane").addClass("st-chat");
                         $("#videowrap").addClass("st-video");
