@@ -111,9 +111,8 @@ button.st-button:first-letter {
     opacity: 0.75;
 }
 
-.pollbox.st-window-open {
+#pollpane.st-window-open {
     display: inline !important;
-    opacity: 1.0;
 }
 
 .tweaked #pollbox {
