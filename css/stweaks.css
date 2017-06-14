@@ -235,3 +235,8 @@ body #leftpane {
     overflow-y: auto;
     padding: 0px;
 }
+
+#mailboxDiv div:nth-child(2) {
+    bottom: auto;
+    right: auto;
+}
