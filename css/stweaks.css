@@ -51,12 +51,12 @@
     border-radius: 5px;
 }
 
-.st-button:hover {
+button.st-button:hover {
     color: #222222;
     background-color: #474747;
 }
 
-.st-button:first-letter {
+button.st-button:first-letter {
     text-transform: capitalize;
 }
 
