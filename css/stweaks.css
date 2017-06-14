@@ -115,7 +115,7 @@ button.st-button:first-letter {
     display: inline !important;
 }
 
-.tweaked #pollbox {
+.tweaked #pollbox.st-window-open {
     display: inline !important;
 }
 
