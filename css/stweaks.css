@@ -45,6 +45,15 @@
     display: inline-block;
     font-size: 12px;
     text-transform: capitalize;
+    background-color: #222222;
+    color: #BBBBBB;
+    border: 1px solid #BBBBBB;
+    border-radius: 5px;
+}
+
+.st-button:hover {
+    color: #222222;
+    background-color: #BBBBBB;
 }
 
 .st-button:first-letter {
