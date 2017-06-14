@@ -47,13 +47,13 @@
     text-transform: capitalize;
     background-color: #222222;
     color: #BBBBBB;
-    border: 1px solid #BBBBBB;
+    border: 1px solid #474747;
     border-radius: 5px;
 }
 
 .st-button:hover {
     color: #222222;
-    background-color: #BBBBBB;
+    background-color: #474747;
 }
 
 .st-button:first-letter {
