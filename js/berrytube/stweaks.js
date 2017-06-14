@@ -12,14 +12,14 @@ $(document).ready(function() {
     const btnsv2 = {
         "about": { "id": "st-button-about", "path-maltweaks": "", "classes": [] },
         "settings": { "id": "st-button-settings", "path": "", "classes": [] },
-        "rules": { "id": "st-button-rules", "path-maltweaks": "#motdwrap", "path-original": "", "classes": ["st-window-open", "st-window-rules"], "wrap": [""] },
-        "header": { "id": "st-button-header", "path-maltweaks": "#headwrap", "classes": ["st-window-open", "st-window-header"], "wrap": [""] },
-        "footer": { "id": "st-button-footer", "path-maltweaks": "#main #footwrap", "classes": ["st-window-open", "st-window-footer"], "wrap": [""] },
-        "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
-        "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
-        "login": { "id": "st-button-login", "path-maltweaks": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"], "wrap": [""] },
-        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
-        "users": { "id": "st-button-users", "path-maltweaks": "#chatlist", "classes": ["st-window-open", "st-window-users"], "wrap": [""] },
+        "rules": { "id": "st-button-rules", "path-maltweaks": "#motdwrap", "path-original": "#dyn_motd", "classes": ["st-window-open", "st-window-rules"], "wrap": [""] },
+        "header": { "id": "st-button-header", "path-maltweaks": "#headwrap", "path-original": "#st-wrap-header", "classes": ["st-window-open", "st-window-header"], "wrap": ["#extras", "#banner"] },
+        "footer": { "id": "st-button-footer", "path-maltweaks": "#main #footwrap", "path-original": "#st-wrap-footer", "classes": ["st-window-open", "st-window-footer"], "wrap": [""] },
+        "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "path-original": "#pollpane", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
+        "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "path-original": "#mailboxDiv", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
+        "login": { "id": "st-button-login", "path-maltweaks": ".wrapper #headbar", "path-original": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"], "wrap": { "class": "", "elements": [""] } },
+        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "path-original": "#main #leftpane", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
+        "users": { "id": "st-button-users", "path-maltweaks": "#chatlist", "path-original": "#chatlist", "classes": ["st-window-open", "st-window-users"], "wrap": [""] },
         "toast": { "id": "st-button-toast", "path-maltweaks": "", "classes": [] }
     };
 
@@ -53,21 +53,16 @@ $(document).ready(function() {
     };
 
     function view(btn) {
-        const elem = $(btnsv2[btn][maltweaks ? "path-maltweaks" : "path-original"]);
+        const obj = btnsv2[btn];
+        const elem = $(obj[maltweaks ? "path-maltweaks" : "path-original"]);
         const open = $(".st-window-open")[0] !== undefined;
-
-        if (!maltweaks) {
-
-        }
 
         //close all the open windows (should be no more than 1 at a time)
         if (open || prevWindow === btn)
             $(".st-window-open").removeClass("st-window-open");
 
         if (prevWindow !== btn || !open)
-            btnsv2[btn]["classes"].forEach(c => elem.addClass(c));
-
-
+            obj["classes"].forEach(c => elem.addClass(c));
 
         prevWindow = btn;
     }
@@ -174,14 +169,29 @@ $(document).ready(function() {
         }
     }
 
+    function createToggleButton() {
+
+    }
+
+    function toggleTweaks() {
+
+    }
+
     function vanillaSetup() {
-        stylesheet = $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks-vanilla.css"/>');
+        stylesheet = $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
+
+        //credit to mal
+        $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
+        $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
 
         $("#chatpane").addClass("st-chat");
         $("#videowrap").addClass("st-video");
         $("#playlist").addClass("st-window-playlist");
-        Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-vanilla"]).addClass("st-window-default-vanilla"));
+
+        Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-original"]).addClass("st-window-default"));
     }
+
+
 
     function start() {
         //append the css files
@@ -202,11 +212,12 @@ $(document).ready(function() {
                     console.log(mutation.addedNodes[i]);
 
                     if (mutation.addedNodes[i].id === "tweakhack") { //thanks mal
-
+                        $("#st-wrap-header").contents().unwrap();
+                        $("#st-wrap-footer").contents().unwrap();
                         //add my own maltweaks compatible stylesheet after the maltweaks
                         //this is due to maltweaks wont' work if it's in the head for some odd reason
                         //remove the original(vanilla) css
-                        //stylesheet.remove();
+                        stylesheet.remove();
                         stylesheet = $('body').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks-maltweaks.css"/>');
                     }
 
@@ -255,6 +266,7 @@ $(document).ready(function() {
             })
         });
 
+        createToggleButton();
         createButtons();
 
         observer.observe(document.body, { childList: true, attributes: true, characterData: true });
