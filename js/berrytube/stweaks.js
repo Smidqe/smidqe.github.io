@@ -12,19 +12,18 @@ $(document).ready(function() {
     const btnsv2 = {
         "about": { "id": "st-button-about", "path-maltweaks": "", "classes": [] },
         "settings": { "id": "st-button-settings", "path": "", "classes": [] },
-        "rules": { "id": "st-button-rules", "path-maltweaks": "#motdwrap", "path-original": "#dyn_motd", "classes": ["st-window-open", "st-window-rules"], "wrap": [""] },
-        "header": { "id": "st-button-header", "path-maltweaks": "#headwrap", "path-original": "#st-wrap-header", "classes": ["st-window-open", "st-window-header"], "wrap": ["#extras", "#banner"] },
-        "footer": { "id": "st-button-footer", "path-maltweaks": "#main #footwrap", "path-original": "#st-wrap-footer", "classes": ["st-window-open", "st-window-footer"], "wrap": [""] },
-        "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "path-original": "#pollpane", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
-        "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "path-original": "#mailboxDiv", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
-        "login": { "id": "st-button-login", "path-maltweaks": ".wrapper #headbar", "path-original": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"], "wrap": { "class": "", "elements": [""] } },
-        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "path-original": "#main #leftpane", "classes": ["st-window-open", "st-window-overlap"], "wrap": [""] },
-        "users": { "id": "st-button-users", "path-maltweaks": "#chatlist", "path-original": "#chatlist", "classes": ["st-window-open", "st-window-users"], "wrap": [""] },
+        "rules": { "id": "st-button-rules", "path-maltweaks": "#motdwrap", "path-original": "#st-wrap-motd", "classes": ["st-window-open", "st-window-rules"] },
+        "header": { "id": "st-button-header", "path-maltweaks": "#headwrap", "path-original": "#st-wrap-header", "classes": ["st-window-open", "st-window-header"] },
+        "footer": { "id": "st-button-footer", "path-maltweaks": "#main #footwrap", "path-original": "#st-wrap-footer", "classes": ["st-window-open", "st-window-footer"] },
+        "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "path-original": "#pollpane", "classes": ["st-window-open", "st-window-overlap"] },
+        "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "path-original": "#mailboxDiv", "classes": ["st-window-open", "st-window-overlap"] },
+        "login": { "id": "st-button-login", "path-maltweaks": ".wrapper #headbar", "path-original": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"] },
+        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "path-original": "#main #leftpane", "classes": ["st-window-open", "st-window-overlap"] },
+        "users": { "id": "st-button-users", "path-maltweaks": "#chatlist", "path-original": "#chatlist", "classes": ["st-window-open", "st-window-users"] },
         "toast": { "id": "st-button-toast", "path-maltweaks": "", "classes": [] }
     };
 
     var observer = null;
-    var styler = null;
     var maltweaks = false;
     var settingsGUI = null;
     var settings = {};
@@ -171,6 +170,7 @@ $(document).ready(function() {
 
     function createToggleButton() {
 
+
     }
 
     function toggleTweaks() {
@@ -180,15 +180,22 @@ $(document).ready(function() {
     function vanillaSetup() {
         stylesheet = $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
 
-        //credit to mal
+        //credit to mal for these trhee lines
         $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
         $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
+        $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
 
+        //add permanent classes
         $("#chatpane").addClass("st-chat");
         $("#videowrap").addClass("st-video");
         $("#playlist").addClass("st-window-playlist");
 
         Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-original"]).addClass("st-window-default"));
+
+        $("#berrytweaks-video_title").wrap("<div id='st-wrap-current-video'><span>Current video (hover)</span></div>")
+            .hover(function() {
+
+            })
     }
 
 
@@ -200,6 +207,27 @@ $(document).ready(function() {
         }, function() { console.log("exiting") });
 
         vanillaSetup();
+
+        //
+        var atteObsv = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (!$("#st-wrap-videotitle")[0])
+                    $("#berrytweaks-video_title").wrap("<div id='st-wrap-videotitle'><span>Current video (hover)</span></div>").wrap("<div id='st-videotitle-window'></div>");
+
+                $("#st-wrap-videotitle").hover(
+                    function() {
+                        $("#st-videotitle-window").slideDown("fast");
+                    },
+                    function() {
+                        $("#st-videotitle-window").hide();
+                    }
+                )
+
+                atteObsv.disconnect();
+            });
+        })
+
+        atteObsv.observe($("#chatControls")[0], { childList: true, attributes: true, characterData: true })
 
         //create the settings observation settings window
         observer = new MutationObserver(function(mutations) {
