@@ -103,7 +103,7 @@ button.st-button:first-letter {
 }
 
 .poll {
-    margin: auto;
+    margin: auto !important;
     position: relative;
 }
 
@@ -115,7 +115,7 @@ button.st-button:first-letter {
     display: inline !important;
 }
 
-.tweaked #pollbox.st-window-open {
+#pollbox.st-window-open {
     display: inline !important;
 }
 
