@@ -30,18 +30,14 @@ $(document).ready(function() {
     var btnContainer = null;
     var prevWindow = null;
     var stylesheet = null;
+    var active = false;
+    var scriptLocation = null;
 
     const categories = {
         "General": {
             "titles": ["Enable", "Hide 'Connected Users' label"],
             "types": ["tick", "tick"],
             "keys": ['enable', 'users']
-        },
-
-        "Compatibility": {
-            "titles": ["Using MalTweaks"],
-            "types": ["tick"],
-            "keys": ['maltweaks']
         },
 
         "Fixes": {
@@ -53,7 +49,7 @@ $(document).ready(function() {
 
     function view(btn) {
         const obj = btnsv2[btn];
-        const elem = $(obj[maltweaks ? "path-maltweaks" : "path-original"]);
+        const elem = $(obj[settings.maltweaks ? "path-maltweaks" : "path-original"]);
         const open = $(".st-window-open")[0] !== undefined;
 
         //close all the open windows (should be no more than 1 at a time)
@@ -169,65 +165,77 @@ $(document).ready(function() {
     }
 
     function createToggleButton() {
-
-
-    }
-
-    function toggleTweaks() {
-
-    }
-
-    function vanillaSetup() {
-        stylesheet = $('head').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
-
-        //credit to mal for these trhee lines
-        $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
-        $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
-        $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
-
-        //add permanent classes
-        $("#chatpane").addClass("st-chat");
-        $("#videowrap").addClass("st-video");
-        $("#playlist").addClass("st-window-playlist");
-
-        Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-original"]).addClass("st-window-default"));
-
-        $("#berrytweaks-video_title").wrap("<div id='st-wrap-current-video'><span>Current video (hover)</span></div>")
-            .hover(function() {
-
+        $("#chatControls").append($('<button>', { class: 'st-button-control', id: "st-button-control-toggle", 'data-key': "toggle" })
+            .click(function() {
+                toggleTweaks(true, false, "");
             })
+        )
     }
 
+    function toggleTweaks(save, force, state) {
+        if (!settings.active || (force && state === "show")) {
+            (settings.maltweaks ? $('body') : $('head')).append(stylesheet = $('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>'));
 
+            if (!settings.maltweaks) {
+                $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
+                $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
+                $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
+            }
+
+            //the videotitle thingy
+            if (!$("#st-wrap-videotitle")[0])
+                $("#berrytweaks-video_title").wrap("<div id='st-wrap-videotitle'><span>Current video (hover)</span></div>").wrap("<div id='st-videotitle-window'></div>");
+
+            $("#st-videotitle-window").hide();
+
+            $("#st-wrap-videotitle").hover(
+                function() {
+                    $("#st-videotitle-window").slideDown("fast");
+                },
+                function() {
+                    $("#st-videotitle-window").hide("fast");
+                }
+            )
+
+            $("#chatpane").addClass("st-chat");
+            $("#videowrap").addClass("st-video");
+            $("#playlist").addClass("st-window-playlist");
+            $(".st-buttons-container").removeClass("st-element-hidden");
+
+            Object.keys(btnsv2).forEach(element => $(btnsv2[element][settings.maltweaks ? "path-maltweaks" : "path-original"]).addClass("st-window-default"));
+        } else if (settings.active || (force && state === "hide")) {
+
+            if (!settings.maltweaks) {
+
+                $("#st-wrap-header").contents().unwrap();
+                $("#st-wrap-footer").contents().unwrap();
+                $("#st-wrap-motd").contents().unwrap();
+            }
+            //unwrapception
+            $("#berrytweaks-video_title").unwrap().unwrap().unwrap();
+            //remove the remaining text
+            $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
+
+            if (stylesheet !== null)
+                stylesheet.remove();
+        }
+
+        if (save) {
+            settings.active = !settings.active;
+            saveSettings();
+        }
+    }
 
     function start() {
-        //append the css files
-        $(".berryemote").hover(function() {
-            console.log("hovering over berrymote");
-        }, function() { console.log("exiting") });
-
-        vanillaSetup();
-
+        createToggleButton();
         //
-        var atteObsv = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (!$("#st-wrap-videotitle")[0])
-                    $("#berrytweaks-video_title").wrap("<div id='st-wrap-videotitle'><span>Current video (hover)</span></div>").wrap("<div id='st-videotitle-window'></div>");
+        settings = loadSettings();
 
-                $("#st-wrap-videotitle").hover(
-                    function() {
-                        $("#st-videotitle-window").slideDown("fast");
-                    },
-                    function() {
-                        $("#st-videotitle-window").hide();
-                    }
-                )
-
-                atteObsv.disconnect();
-            });
-        })
-
-        atteObsv.observe($("#chatControls")[0], { childList: true, attributes: true, characterData: true })
+        //a hacky thing to wait out until maltweaks have loaded (also in vanilla)
+        if (settings.active)
+            setTimeout(function() {
+                toggleTweaks(false, settings.active, "show");
+            }, 4000);
 
         //create the settings observation settings window
         observer = new MutationObserver(function(mutations) {
@@ -235,40 +243,13 @@ $(document).ready(function() {
                 if (mutation.addedNodes.length === 0)
                     return;
 
-                //find the settings window
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
                     console.log(mutation.addedNodes[i]);
 
-                    if (mutation.addedNodes[i].id === "tweakhack") { //thanks mal
-                        $("#st-wrap-header").contents().unwrap();
-                        $("#st-wrap-footer").contents().unwrap();
-                        //add my own maltweaks compatible stylesheet after the maltweaks
-                        //this is due to maltweaks wont' work if it's in the head for some odd reason
-                        //remove the original(vanilla) css
-                        stylesheet.remove();
-                        stylesheet = $('body').append('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks-maltweaks.css"/>');
-                    }
-
                     //when the headwrap-div appears the site has finished loading, after that inject classes
                     //this only happens in maltweaks
-                    if (mutation.addedNodes[i].id === "headwrap") {
-                        maltweaks = true;
-                        $(".st-window-default").forEach($(this).removeClass("st-window-default"));
-
-                        Object.keys(btnsv2).forEach(element => $(btnsv2[element]["path-maltweaks"]).addClass("st-window-default"));
-                        //disables the maltweaks and hides the tweaked mode button
-                        $("body").removeClass("tweaked");
-
-                        $("#leftpane").css("height", "100% !important");
-
-
-                        $("#chatpane").addClass("st-chat");
-                        $("#videowrap").addClass("st-video");
-                        $("#playlist").addClass("st-window-playlist");
-
-
-                        //more things to come
-                    }
+                    if (mutation.addedNodes[i].id === "headwrap")
+                        settings.maltweaks = true;
 
                     //handle the new messages, since the original div is hidden, works similarly but with animation
                     if (mutation.addedNodes[i].id === "mailButtonDiv" && mutation.addedNodes[i].className === "new") {
@@ -293,8 +274,6 @@ $(document).ready(function() {
                 }
             })
         });
-
-        createToggleButton();
         createButtons();
 
         observer.observe(document.body, { childList: true, attributes: true, characterData: true });

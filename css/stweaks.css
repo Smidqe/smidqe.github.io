@@ -174,7 +174,7 @@ button.st-button:first-letter {
 }
 
 .st-element-hidden {
-    display: hidden;
+    display: hidden !important;
 }
 
 .st-window-open #footwrap {
