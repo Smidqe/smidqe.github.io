@@ -5,34 +5,67 @@
     
 */
 
+/*
+    TODO:
+        - Turn this into a OOP
+        - Add the change animations to the buttons
+            - Using mutation observers attached to the right elements
+            - can be created in one function (general)
+            - 
+        - Small details
+            - responsive
+
+        - combine drink count and user amounts to a new div
+            - will be next to the buttons
+
+        -                     
+
+*/
 
 $(document).ready(function() {
 
-    //list of buttons
     const btnsv2 = {
-        "about": { "id": "st-button-about", "path-maltweaks": "", "classes": [] },
-        "settings": { "id": "st-button-settings", "path": "", "classes": [] },
-        "rules": { "id": "st-button-rules", "path-maltweaks": "#motdwrap", "path-original": "#st-wrap-motd", "classes": ["st-window-open", "st-window-rules"] },
-        "header": { "id": "st-button-header", "path-maltweaks": "#headwrap", "path-original": "#st-wrap-header", "classes": ["st-window-open", "st-window-header"] },
-        "footer": { "id": "st-button-footer", "path-maltweaks": "#main #footwrap", "path-original": "#st-wrap-footer", "classes": ["st-window-open", "st-window-footer"] },
-        "polls": { "id": "st-button-polls", "path-maltweaks": "#pollbox", "path-original": "#pollpane", "classes": ["st-window-open", "st-window-overlap"] },
-        "messages": { "id": "st-button-messages", "path-maltweaks": "#mailboxDiv", "path-original": "#mailboxDiv", "classes": ["st-window-open", "st-window-overlap"] },
-        "login": { "id": "st-button-login", "path-maltweaks": ".wrapper #headbar", "path-original": ".wrapper #headbar", "classes": ["st-window-open", "st-window-login"] },
-        "playlist": { "id": "st-button-playlist", "path-maltweaks": "#main #leftpane", "path-original": "#main #leftpane", "classes": ["st-window-open", "st-window-overlap"] },
-        "users": { "id": "st-button-users", "path-maltweaks": "#chatlist", "path-original": "#chatlist", "classes": ["st-window-open", "st-window-users"] },
-        "toast": { "id": "st-button-toast", "path-maltweaks": "", "classes": [] }
+        "about": {},
+        "settings": {},
+        "rules": {
+            paths: ["#motdwrap", "#st-wrap-motd"],
+        },
+        "header": {
+            paths: ["#headwrap", "#st-wrap-header"],
+        },
+        "footer": {
+            paths: ["#main #footwrap", "#st-wrap-footer"],
+        },
+        "polls": {
+            paths: ["#pollpane", "#pollpane"],
+            classes: ["st-window-overlap"]
+        },
+        "messages": {
+            paths: ["#mailboxDiv", "#mailboxDiv"],
+            classes: ["st-window-overlap"]
+        },
+        "login": {
+            paths: [".wrapper #headbar", ".wrapper #headbar"],
+        },
+        "playlist": {
+            paths: ["#main #leftpane", "#main #leftpane"],
+            classes: ["st-window-overlap"]
+        },
+        "users": {
+            paths: ["#chatlist", "#chatlist"],
+            classes: ["st-window-users"]
+        },
+
+        "toast": {}
     };
 
     var observer = null;
-    var maltweaks = false;
+    var observers = {};
     var settingsGUI = null;
     var settings = {};
+    var settings2 = { gui: {}, storage: {}, observers: {} };
     var btnContainer = null;
-    var prevWindow = null;
-    var stylesheet = null;
-    var active = false;
-    var scriptLocation = null;
-
+    var timers = {};
     const categories = {
         "General": {
             "titles": ["Enable", "Hide 'Connected Users' label"],
@@ -47,19 +80,38 @@ $(document).ready(function() {
         }
     };
 
+    function createChangeListener(callback) {
+        return new MutationObserver(callback)
+    }
+
+    function createInfoBox() {
+        settings2.gui.info = $("<div>", { id: "st-container-info" })
+            .append($("<div>", { id: "st-info-time", text: "Time: " }).append($("<span>")))
+            .append($("<div>", { id: "st-info-users", text: "Users: " }).append($("<span>")))
+            .append($("<div>", { id: "st-info-drinks", text: "Drinks: " }).append($("<span>")))
+
+        return settings2.gui.info;
+    }
+
     function view(btn) {
         const obj = btnsv2[btn];
-        const elem = $(obj[settings.maltweaks ? "path-maltweaks" : "path-original"]);
+        const elem = $(obj.paths[settings.maltweaks ? 0 : 1]);
         const open = $(".st-window-open")[0] !== undefined;
 
         //close all the open windows (should be no more than 1 at a time)
-        if (open || prevWindow === btn)
+        if (open || settings.prevWindow === btn)
             $(".st-window-open").removeClass("st-window-open");
 
-        if (prevWindow !== btn || !open)
-            obj["classes"].forEach(c => elem.addClass(c));
+        if (settings.prevWindow !== btn || !open) {
+            elem.addClass("st-window-open");
 
-        prevWindow = btn;
+            //if there are windows
+            if (obj.classes !== undefined)
+                for (var i = 0; i < obj.classes.length; i++)
+                    elem.addClass(obj.classes[i]);
+        }
+
+        settings.prevWindow = btn;
     }
 
     function createButtons() {
@@ -85,17 +137,192 @@ $(document).ready(function() {
                     if (key === "playlist") {
                         smartRefreshScrollbar();
                         scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2, 0));
+                        realignPosHelper();
                     }
                 })
             );
         })
 
         //move to css eventually
-        $('body').append(btnContainer);
+        return btnContainer;
+    }
+
+    function createControls() {
+        $('body').append($("<div>", { class: 'st-controls-wrap' })
+            .append(createButtons())
+            .append(createInfoBox())
+        );
     }
 
     function saveSettings() {
         localStorage['SmidqeTweaks'] = JSON.stringify(settings);
+    }
+    //eventually settings will be broken into two areas
+    //functionalities and storage
+
+    settings2.modify = function(key, value, save) {
+        this.storage[key] = value;
+
+        if (save)
+            this.save();
+    }
+
+    settings2.save = function() {
+        localStorage["SmidqeTweaks"] = JSON.stringify(this.storage);
+    }
+
+    settings2.load = function() {
+        this.storage = JSON.parse(localStorage["SmidqeTweaks"] || '{}');
+    }
+
+    settings2.gui.berrytweaks = function(state) {
+        if (state === "show") {
+            if (!$("#st-wrap-videotitle")[0])
+                $("#berrytweaks-video_title").wrap("<div id='st-wrap-videotitle'><span>Current video (hover)</span></div>").wrap("<div id='st-videotitle-window'></div>");
+
+            $("#st-videotitle-window").hide();
+
+            $("#st-wrap-videotitle").hover(
+                function() {
+                    $("#st-videotitle-window").slideDown("fast");
+                },
+                function() {
+                    $("#st-videotitle-window").hide("fast");
+                }
+            )
+        } else {
+            if ($("#st-wrap-videotitle")[0])
+                $("#berrytweaks-video_title").unwrap().unwrap().unwrap();
+        }
+
+        settings2.storage['videowrap'] = !settings2.storage['videowrap'];
+    }
+
+    settings2.gui.toggleWraps = function(state) {
+        if (settings2.storage.maltweaks)
+            return;
+
+        if (state === "show") {
+            $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
+            $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
+            $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
+        } else {
+            $("#st-wrap-header").contents().unwrap();
+            $("#st-wrap-footer").contents().unwrap();
+            $("#st-wrap-motd").contents().unwrap();
+        }
+    }
+
+    settings2.gui.toggle = function(force, state) {
+        if (!settings2.storage['maltweaks'])
+            this.gui.wrap(settings2.storage['active']);
+
+
+        //remove the remaining text
+
+        $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
+
+        if (settings2.stylesheet !== null)
+            settings2.stylesheet.remove();
+    }
+
+    settings2.show = function() {
+        if (!settings2.gui.container)
+            settings2.gui.container = $('<fieldset>');
+
+        settings2.gui.container.empty();
+
+        settings2.gui.container.append($('<legend>', { text: 'SmidqeTweaks' }));
+
+        const keys = Object.keys(categories);
+        for (var i = 0; i < keys.length; i++) {
+            const section = $('<div>', { for: 'st-settings-category' }).append($("<label>", { text: keys[i] }))
+            const titles = categories[keys[i]].titles;
+
+            for (var j = 0; j < titles.length; j++) {
+                section.append($('<div>', {
+                        for: 'st-settings-setting'
+                    }))
+                    .append($('<label>', {
+                        text: titles[j]
+                    }));
+
+                const category = categories[keys[i]];
+                switch (category.types[j]) {
+                    case 'tick':
+                        {
+                            section.append($('<input>', {
+                                    type: 'checkbox',
+                                    checked: settings[category.keys[j]],
+
+                                    'data-key': category.keys[j]
+                                })
+                                .change(function() {
+                                    this.modify($(this).attr('data-key'), !!$(this).prop('checked'), true);
+                                }));
+
+                        }
+                }
+
+            }
+
+            settings2.gui.container.append(section);
+        }
+
+        $("#settingsGui > ul").append($('<li>').append(settings2.gui.container))
+    }
+
+    function createListener(callback) {
+        return new MutationObserver(function(mutations) {
+            if (mutations.length === 0)
+                return;
+
+            mutations.forEach(callback);
+        })
+    };
+
+    settings2.observers.load = () => {
+
+        settings2.observers.init = createListener(mutation => {
+            for (var i = 0; i < mutation.addedNodes.length; i++) {
+                var mut = mutation.addedNodes[i];
+
+                //we have maltweaks
+                if (mut.id === "tweakhack") {
+                    clearTimeout(timers.init);
+                    settings.maltweaks = true;
+                    toggleTweaks(false, settings.active, "show");
+                }
+
+                //we may not have maltweaks
+                if (mut.id === "chainsawDiv")
+                    settings.maltweaks = false;
+            }
+        })
+
+        settings2.observers.settings = createListener(mutation => {
+            for (var i = 0; i < mutation.addedNodes.length; i++) {
+                var mut = mutation.addedNodes[i];
+
+                if (mut.className === "dialogWindow ui-draggable")
+                    settings2.show();
+            }
+        })
+
+        settings2.observers.drinks = createListener(() => {
+            $("#st-info-drinks-amount > span:last").text($("#drinkCounter").text());
+            $("#st-info-drinks-dpm > span").text($(".dpmCounter").text().substring())
+        })
+
+        settings2.observers.users = createListener(() => {
+            $("#st-info-users-amount > span").text($("#connectedCount").text())
+        })
+
+        settings2.observers.time = createListener(() => {
+            $("#st-info-time > span").text($(".me > .berrytweaks-localtime"));
+        })
+
+        settings2.observers.settings.observe(document.body, { childList: true });
     }
 
     function loadSettings() {
@@ -138,12 +365,11 @@ $(document).ready(function() {
                 }));
 
                 //append the method, currently only checkbox is possible
-                var elemnt = null
+                var elemnt = null;
                 var category = categories[keys[i]];
                 switch (category.types[j]) {
                     case 'tick':
                         elemnt = $('<input>', {
-                            id: 'st-settings-setting-' + category.keys[j],
                             type: 'checkbox',
                             checked: settings[category.keys[j]],
 
@@ -172,9 +398,11 @@ $(document).ready(function() {
         )
     }
 
+    //this is horrible \\ppcute
+
     function toggleTweaks(save, force, state) {
         if (!settings.active || (force && state === "show")) {
-            (settings.maltweaks ? $('body') : $('head')).append(stylesheet = $('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>'));
+            (settings.maltweaks ? $('body') : $('head')).append(settings.stylesheet = $('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>'));
 
             if (!settings.maltweaks) {
                 $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
@@ -202,7 +430,12 @@ $(document).ready(function() {
             $("#playlist").addClass("st-window-playlist");
             $(".st-buttons-container").removeClass("st-element-hidden");
 
-            Object.keys(btnsv2).forEach(element => $(btnsv2[element][settings.maltweaks ? "path-maltweaks" : "path-original"]).addClass("st-window-default"));
+            Object.keys(btnsv2).forEach(function(element) {
+                if (btnsv2[element].paths === undefined)
+                    return;
+
+                $(btnsv2[element].paths[settings.maltweaks ? 0 : 1]).addClass("st-window-default")
+            });
         } else if (settings.active || (force && state === "hide")) {
 
             if (!settings.maltweaks) {
@@ -216,8 +449,8 @@ $(document).ready(function() {
             //remove the remaining text
             $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
 
-            if (stylesheet !== null)
-                stylesheet.remove();
+            if (settings.stylesheet !== null)
+                settings.stylesheet.remove();
         }
 
         if (save) {
@@ -230,37 +463,30 @@ $(document).ready(function() {
         createToggleButton();
         //
         settings = loadSettings();
+        timers.init = setTimeout(toggleTweaks(false, settings.active, "show"), 6000)
 
-        //a hacky thing to wait out until maltweaks have loaded (also in vanilla)
-        if (settings.active)
-            setTimeout(function() {
-                toggleTweaks(false, settings.active, "show");
-            }, 4000);
+        observers.body = createChangeListener(function(mutations) {
+            if (mutations.length === 0)
+                return;
 
-        //create the settings observation settings window
-        observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
-                if (mutation.addedNodes.length === 0)
-                    return;
 
                 for (var i = 0; i < mutation.addedNodes.length; i++) {
-                    console.log(mutation.addedNodes[i]);
+                    var mut = mutation.addedNodes[i];
 
-                    //when the headwrap-div appears the site has finished loading, after that inject classes
-                    //this only happens in maltweaks
-                    if (mutation.addedNodes[i].id === "headwrap")
+                    //we have maltweaks
+                    if (mut.id === "tweakhack") {
+                        clearTimeout(timers.init);
                         settings.maltweaks = true;
-
-                    //handle the new messages, since the original div is hidden, works similarly but with animation
-                    if (mutation.addedNodes[i].id === "mailButtonDiv" && mutation.addedNodes[i].className === "new") {
-                        console.log("got a new message");
-                        //add a new class to the messages button
-                        //$(btnsv2["messages"]["path"]).addClass("st-button-change");
+                        toggleTweaks(false, settings.active, "show");
                     }
 
-                    //handle the settings window
-                    if (mutation.addedNodes[i].className === "dialogWindow ui-draggable") {
-                        //check if the settings exist and create them if necessary, else empty the settings
+                    //we may not have maltweaks
+                    if (mut.id === "chainsawDiv")
+                        settings.maltweaks = false;
+
+                    if (mut.className === "dialogWindow ui-draggable") {
+                        /*
                         if (!settingsGUI)
                             settingsGUI = $('<fieldset>');
 
@@ -270,14 +496,25 @@ $(document).ready(function() {
                         )
 
                         showSettings();
+                        */
                     }
                 }
             })
         });
-        createButtons();
 
-        observer.observe(document.body, { childList: true, attributes: true, characterData: true });
+        //createButtons();
+        //observers.forEach(e => e.func.observe(e.path, e.config));
+        observers.body.observe(document.body, { childList: true, attributes: true, characterData: true });
     };
 
+    function start2() {
+        settings2.load();
+        settings2.observers.load();
+        console.log(settings2.storage);
+        console.log(settings2.observers);
+        createControls();
+    }
+
     start();
+    start2();
 });

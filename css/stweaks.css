@@ -1,9 +1,25 @@
 .st-buttons-container {
-    display: inline-block;
+    display: inline-flex;
     position: fixed;
     bottom: 0px;
     left: 0px;
     height: 75px;
+    width: 80%;
+    float: left;
+}
+
+.st-controls-wrap {
+    width: 70%;
+    bottom: 0px;
+    position: absolute;
+    height: 75px;
+}
+
+.st-container-info {
+    width: 20%;
+    height: 75px;
+    float: left;
+    display: grid;
 }
 
 .st-window-open {
@@ -60,21 +76,16 @@
     border-radius: 5px;
 }
 
+.st-button-change {
+    display: none;
+}
+
 button.st-button:hover {
     background-color: #474747;
 }
 
 button.st-button:first-letter {
     text-transform: capitalize;
-}
-
-@keyframes btn-change {
-    0% {
-        background-color: black;
-    }
-    100% {
-        background-color: red;
-    }
 }
 
 #chatpane.st-chat {
@@ -166,11 +177,6 @@ button.st-button:first-letter {
 
 .st-button:hover {
     background-color: aliceblue;
-}
-
-.st-button-change {
-    animation-name: btn-change;
-    animation-duration: 5s;
 }
 
 .st-element-hidden {
