@@ -59,18 +59,14 @@ $(document).ready(function() {
         "toast": {}
     };
 
-    var observer = null;
-    var observers = {};
-    var settingsGUI = null;
-    var settings = {};
     var settings2 = { gui: {}, storage: {}, observers: {} };
-    var btnContainer = null;
     var timers = {};
+
     const categories = {
         "General": {
-            "titles": ["Enable", "Hide 'Connected Users' label"],
-            "types": ["tick", "tick"],
-            "keys": ['enable', 'users']
+            "titles": ["Hide 'Connected Users' label"],
+            "types": ["tick"],
+            "keys": ['hide-users']
         },
 
         "Fixes": {
@@ -95,14 +91,14 @@ $(document).ready(function() {
 
     function view(btn) {
         const obj = btnsv2[btn];
-        const elem = $(obj.paths[settings.maltweaks ? 0 : 1]);
+        const elem = $(obj.paths[settings2.storage.maltweaks ? 0 : 1]);
         const open = $(".st-window-open")[0] !== undefined;
 
         //close all the open windows (should be no more than 1 at a time)
-        if (open || settings.prevWindow === btn)
+        if (open || settings2.storage.prevWindow === btn)
             $(".st-window-open").removeClass("st-window-open");
 
-        if (settings.prevWindow !== btn || !open) {
+        if (settings2.storage.prevWindow !== btn || !open) {
             elem.addClass("st-window-open");
 
             //if there are windows
@@ -111,7 +107,7 @@ $(document).ready(function() {
                     elem.addClass(obj.classes[i]);
         }
 
-        settings.prevWindow = btn;
+        settings2.storage.prevWindow = btn;
     }
 
     function createButtons() {
@@ -154,29 +150,25 @@ $(document).ready(function() {
         );
     }
 
-    function saveSettings() {
-        localStorage['SmidqeTweaks'] = JSON.stringify(settings);
-    }
-    //eventually settings will be broken into two areas
-    //functionalities and storage
-
     settings2.modify = function(key, value, save) {
-        this.storage[key] = value;
+        settings2.storage[key] = value;
 
         if (save)
-            this.save();
+            settings2.save();
     }
 
     settings2.save = function() {
-        localStorage["SmidqeTweaks"] = JSON.stringify(this.storage);
+        localStorage["SmidqeTweaks"] = JSON.stringify(settings2.storage);
     }
 
     settings2.load = function() {
-        this.storage = JSON.parse(localStorage["SmidqeTweaks"] || '{}');
+        settings2.storage = JSON.parse(localStorage["SmidqeTweaks"] || '{}');
     }
 
     settings2.gui.berrytweaks = function(state) {
-        if (state === "show") {
+        //check if we have berrytweaks enabled
+
+        if (state) {
             if (!$("#st-wrap-videotitle")[0])
                 $("#berrytweaks-video_title").wrap("<div id='st-wrap-videotitle'><span>Current video (hover)</span></div>").wrap("<div id='st-videotitle-window'></div>");
 
@@ -195,14 +187,14 @@ $(document).ready(function() {
                 $("#berrytweaks-video_title").unwrap().unwrap().unwrap();
         }
 
-        settings2.storage['videowrap'] = !settings2.storage['videowrap'];
+        settings2.modify('videowrap', state, true);
     }
 
     settings2.gui.toggleWraps = function(state) {
         if (settings2.storage.maltweaks)
             return;
 
-        if (state === "show") {
+        if (state) {
             $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
             $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
             $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
@@ -213,26 +205,50 @@ $(document).ready(function() {
         }
     }
 
-    settings2.gui.toggle = function(force, state) {
-        if (!settings2.storage['maltweaks'])
-            this.gui.wrap(settings2.storage['active']);
+    settings2.gui.toggle = function(force, state, save) {
+        const gui = settings2.gui;
+        const storage = settings2.storage;
 
+        console.log("Toggling tweaks: " + state)
 
-        //remove the remaining text
+        if (storage.active === state && !force)
+            return;
 
-        $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
+        settings2.gui.toggleWraps(state);
+        settings2.gui.berrytweaks(state);
 
-        if (settings2.stylesheet !== null)
-            settings2.stylesheet.remove();
+        if (state || (storage.active && force)) {
+            (storage['maltweaks'] ? $('body') : $('head')).append(settings2.stylesheet);
+
+            Object.keys(btnsv2).forEach(function(element) {
+                if (btnsv2[element].paths === undefined)
+                    return;
+
+                $(btnsv2[element].paths[storage.maltweaks ? 0 : 1]).addClass("st-window-default")
+            });
+            //remove the remaining text
+        } else {
+            $("#st-stylesheet").remove();
+
+            if (storage.active)
+                $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
+
+            if (storage.maltweaks)
+                $(".wrapper #dyn_header iframe").css({ "height": "140px" });
+        }
+
+        if (save)
+            settings2.modify('active', !storage['active'], true);
     }
 
     settings2.show = function() {
-        if (!settings2.gui.container)
-            settings2.gui.container = $('<fieldset>');
+        if (!this.gui.container)
+            this.gui.container = $('<fieldset>');
 
-        settings2.gui.container.empty();
+        const element = this.gui.container;
 
-        settings2.gui.container.append($('<legend>', { text: 'SmidqeTweaks' }));
+        element.empty();
+        element.append($('<legend>', { text: 'SmidqeTweaks' }));
 
         const keys = Object.keys(categories);
         for (var i = 0; i < keys.length; i++) {
@@ -253,7 +269,7 @@ $(document).ready(function() {
                         {
                             section.append($('<input>', {
                                     type: 'checkbox',
-                                    checked: settings[category.keys[j]],
+                                    checked: settings2.storage[category.keys[j]],
 
                                     'data-key': category.keys[j]
                                 })
@@ -266,10 +282,10 @@ $(document).ready(function() {
 
             }
 
-            settings2.gui.container.append(section);
+            element.append(section);
         }
 
-        $("#settingsGui > ul").append($('<li>').append(settings2.gui.container))
+        $("#settingsGui > ul").append($('<li>').append(element))
     }
 
     function createListener(callback) {
@@ -282,6 +298,12 @@ $(document).ready(function() {
     };
 
     settings2.observers.load = () => {
+        timers.init = setTimeout(function() {
+            settings2.gui.toggle(true, settings2.storage.active, false);
+
+            //we don't need this anymore
+            settings2.observers.init.disconnect();
+        }, 5000)
 
         settings2.observers.init = createListener(mutation => {
             for (var i = 0; i < mutation.addedNodes.length; i++) {
@@ -290,13 +312,15 @@ $(document).ready(function() {
                 //we have maltweaks
                 if (mut.id === "tweakhack") {
                     clearTimeout(timers.init);
-                    settings.maltweaks = true;
-                    toggleTweaks(false, settings.active, "show");
+                    settings2.modify("maltweaks", true, true);
+
+                    settings2.gui.toggle(true, settings2.storage.active, false);
+                    settings2.observers.init.disconnect();
                 }
 
                 //we may not have maltweaks
                 if (mut.id === "chainsawDiv")
-                    settings.maltweaks = false;
+                    settings2.modify("maltweaks", false, true);
             }
         })
 
@@ -310,211 +334,70 @@ $(document).ready(function() {
         })
 
         settings2.observers.drinks = createListener(() => {
-            $("#st-info-drinks-amount > span:last").text($("#drinkCounter").text());
+            $("#st-info-drinks > span").text($("#drinkCounter").text());
             $("#st-info-drinks-dpm > span").text($(".dpmCounter").text().substring())
         })
 
         settings2.observers.users = createListener(() => {
-            $("#st-info-users-amount > span").text($("#connectedCount").text())
+            $("#st-info-users > span").text($("#connectedCount").text())
         })
 
-        settings2.observers.time = createListener(() => {
-            $("#st-info-time > span").text($(".me > .berrytweaks-localtime"));
-        })
+        settings2.observers.time = createListener(mutation => {
+            for (var i = 0; i < mutation.addedNodes.length; i++) {
+                var mut = mutation.addedNodes[i];
 
-        settings2.observers.settings.observe(document.body, { childList: true });
-    }
+                if ($(mut).hasClass("me")) {
+                    //initial time
 
-    function loadSettings() {
-        return settings = JSON.parse(localStorage["SmidqeTweaks"] || '{}');
-    }
+                    settings2.observers.sub = createListener(mutation => {
+                        if ((mutation.type === "childList") && $(mutation.target).hasClass("berrytweaks-localtime"))
+                            $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
+                    })
 
-    function showSettings() {
-        //c
-        const sttwin = $('#dialogContent');
-
-        //if it doesn't exist
-        if (!sttwin)
-            return;
-
-        settingsGUI.empty();
-
-        //append the title
-        settingsGUI.append($('<legend>', { text: 'SmidqeTweaks' }));
-
-        //load the settings from local storage
-        settings = loadSettings();
-
-        //attach a listener to every setting, so that they will be saved everytime a change happens
-        const keys = Object.keys(categories);
-        var container = null;
-
-        for (var i = 0; i < keys.length; i++) {
-            settingsGUI.append(container = $('<div>', { for: 'st-settings-category' }).append($("<label>", { text: keys[i] })));
-            const titles = categories[keys[i]].titles;
-
-            //append the titles and their methods
-            for (var j = 0; j < titles.length; j++) {
-                container.append($('<div>', {
-                    for: 'st-settings-setting'
-                }));
-
-                //append the label
-                container.append($('<label>', {
-                    text: titles[j]
-                }));
-
-                //append the method, currently only checkbox is possible
-                var elemnt = null;
-                var category = categories[keys[i]];
-                switch (category.types[j]) {
-                    case 'tick':
-                        elemnt = $('<input>', {
-                            type: 'checkbox',
-                            checked: settings[category.keys[j]],
-
-                            /* This allows us to keep the name of setting in the object */
-                            'data-key': category.keys[j]
-                        });
+                    settings2.observers.sub.observe(mut, { childList: true, subtree: true });
                 }
-
-                $(elemnt).change(function() {
-                    settings[$(this).attr('data-key')] = !!$(this).prop('checked');
-
-                    saveSettings();
-                    showSettings();
-                });
-
-                container.append(elemnt);
             }
-        }
+        })
+
+
+        const obj = settings2.observers;
+
+
+        obj.init.observe(document.body, { childList: true });
+        obj.settings.observe(document.body, { childList: true });
+        obj.drinks.observe($("#drinkCounter")[0], { childList: true, attributes: true, characterData: true })
+        obj.users.observe($("#connectedCount")[0], { childList: true, attributes: true, characterData: true });
+        obj.time.observe($("#chatlist > ul")[0], { childList: true, attributes: true, characterData: true });
+
+        //force the texts
+        $("#st-info-users > span").text($("#connectedCount").text())
+        $("#st-info-time > span").text(":(");
+
     }
 
     function createToggleButton() {
         $("#chatControls").append($('<button>', { class: 'st-button-control', id: "st-button-control-toggle", 'data-key': "toggle" })
             .click(function() {
-                toggleTweaks(true, false, "");
+                settings2.gui.toggle(false, !settings2.storage.active, true);
             })
         )
     }
 
-    //this is horrible \\ppcute
-
-    function toggleTweaks(save, force, state) {
-        if (!settings.active || (force && state === "show")) {
-            (settings.maltweaks ? $('body') : $('head')).append(settings.stylesheet = $('<link rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>'));
-
-            if (!settings.maltweaks) {
-                $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
-                $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
-                $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
-            }
-
-            //the videotitle thingy
-            if (!$("#st-wrap-videotitle")[0])
-                $("#berrytweaks-video_title").wrap("<div id='st-wrap-videotitle'><span>Current video (hover)</span></div>").wrap("<div id='st-videotitle-window'></div>");
-
-            $("#st-videotitle-window").hide();
-
-            $("#st-wrap-videotitle").hover(
-                function() {
-                    $("#st-videotitle-window").slideDown("fast");
-                },
-                function() {
-                    $("#st-videotitle-window").hide("fast");
-                }
-            )
-
-            $("#chatpane").addClass("st-chat");
-            $("#videowrap").addClass("st-video");
-            $("#playlist").addClass("st-window-playlist");
-            $(".st-buttons-container").removeClass("st-element-hidden");
-
-            Object.keys(btnsv2).forEach(function(element) {
-                if (btnsv2[element].paths === undefined)
-                    return;
-
-                $(btnsv2[element].paths[settings.maltweaks ? 0 : 1]).addClass("st-window-default")
-            });
-        } else if (settings.active || (force && state === "hide")) {
-
-            if (!settings.maltweaks) {
-
-                $("#st-wrap-header").contents().unwrap();
-                $("#st-wrap-footer").contents().unwrap();
-                $("#st-wrap-motd").contents().unwrap();
-            }
-            //unwrapception
-            $("#berrytweaks-video_title").unwrap().unwrap().unwrap();
-            //remove the remaining text
-            $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
-
-            if (settings.stylesheet !== null)
-                settings.stylesheet.remove();
-        }
-
-        if (save) {
-            settings.active = !settings.active;
-            saveSettings();
-        }
-    }
-
-    function start() {
-        createToggleButton();
-        //
-        settings = loadSettings();
-        timers.init = setTimeout(toggleTweaks(false, settings.active, "show"), 6000)
-
-        observers.body = createChangeListener(function(mutations) {
-            if (mutations.length === 0)
-                return;
-
-            mutations.forEach(function(mutation) {
-
-                for (var i = 0; i < mutation.addedNodes.length; i++) {
-                    var mut = mutation.addedNodes[i];
-
-                    //we have maltweaks
-                    if (mut.id === "tweakhack") {
-                        clearTimeout(timers.init);
-                        settings.maltweaks = true;
-                        toggleTweaks(false, settings.active, "show");
-                    }
-
-                    //we may not have maltweaks
-                    if (mut.id === "chainsawDiv")
-                        settings.maltweaks = false;
-
-                    if (mut.className === "dialogWindow ui-draggable") {
-                        /*
-                        if (!settingsGUI)
-                            settingsGUI = $('<fieldset>');
-
-                        //append the settings container to the bt's own setting window
-                        $("#settingsGui > ul").append(
-                            $('<li>').append(settingsGUI)
-                        )
-
-                        showSettings();
-                        */
-                    }
-                }
-            })
-        });
-
-        //createButtons();
-        //observers.forEach(e => e.func.observe(e.path, e.config));
-        observers.body.observe(document.body, { childList: true, attributes: true, characterData: true });
-    };
-
     function start2() {
         settings2.load();
-        settings2.observers.load();
-        console.log(settings2.storage);
-        console.log(settings2.observers);
-        createControls();
-    }
 
-    start();
+        if (!settings2.stylesheet)
+            settings2.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
+
+        settings2.observers.load();
+
+        createControls();
+
+        $("#chatpane").addClass("st-chat");
+        $("#videowrap").addClass("st-video");
+        $("#playlist").addClass("st-window-playlist");
+
+        createToggleButton();
+    }
     start2();
 });
