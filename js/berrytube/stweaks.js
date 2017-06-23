@@ -62,6 +62,7 @@ $(document).ready(function() {
     var settings2 = { gui: {}, storage: {}, observers: {} };
     var timers = {};
 
+
     const categories = {
         "General": {
             "titles": ["Hide 'Connected Users' label"],
@@ -112,7 +113,7 @@ $(document).ready(function() {
 
     function createButtons() {
         //create the buttonarea first
-        btnContainer = $('<div>', { class: 'st-buttons-container' });
+        var btnContainer = $('<div>', { class: 'st-buttons-container' });
 
         Object.keys(btnsv2).forEach(function(element) {
             //create the button and the 
@@ -226,8 +227,8 @@ $(document).ready(function() {
 
                 $(btnsv2[element].paths[storage.maltweaks ? 0 : 1]).addClass("st-window-default")
             });
-            //remove the remaining text
         } else {
+            //remove the stylesheet
             $("#st-stylesheet").remove();
 
             if (storage.active)
@@ -351,7 +352,8 @@ $(document).ready(function() {
 
                     settings2.observers.sub = createListener(mutation => {
                         if ((mutation.type === "childList") && $(mutation.target).hasClass("berrytweaks-localtime"))
-                            $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
+                            if ($(".me").length > 0)
+                                $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
                     })
 
                     settings2.observers.sub.observe(mut, { childList: true, subtree: true });
@@ -372,7 +374,6 @@ $(document).ready(function() {
         //force the texts
         $("#st-info-users > span").text($("#connectedCount").text())
         $("#st-info-time > span").text(":(");
-
     }
 
     function createToggleButton() {
@@ -389,9 +390,11 @@ $(document).ready(function() {
         if (!settings2.stylesheet)
             settings2.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
 
+        createControls();
+
         settings2.observers.load();
 
-        createControls();
+
 
         $("#chatpane").addClass("st-chat");
         $("#videowrap").addClass("st-video");

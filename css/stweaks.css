@@ -59,6 +59,10 @@
     position: relative;
 }
 
+#drinkWrap {
+    display: none !important;
+}
+
 .st-button {
     height: inherit;
     width: 100px;
