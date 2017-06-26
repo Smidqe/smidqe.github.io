@@ -14,11 +14,31 @@
     height: 75px;
 }
 
+.st-control-border {
+    background-color: #222222;
+    color: #BBBBBB;
+    border: 1px solid #474747;
+}
+
 #st-container-info {
     width: 20%;
     height: 75px;
     float: left;
     display: grid;
+    border: 1px solid #474747;
+}
+
+.st-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.st-grid-block {
+    text-align: center;
+    vertical-align: middle;
+    /*This will change eventually*/
+    line-height: 37.5px;
 }
 
 .st-window-open {
