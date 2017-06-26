@@ -58,25 +58,21 @@ const btnsv2 = {
 
 var settings = { gui: {}, storage: {}, observers: {}, maltweaks: false };
 var timers = {};
-
+var listeners = {};
 
 const categories = {
     "General": {
-        "titles": ["Hide 'Connected Users' label"],
-        "types": ["tick"],
-        "keys": ['hide-users']
+        "titles": ["Ircify changes", "Hover current video"],
+        "types": ["tick", "tick"],
+        "keys": ["ircChanges", "hoverTitle"]
     },
 
     "Fixes": {
-        "titles": ["Fix timestamps"],
+        "titles": ["Temporary"],
         "types": ["tick"],
-        "keys": ["timestamps"]
+        "keys": ["temp"]
     }
 };
-
-function createChangeListener(callback) {
-    return new MutationObserver(callback)
-}
 
 function createInfoBox() {
     settings.gui.info = $("<div>", { id: "st-container-info", class: "st-grid" })
@@ -353,9 +349,13 @@ settings.observers.load = () => {
     obj.users.observe($("#connectedCount")[0], { childList: true, attributes: true, characterData: true });
     obj.time.observe($("#chatlist > ul")[0], { childList: true, attributes: true, characterData: true });
 
-    //force the texts
+    //force the texts initially
     $("#st-info-users > span").text($("#connectedCount").text())
     $("#st-info-time > span").text(":(");
+}
+
+function createChangeListeners() {
+
 }
 
 function init() {
@@ -364,6 +364,7 @@ function init() {
     if (!settings.stylesheet)
         settings.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/css/stweaks.css"/>');
 
+    //create the controls
     $('body').append($("<div>", { class: 'st-controls-wrap' })
         .append(createButtons())
         .append(createInfoBox())
@@ -375,6 +376,7 @@ function init() {
     $("#videowrap").addClass("st-video");
     $("#playlist").addClass("st-window-playlist");
 
+    //create the toggle button;
     $("#chatControls").append($('<button>', { class: 'st-button-control', id: "st-button-control-toggle", 'data-key': "toggle" })
         .click(function() {
             settings.gui.toggle(false, !settings.storage.active, true);
