@@ -12,6 +12,7 @@
     bottom: 0px;
     position: absolute;
     height: 75px;
+    display: inline-flex;
 }
 
 .st-control-border {

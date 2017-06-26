@@ -82,7 +82,7 @@ function createInfoBox() {
     settings.gui.info = $("<div>", { id: "st-container-info" })
         .append($("<div>", { id: "st-info-time", text: "Time: " }).append($("<span>")))
         .append($("<div>", { id: "st-info-users", text: "Users: " }).append($("<span>")))
-        .append($("<div>", { id: "st-info-drinks-group", class: "" })
+        .append($("<div>", { id: "st-info-drinks-group", class: "st-grid" })
             .append($("<div>", { id: "st-info-drinks", text: "Drinks: " }).append($("<span>")))
             .append($("$<div>", { id: "st-info-dpm", text: "DPM: " }).append($("<span>"))))
 
