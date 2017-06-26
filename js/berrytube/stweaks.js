@@ -79,12 +79,12 @@ function createChangeListener(callback) {
 }
 
 function createInfoBox() {
-    settings.gui.info = $("<div>", { id: "st-container-info" })
-        .append($("<div>", { id: "st-info-time", text: "Time: " }).append($("<span>")))
-        .append($("<div>", { id: "st-info-users", text: "Users: " }).append($("<span>")))
-        .append($("<div>", { id: "st-info-drinks-group", class: "st-grid" })
-            .append($("<div>", { id: "st-info-drinks", text: "Drinks: " }).append($("<span>")))
-            .append($("$<div>", { id: "st-info-dpm", text: "DPM: " }).append($("<span>"))))
+    settings.gui.info = $("<div>", { id: "st-container-info", class: "st-grid" })
+        .append($("<div>", { id: "st-info-time", class: "st-grid-block", text: "Time: " }).append($("<span>")))
+        .append($("<div>", { id: "st-info-users", class: "st-grid-block", text: "Users: " }).append($("<span>")))
+        .append($("<div>", { id: "st-info-drinks-group" })
+            .append($("<div>", { id: "st-info-drinks", class: "st-grid-block", text: "Drinks: " }).append($("<span>")))
+            .append($("$<div>", { id: "st-info-dpm", class: "st-grid-block", text: "DPM: " }).append($("<span>"))))
 
     return settings.gui.info;
 }
