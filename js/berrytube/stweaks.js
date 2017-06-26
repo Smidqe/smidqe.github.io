@@ -306,6 +306,7 @@ settings.observers.load = () => {
     })
 
     /*
+    //will handle the berrytweaks eventually
     settings.observers.berrytweaks = createListener(mutation => {
         mutation.addedNodes.forEach(node => {
             console.log(node);
