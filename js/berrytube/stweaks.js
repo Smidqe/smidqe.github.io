@@ -155,7 +155,7 @@ settings.load = function() {
 }
 
 settings.gui.berrytweaks = function(state) {
-    //check if we have berrytweaks enabled
+
 
     if (state) {
         if (!$("#st-wrap-videotitle")[0])
@@ -214,13 +214,12 @@ settings.gui.toggle = function(force, state, save) {
             $(btnsv2[element].paths[settings.maltweaks ? 0 : 1]).addClass("st-window-default")
         });
     } else {
-        //remove the stylesheet
         $("#st-stylesheet").remove();
 
-        if (storage.active)
+        if (storage.active) //remove the f
             $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
 
-        if (settings.maltweaks)
+        if (settings.maltweaks) //patch, fixes wrong sized header
             $(".wrapper #dyn_header iframe").css({ "height": "140px" });
     }
 
@@ -291,6 +290,7 @@ settings.observers.load = () => {
     }, 5000)
 
     settings.observers.init = createListener(mutation => {
+        //listen for maltweaks
         for (var i = 0; i < mutation.addedNodes.length; i++) {
             var mut = mutation.addedNodes[i];
 
@@ -305,6 +305,19 @@ settings.observers.load = () => {
         }
     })
 
+    /*
+    settings.observers.berrytweaks = createListener(mutation => {
+        mutation.addedNodes.forEach(node => {
+            console.log(node);
+
+            if (node.src.indexOf("atte.fi") === -1)
+                return;
+
+            settings.berrytweaks = true;
+            settings.observers.berrytweaks.disconnect();
+        })
+    })
+    */
     settings.observers.settings = createListener(mutation => {
         for (var i = 0; i < mutation.addedNodes.length; i++) {
             var mut = mutation.addedNodes[i];
@@ -329,8 +342,11 @@ settings.observers.load = () => {
 
             if ($(mut).hasClass("me")) {
                 //initial time
-
+                console.log("Found me");
+                console.log(mut);
                 settings.observers.sub = createListener(mutation => {
+
+                    console.log(mutation);
                     if ((mutation.type === "childList") && $(mutation.target).hasClass("berrytweaks-localtime"))
                         if ($(".me").length > 0)
                             $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
@@ -348,6 +364,7 @@ settings.observers.load = () => {
     obj.drinks.observe($("#drinkWrap")[0], { childList: true, attributes: true, characterData: true, subtree: true })
     obj.users.observe($("#connectedCount")[0], { childList: true, attributes: true, characterData: true });
     obj.time.observe($("#chatlist > ul")[0], { childList: true, attributes: true, characterData: true });
+    //obj.berrytweaks.observe(document.head, { childList: true });
 
     //force the texts initially
     $("#st-info-users > span").text($("#connectedCount").text())
