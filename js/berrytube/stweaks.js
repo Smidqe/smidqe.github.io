@@ -364,7 +364,7 @@ settings.observers.load = () => {
     obj.settings.observe(document.body, { childList: true });
     obj.drinks.observe($("#drinkWrap")[0], { childList: true, attributes: true, characterData: true, subtree: true })
     obj.users.observe($("#connectedCount")[0], { childList: true, attributes: true, characterData: true });
-    obj.time.observe($("#chatlist > ul")[0], { childList: true, attributes: true, characterData: true });
+    obj.time.observe($("#chatlist > ul")[0], { childList: true, attributes: true, characterData: true, subtree: true });
     //obj.berrytweaks.observe(document.head, { childList: true });
 
     //force the texts initially
