@@ -427,7 +427,7 @@ observers.load = () => {
     })
 
     observers.messages = createListener(mutation => {
-        const button = $("st-button-messages")
+        const button = $("#st-button-messages")
 
         if (button.hasClass("st-button-changed"))
             return;

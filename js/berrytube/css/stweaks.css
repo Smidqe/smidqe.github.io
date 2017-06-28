@@ -116,7 +116,7 @@
     }
 }
 
-.st-button-changed {
+.st-button.st-button-changed {
     animation-name: anim-change;
     animation-duration: 3s;
     animation-iteration-count: 0;
