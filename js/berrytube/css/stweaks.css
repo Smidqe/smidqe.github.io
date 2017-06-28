@@ -119,7 +119,7 @@
 .st-button.st-button-changed {
     animation-name: anim-change;
     animation-duration: 3s;
-    animation-iteration-count: 0;
+    animation-iteration-count: infinite;
     animation-direction: alternate;
     animation-timing-function: ease;
 }
