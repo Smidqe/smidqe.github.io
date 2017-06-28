@@ -327,6 +327,6 @@ body #leftpane {
 
 /*Settings css tweaks*/
 
-.st-settings-category label {
+.st-settings-category>label {
     font-weight: bold;
 }

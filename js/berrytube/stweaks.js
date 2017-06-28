@@ -318,7 +318,7 @@ settings.show = function() {
 
     const keys = Object.keys(categories);
     for (var i = 0; i < keys.length; i++) {
-        const title = $('<div>', { for: 'st-settings-category' }).append($("<label>", { text: keys[i] }))
+        const title = $('<div>', { class: 'st-settings-category' }).append($("<label>", { text: keys[i] }))
         const titles = categories[keys[i]].titles;
 
 
