@@ -107,8 +107,21 @@
     border: 1px solid #474747;
 }
 
-.st-button-change {
-    display: none;
+@keyframes anim-change {
+    from {
+        border: 1px solid #474747;
+    }
+    to {
+        border: 1px solid red;
+    }
+}
+
+.st-button-changed {
+    animation-name: anim-change;
+    animation-duration: 3s;
+    animation-iteration-count: 0;
+    animation-direction: alternate;
+    animation-timing-function: ease;
 }
 
 button.st-button:hover {
