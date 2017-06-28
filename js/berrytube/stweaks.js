@@ -188,7 +188,7 @@ function createButtons() {
                 const funcs = btnsv2[key].funcs;
                 const params = btnsv2[key].params;
 
-                $(this).removeClass("st-button-change");
+                $(this).removeClass("st-button-changed");
 
                 if (key === "toast")
                     return toggle();
@@ -239,7 +239,7 @@ gui.berrytweaks = function(state) {
         return;
 
     if (state) {
-        if (!$("#st-wrap-videotitle")[0])
+        if (!$("#st-wrap-videotitle")[0]) //&& storage.videonamewrap
             $("#berrytweaks-video_title").wrap("<div id='st-wrap-videotitle'><span>Current video (hover)</span></div>").wrap("<div id='st-videotitle-window'></div>");
 
         $("#st-videotitle-window").hide();
@@ -253,8 +253,11 @@ gui.berrytweaks = function(state) {
             }
         )
     } else {
-        if ($("#st-wrap-videotitle")[0])
+        //replace with storage.videonamewrap, eventually
+        if ($("#st-wrap-videotitle")[0]) {
             $("#berrytweaks-video_title").unwrap().unwrap().unwrap();
+            $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
+        }
     }
 
     settings.modify('videowrap', state, true);
@@ -295,9 +298,6 @@ gui.toggle = function(force, state, save) {
         });
     } else {
         $("#st-stylesheet").remove();
-
-        if (storage.active && storage.videowrap) //remove the text 
-            $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
 
         if (settings.maltweaks) //patch, fixes wrong sized header
             $(".wrapper #dyn_header iframe").css({ "height": "140px" });
