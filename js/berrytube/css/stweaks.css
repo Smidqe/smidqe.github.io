@@ -323,3 +323,10 @@ body #leftpane {
     float: none;
     text-align: center;
 }
+
+
+/*Settings css tweaks*/
+
+.st-settings-category label {
+    font-weight: bold;
+}
