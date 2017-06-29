@@ -425,6 +425,12 @@ function createToolbarButtons() {
 
     $("#chatControls").append(bar);
 
+    if (settings.active)
+        $("#st-button-control-tweaks").addClass("st-button-control-active");
+
+    if (settings.videonamewrap)
+        $("#st-button-control-video").addClass("st-button-control-active");
+
     $("#st-button-control-tweaks").click(() => {
         gui.toggleTweaks(false, !settings.active, true);
         $(".st-button-toggle").toggleClass("st-button-control-hidden");
@@ -449,10 +455,12 @@ function createToolbarButtons() {
 function init() {
     utils.loadSettings();
 
+    $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))
+
     //this will fix greasemonkey which starts the scripts after the page has loaded iirc
     //it's possible to miss the berrytweaks
     if ($("head > link").attr('href').indexOf("atte.fi") !== -1)
-        settings.berrytweaks = true;
+        utils.modifySetting("berrytweaks", true, true);
 
     //create the controls
     $('body').append($("<div>", { class: 'st-controls-wrap' })
@@ -463,7 +471,6 @@ function init() {
     createToolbarButtons();
 
     observers.load();
-    //listeners.load();
 
     $("#chatpane").addClass("st-chat");
     $("#videowrap").addClass("st-video");

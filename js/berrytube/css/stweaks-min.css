@@ -1,0 +1,23 @@
+/* For the minimalistic css used before the main one is included */
+
+.st-settings-category>label {
+    font-weight: bold;
+}
+
+.st-button-control-hidden {
+    display: none;
+}
+
+.st-button-control {
+    float: left;
+    width: 20px;
+    text-align: center;
+    font-size: x-large;
+    cursor: pointer;
+    margin: 0px 2px 0px 2px;
+}
+
+.st-button-control-active {
+    background-color: #BBBBBB;
+    color: #222222;
+}
