@@ -425,8 +425,12 @@ function createToolbarButtons() {
 
     $("#chatControls").append(bar);
 
-    if (settings.active)
-        $("#st-button-control-tweaks").addClass("st-button-control-active");
+    if (settings.active) {
+        $(".st-button-toggle").toggleClass("st-button-control-hidden");
+
+        $("#st-button-control-tweaks").addClass("st-button-control-active")
+            .removeClass("st-button-control-hidden");
+    }
 
     if (settings.videonamewrap)
         $("#st-button-control-video").addClass("st-button-control-active");
