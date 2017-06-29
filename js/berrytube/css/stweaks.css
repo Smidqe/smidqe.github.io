@@ -343,3 +343,13 @@ body #leftpane {
 .st-settings-category>label {
     font-weight: bold;
 }
+
+.st-button-control {
+    float: left;
+    border: 1px solid aliceblue;
+}
+
+.st-button-control-active {
+    background-color: #BBBBBB;
+    color: #222222;
+}
