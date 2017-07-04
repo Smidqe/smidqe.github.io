@@ -319,6 +319,7 @@ body #leftpane {
     border: 1px solid rgb(187, 187, 187);
     left: 0px;
     z-index: 5;
+    top: 20px;
 }
 
 
@@ -360,4 +361,8 @@ body #leftpane {
 .st-button-control-active {
     background-color: #BBBBBB;
     color: #222222;
+}
+
+#rcvOverlay {
+    width: 100% !important;
 }
