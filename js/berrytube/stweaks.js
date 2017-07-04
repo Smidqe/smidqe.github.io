@@ -105,7 +105,11 @@ var gui = {
         },
 
         enable: function() {
-            (settings.maltweaks ? $('body') : $('head')).append($('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>'));
+            const location = settings.maltweaks ? $('body') : $('head');
+
+            location.append($('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>'));
+
+            $("#st-controls-container").removeClass("st-window-default");
 
             if (settings.videoname)
                 this.namewrap.enable();
@@ -115,6 +119,7 @@ var gui = {
 
             $.each(gui.buttons, function(element) {
                 const paths = gui.buttons[element].paths;
+
                 if (paths === undefined)
                     return;
 
@@ -155,9 +160,7 @@ var gui = {
                 ["http://berrytube.tv/about.php", "_blank"]
             ],
         },
-        settings: {
-            funcs: [showConfigMenu],
-        },
+        settings: {},
         rules: {
             paths: ["#motdwrap", "#st-wrap-motd"],
         },
@@ -194,9 +197,9 @@ var gui = {
 
         create: function() {
             const obj = this;
-            const btns = $('<div>', { class: "st-buttons-container st-window-default" });
+            const btns = $('<div>', { class: "st-buttons-container" });
 
-            this.container = $("<div>", { class: "st-controls-wrap" });
+            this.container = $("<div>", { id: "st-controls-container", class: "st-controls-wrap st-window-default" });
             this.container.append(btns);
 
             $.each(this, function(element) {
@@ -229,6 +232,8 @@ var gui = {
             const funcs = this[key].funcs;
             const params = this[key].params;
 
+            //toast and settings have to be separate, toast won't work with calls because it doesn't exist as this script is initialised and settings have to be separate because
+            //call doesn't trigger berrytweaks at all.
             if (key === "toast")
                 return toggle();
 
@@ -285,8 +290,7 @@ var gui = {
             tweaks: {
                 text: "T",
                 tooltip: "Toggle smidqeTweaks",
-                shown: true,
-                default: false,
+                active: false,
                 func: () => {
                     const layout = gui.layout;
 
@@ -300,8 +304,10 @@ var gui = {
             video: {
                 text: "V",
                 tooltip: "Toggle video",
-                shown: false,
-                default: true,
+                active: false,
+                deps: [
+                    ['SmidqeTweaks', 'active'],
+                ],
                 func: () => {
                     gui.video.toggle();
                 }
@@ -310,8 +316,12 @@ var gui = {
             videoname: {
                 text: "W",
                 tooltip: "Show videoname",
-                shown: false,
-                default: false,
+                deps: [
+                    ["SmidqeTweaks", "active"],
+                    ["BerryTweaks", "enabled"],
+                    ['BerryTweaks', 'enabled', "videoTitle"],
+                    ['SmidqeTweaks', 'namewrap'],
+                ],
                 func: () => {
 
                 },
@@ -323,7 +333,8 @@ var gui = {
             const buttons = gui.toolbar.buttons;
 
             $.each(buttons, function(btn) {
-                bar.append($("<div>", {
+
+                const obj = $("<div>", {
                         class: "st-button-control",
                         id: "st-button-control-" + btn,
                         text: buttons[btn].text,
@@ -332,7 +343,33 @@ var gui = {
                     .click(function() {
                         gui.toolbar.toggle($(this), buttons[$(this).attr('data-key')], true);
                     })
-                )
+
+                const deps = buttons[btn].deps;
+                const bt = JSON.parse(localStorage["BerryTweaks"]);
+                //const mt = JSON.parse(localStorage["MT"]);
+
+                if (deps) {
+                    var depsFound = false;
+                    var search = null;
+
+                    for (var i = 0; i < deps.length; i++) {
+                        if (deps[i][0] === "BerryTweaks")
+                            search = bt;
+                        else
+                            search = settings;
+
+                        if (deps[i].length > 2)
+                            depsFound = !!search[deps[i][1]][deps[i][2]];
+                        else
+                            depsFound = !!search[deps[i][1]];
+                    }
+
+                    if (!depsFound)
+                        obj.addClass("st-window-default"); //disable the button
+                }
+
+                bar.append(obj);
+
             });
 
             $("#chatControls").append(bar);
