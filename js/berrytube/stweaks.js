@@ -2,15 +2,18 @@ var settings = {};
 var utils = {
     settings: {
         save: function() {
-
+            localStorage.SmidqeTweaks = JSON.stringify(settings);
         },
 
         load: function() {
-
+            settings = JSON.parse(localStorage.SmidqeTweaks || '{}');
         },
 
-        modify: function() {
+        modify: function(key, value, save) {
+            settings[key] = value;
 
+            if (save)
+                utils.settings.save();
         }
     },
 };
@@ -60,7 +63,7 @@ var gui = {
                                 'data-key': category.keys[j]
                             })
                             .change(function() {
-                                utils.modifySetting($(this).attr('data-key'), !!$(this).prop('checked'), true);
+                                utils.settings.modify($(this).attr('data-key'), !!$(this).prop('checked'), true);
                             }));
 
                     title.append(section);
@@ -82,7 +85,7 @@ var gui = {
             },
 
             disable: function() {
-                $("#berrytweaks-video_title").unwrap().unwrap().unwrap();
+                $("#berrytweaks-video_title").unwrap().unwrap();
                 $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
             }
         },
@@ -123,7 +126,7 @@ var gui = {
                 elem.addClass("st-window-default");
             });
 
-            utils.modifySetting("active", true, true)
+            utils.settings.modify("active", true, true)
         },
 
         disable: function() {
@@ -135,7 +138,7 @@ var gui = {
             if (settings.maltweaks) //patch, fixes wrong sized header
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
 
-            utils.modifySetting("active", false, true)
+            utils.settings.modify("active", false, true)
         },
 
         refresh: () => {
@@ -191,7 +194,7 @@ var gui = {
 
         create: function() {
             const obj = this;
-            const btns = $('<div>', { class: "st-buttons-container" });
+            const btns = $('<div>', { class: "st-buttons-container st-window-default" });
 
             this.container = $("<div>", { class: "st-controls-wrap" });
             this.container.append(btns);
@@ -401,7 +404,7 @@ const listeners = {
             if (mutation.id !== "headwrap")
                 return;
 
-            utils.modifySetting("maltweaks", true, true);
+            utils.settings.modify("maltweaks", true, true);
 
             if (settings.active)
                 gui.layout.enable();
@@ -552,43 +555,15 @@ const categories = {
     }
 };
 
-utils.modifySetting = (key, value, save) => {
-    settings[key] = value;
-
-    if (save)
-        utils.saveSettings();
-}
-
-utils.saveSettings = () => {
-    localStorage.SmidqeTweaks = JSON.stringify(settings);
-}
-
 utils.loadSettings = () => {
-    settings = JSON.parse(localStorage.SmidqeTweaks || '{}');
+
 }
 
-/*
-gui.toggleWraps = function(state) {
-    if (settings.maltweaks)
-        return;
-
-    if (state) {
-
-    } else {
-
-    }
-}
-
-*/
 function init() {
-    utils.loadSettings();
-
+    utils.settings.load();
+    //add minimum css for the chatcontrol buttons
     $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))
 
-    console.log($("#tweakhack")[0]);
-
-    //this will fix greasemonkey which starts the scripts after the page has loaded iirc
-    //it's possible to miss the berrytweaks (seems to be the same for )
     gui.toolbar.create();
     gui.buttons.create();
 
@@ -601,7 +576,7 @@ function init() {
     $("#st-info-time > span").text(":(");
 
     if ($("head > link").attr('href').indexOf("atte.fi") !== -1)
-        utils.modifySetting("berrytweaks", true, true);
+        utils.settings.modify("berrytweaks", true, true);
 
     if (settings.active && !settings.maltweaks)
         gui.layout.enable();

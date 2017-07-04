@@ -22,7 +22,6 @@
 
 #st-container-info {
     width: 20%;
-    /* Two pixels for the border */
     height: 73px;
     float: left;
     display: grid;
@@ -45,7 +44,6 @@
 .st-grid-block {
     text-align: center;
     vertical-align: middle;
-    /*This will change eventually*/
     line-height: 35px;
     border: 1px solid #474747;
 }
@@ -141,9 +139,6 @@ button.st-button:first-letter {
     width: 30%;
 }
 
-
-/* to eliminate too large gap between elements in the header */
-
 .wrapper #dyn_header iframe {
     height: auto !important;
 }
@@ -173,9 +168,6 @@ button.st-button:first-letter {
 #pollbox.st-window-open {
     display: inline !important;
 }
-
-
-/*Not a registered user*/
 
 #chatpane.st-chat #chatinput:not(.right) input {
     text-align: left;
@@ -276,11 +268,8 @@ body #leftpane {
     height: calc(100% - 50px) !important;
     right: inherit !important;
     left: auto;
-    /* top: 20px; */
-    /* z-index: inherit; */
     overflow: scroll;
     overflow-x: hidden;
-    /* position: fixed !important; */
     box-sizing: border-box;
     border-bottom: 1px solid #BBBBBB !important;
 }

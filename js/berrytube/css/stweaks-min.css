@@ -21,3 +21,7 @@
     background-color: #BBBBBB;
     color: #222222;
 }
+
+.st-window-default {
+    display: none;
+}
