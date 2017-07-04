@@ -23,7 +23,7 @@ var gui = {
 
     video: {
         toggle: () => {
-            if ($("#st-button-control-video").hasClass("st-button-control-active"))
+            if ($("#st-button-control-video").hasClass("active"))
                 MT.disablePlayer();
             else
                 MT.restoreLocalPlayer();
@@ -290,7 +290,7 @@ var gui = {
             tweaks: {
                 text: "T",
                 tooltip: "Toggle smidqeTweaks",
-                active: false,
+                id: "active",
                 func: () => {
                     const layout = gui.layout;
 
@@ -304,7 +304,7 @@ var gui = {
             video: {
                 text: "V",
                 tooltip: "Toggle video",
-                active: false,
+                id: "video",
                 deps: [
                     ['SmidqeTweaks', 'active'],
                 ],
@@ -316,14 +316,15 @@ var gui = {
             videoname: {
                 text: "W",
                 tooltip: "Show videoname",
+                id: "videoname",
                 deps: [
                     ["SmidqeTweaks", "active"],
                     ["BerryTweaks", "enabled"],
                     ['BerryTweaks', 'enabled', "videoTitle"],
-                    ['SmidqeTweaks', 'namewrap'],
+                    ['SmidqeTweaks', 'videoname'],
                 ],
                 func: () => {
-
+                    $("#st-videotitle-window").toggleClass("active");
                 },
             },
         },
@@ -341,8 +342,12 @@ var gui = {
                         'data-key': btn,
                     })
                     .click(function() {
+                        $(this).toggleClass("active");
                         gui.toolbar.toggle($(this), buttons[$(this).attr('data-key')], true);
                     })
+
+                if (settings[buttons[btn].id])
+                    obj.addClass("active");
 
                 const deps = buttons[btn].deps;
                 const bt = JSON.parse(localStorage["BerryTweaks"]);
@@ -376,7 +381,7 @@ var gui = {
         },
 
         toggle: function(handle, btn, save) {
-            handle.toggleClass('st-button-control-active');
+            handle.toggleClass('active');
 
             if (btn.func !== undefined)
                 btn.func();
@@ -387,7 +392,7 @@ var gui = {
                 if ($(this).attr("key") !== btn)
                     return;
 
-                $(this).addClass("st-button-control-active");
+                $(this).addClass("active");
             })
         },
 
@@ -396,7 +401,7 @@ var gui = {
                 if ($(this).attr("key") !== btn)
                     return;
 
-                $(this).removeClass("st-button-control-active");
+                $(this).removeClass("active");
             })
         }
     },
@@ -456,8 +461,13 @@ const listeners = {
         disconnect: false,
         monitor: "added",
         callback(mutation) {
+            if (!mutation.src)
+                return;
+
             if (mutation.src.indexOf("atte.fi") !== -1)
                 settings.berrytweaks = true;
+
+            console.log("ST: Found berrytweaks")
 
             if (settings.berrytweaks)
                 listeners.stop(listeners.berrytweaks);
@@ -591,10 +601,6 @@ const categories = {
         keys: ["temp"]
     }
 };
-
-utils.loadSettings = () => {
-
-}
 
 function init() {
     utils.settings.load();

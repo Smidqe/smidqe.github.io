@@ -300,7 +300,7 @@ body #leftpane {
 
 /*BerryTweaks patches*/
 
-#st-videotitle-window {
+#st-videotitle-window.active {
     background-color: #474747;
     height: auto;
     width: 100%;
@@ -347,7 +347,7 @@ body #leftpane {
     margin: 0px 2px 0px 2px;
 }
 
-.st-button-control-active {
+.st-button-control.active {
     background-color: #BBBBBB;
     color: #222222;
 }
