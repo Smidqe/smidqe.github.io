@@ -4,7 +4,7 @@
     font-weight: bold;
 }
 
-.st-button-control-hidden {
+.st-button-control.hidden {
     display: none;
 }
 
@@ -17,11 +17,7 @@
     margin: 0px 2px 0px 2px;
 }
 
-.st-button-control-active {
+.st-button-control.active {
     background-color: #BBBBBB;
     color: #222222;
-}
-
-.st-window-default {
-    display: none;
 }

@@ -75,32 +75,36 @@ var gui = {
     },
 
     layout: {
-        namewrap: {
-            enable: function() {
-                if (!settings.berrytweaks)
-                    return;
+        tweaks: {
+            namewrap: {
+                enable: function() {
+                    if (!settings.berrytweaks)
+                        return;
 
-                if (settings.videoname)
-                    $("#berrytweaks-video_title").wrap("<div id='st-videotitle-window'></div>");
+                    if (settings.videoname)
+                        $("#berrytweaks-video_title").wrap("<div id='st-videotitle-window'></div>");
+                },
+
+                disable: function() {
+                    $("#berrytweaks-video_title").unwrap();
+                    $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
+                }
             },
 
-            disable: function() {
-                $("#berrytweaks-video_title").unwrap().unwrap();
-                $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
-            }
-        },
+            wraps: {
+                enable: function() {
+                    //check deps
 
-        wraps: {
-            enable: function() {
-                $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
-                $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
-                $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
-            },
+                    $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
+                    $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
+                    $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
+                },
 
-            disable: function() {
-                $("#st-wrap-header").contents().unwrap();
-                $("#st-wrap-footer").contents().unwrap();
-                $("#st-wrap-motd").contents().unwrap();
+                disable: function() {
+                    $("#st-wrap-header").contents().unwrap();
+                    $("#st-wrap-footer").contents().unwrap();
+                    $("#st-wrap-motd").contents().unwrap();
+                },
             },
         },
 
@@ -111,14 +115,10 @@ var gui = {
 
             $("#st-controls-container").removeClass("st-window-default");
 
-            if (settings.videoname)
-                this.namewrap.enable();
-
-            if (!settings.maltweaks)
-                this.wraps.enable();
+            $.each(this.tweaks, tweak => this.tweaks[tweak].enable());
 
             $.each(gui.buttons, function(element) {
-                const paths = gui.buttons[element].paths;
+                const paths = this.paths;
 
                 if (paths === undefined)
                     return;
@@ -137,11 +137,12 @@ var gui = {
         disable: function() {
             $("#st-stylesheet").remove();
 
-            if (settings.videoname)
-                this.namewrap.disable();
+            $.each(this.tweaks, tweak => this.tweaks[tweak].disable());
 
             if (settings.maltweaks) //patch, fixes wrong sized header
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
+
+            $(".st-window-default").removeClass("st-window-default");
 
             utils.settings.modify("active", false, true)
         },
@@ -240,7 +241,7 @@ var gui = {
             if (key === "settings" && (settings.berrytweaks))
                 return showConfigMenu(true);
 
-            $(this).removeClass("st-button-changed");
+            btn.removeClass("st-button-changed");
 
             if (key !== "about")
                 gui.windows.view(this[key]);
@@ -298,6 +299,15 @@ var gui = {
                         layout.disable();
                     else
                         layout.enable();
+
+                    const buttons = gui.toolbar.buttons
+
+                    $.each(buttons, btn => {
+                        if (btn === "tweaks")
+                            return;
+
+                        $("#st-button-control-" + btn).toggleClass("hidden");
+                    })
                 }
             },
 
@@ -342,12 +352,15 @@ var gui = {
                         'data-key': btn,
                     })
                     .click(function() {
-                        $(this).toggleClass("active");
                         gui.toolbar.toggle($(this), buttons[$(this).attr('data-key')], true);
                     })
 
                 if (settings[buttons[btn].id])
                     obj.addClass("active");
+
+                if (!settings.active && btn !== "tweaks")
+                    obj.addClass("hidden");
+
 
                 const deps = buttons[btn].deps;
                 const bt = JSON.parse(localStorage["BerryTweaks"]);
@@ -370,7 +383,7 @@ var gui = {
                     }
 
                     if (!depsFound)
-                        obj.addClass("st-window-default"); //disable the button
+                        obj.addClass("hidden"); //disable the button
                 }
 
                 bar.append(obj);
