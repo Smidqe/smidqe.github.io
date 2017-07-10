@@ -1,169 +1,347 @@
-var settings = {};
-var utils = {
-    settings: {
-        save: function() {
-            localStorage.SmidqeTweaks = JSON.stringify(settings);
-        },
+var startTimer = null;
 
-        load: function() {
-            settings = JSON.parse(localStorage.SmidqeTweaks || '{}');
-        },
-
-        modify: function(key, value, save) {
-            settings[key] = value;
-
-            if (save)
-                utils.settings.save();
-        }
+const categories = {
+    Scripts: {
+        titles: ["Maltweaks", "Berrytweaks"],
+        types: ["checkbox", "checkbox"],
+        keys: ["maltweaks", "berrytweaks"]
     },
+
+    General: {
+        titles: ["Ircify changes", "Enable hovered windows"],
+        types: ["checkbox", "checkbox"],
+        keys: ["ircChanges", "allowHover"]
+    },
+
+    Berrytweaks: {
+        titles: ["Wrap current video's name"],
+        types: ["checkbox"],
+        keys: ["videoname"],
+    },
+
+    Debug: {
+        titles: ["Enable debug logging", "Ircify debug"],
+        types: ["checkbox", "checkbox"],
+        keys: ["debug", "ircDebug"]
+    }
 };
 
-var gui = {
-    window: null,
+var settings = {
+    storage: {},
+    container: null,
+
+    save: function() {
+        localStorage.SmidqeTweaks = JSON.stringify(this.storage);
+    },
+
+    load: function() {
+        this.storage = JSON.parse(localStorage.SmidqeTweaks || '{}')
+    },
+
+    get: function(key) {
+        return this.storage[key];
+    },
+
+    set: function(key, value, save) {
+        this.storage[key] = value
+
+        if (save)
+            this.save();
+    },
+
+    show: function() {
+        if (!this.container)
+            this.container = $('<fieldset>');
+
+        this.container.empty();
+        this.container.append($('<legend>', { text: 'SmidqeTweaks' }));
+
+        const keys = Object.keys(categories);
+        for (var i = 0; i < keys.length; i++) {
+            const title = $('<div>', { class: 'st-settings-category' }).append($("<label>", { text: keys[i] }))
+            const titles = categories[keys[i]].titles;
+
+            this.container.append(title);
+
+            for (var j = 0; j < titles.length; j++) {
+                const section = $("<div>", { class: 'st-settings-wrap' });
+                const category = categories[keys[i]];
+                section.append($('<div>', {
+                        class: 'st-settings-setting'
+                    }))
+                    .append($('<label>', {
+                        text: titles[j]
+                    }))
+                    .append($('<input>', {
+                            type: category.types[j],
+                            checked: settings.get(category.keys[j]),
+
+                            'data-key': category.keys[j]
+                        })
+                        .change(function() {
+                            settings.set($(this).attr('data-key'), !!$(this).prop('checked'), true);
+                        }));
+
+                title.append(section);
+            }
+        }
+
+        $("#settingsGui > ul").append($('<li>').append(this.container));
+    }
+};
+
+var utilities = {
+    chat: {
+        add: function(nick, text, type) {
+            addChatMsg({
+                msg: {
+                    nick,
+                    msg: text,
+                    metadata: {
+                        graymute: false,
+                        nameflaunt: false,
+                        flair: null,
+                        channel: 'main'
+                    },
+                    emote: type,
+                },
+
+                ghost: false,
+            }, "#chatbuffer");
+        },
+
+
+    }
+}
+
+var tweaksv2 = {
+    polls: {
+        average: {
+            deps: ['active', 'calcAvg'],
+            apply: function() {
+                if ($("pollpane .active")[0])
+                    return;
+
+                const buttons = $(".poll:first-child .btn:not('.close')"); // we can use index numbers to calculate the final values \\teehee
+
+                if (buttons.length != 10) //not a episode poll (should make into a constant)
+                    return;
+
+                var number = true;
+                var value = 0;
+                var count = 0;
+
+                $.each(btns, i => {
+                    if (isNaN($(btns[i]).text()))
+                        number = false;
+
+                    if (!number)
+                        return;
+
+                    value += $(btns[i]).text() * i;
+                    count += Number($(btns[i]).text());
+                })
+
+                if (!number)
+                    return; //prevent wrong messages
+
+                //create a ircified message
+                utilities.chat.add(this.setting.msg, value / count, this.setting.type)
+            },
+
+            setting: {
+                msg: "Poll average: ",
+                type: "act",
+            },
+        },
+
+        closure: {
+            deps: ['active', 'pollClose'],
+
+            run: () => {
+                if (!settings.get("pollClose"))
+                    return;
+
+                if ($("pollpane .active")[0]) //we have open poll
+                    return;
+
+                //$("pollpane .poll:first-child").
+                //notification to the chat (ircify)
+            },
+        },
+    },
+
+    playlist: {
+        notify: {
+
+        }
+    },
 
     video: {
-        toggle: () => {
+        run: function() {
             if ($("#st-button-control-video").hasClass("active"))
                 MT.disablePlayer();
             else
                 MT.restoreLocalPlayer();
-        },
-    },
-
-    settings: {
-        container: null,
-
-        show: function() {
-            if (!this.container)
-                this.container = $('<fieldset>');
-
-            this.container.empty();
-            this.container.append($('<legend>', { text: 'SmidqeTweaks' }));
-
-            const keys = Object.keys(categories);
-            for (var i = 0; i < keys.length; i++) {
-                const title = $('<div>', { class: 'st-settings-category' }).append($("<label>", { text: keys[i] }))
-                const titles = categories[keys[i]].titles;
-
-                this.container.append(title);
-
-                for (var j = 0; j < titles.length; j++) {
-                    var section = $("<div>", { class: 'st-settings-wrap' });
-                    const category = categories[keys[i]];
-                    section.append($('<div>', {
-                            class: 'st-settings-setting'
-                        }))
-                        .append($('<label>', {
-                            text: titles[j]
-                        }))
-                        .append($('<input>', {
-                                type: category.types[j],
-                                checked: settings[category.keys[j]],
-
-                                'data-key': category.keys[j]
-                            })
-                            .change(function() {
-                                utils.settings.modify($(this).attr('data-key'), !!$(this).prop('checked'), true);
-                            }));
-
-                    title.append(section);
-                }
-            }
-
-            $("#settingsGui > ul").append($('<li>').append(this.container));
-        },
+        }
     },
 
     layout: {
         tweaks: {
-            namewrap: {
-                enable: function() {
-                    if (!settings.berrytweaks)
-                        return;
+            state: false,
+            enable: function() {
+                const maltweaks = settings.get("maltweaks");
+                const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
+                const location = maltweaks ? $('body') : $('head');
 
-                    if (settings.videoname)
-                        $("#berrytweaks-video_title").wrap("<div id='st-videotitle-window'></div>");
-                },
+                location.append(stylesheet);
 
-                disable: function() {
-                    $("#berrytweaks-video_title").unwrap();
-                    $("#chatControls").contents().filter(function() { return this.nodeType == 3; }).remove();
-                }
-            },
-
-            wraps: {
-                enable: function() {
-                    //check deps
-
+                if (!maltweaks) {
                     $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
                     $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
                     $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
-                },
+                }
 
-                disable: function() {
-                    $("#st-wrap-header").contents().unwrap();
-                    $("#st-wrap-footer").contents().unwrap();
-                    $("#st-wrap-motd").contents().unwrap();
-                },
+                $("#chatpane").addClass("st-chat");
+                $("#videowrap").addClass("st-video");
+                $("#playlist").addClass("st-window-playlist");
+
+                $("#st-controls-container").removeClass("st-window-default");
+
+                windows.init();
+                settings.set("active", true, true)
+            },
+
+            disable: function() {
+                if (!settings.get("active"))
+                    return;
+
+                const maltweaks = settings.get('maltweaks');
+
+                if (!maltweaks)
+                    $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
+
+                $("#chatpane").removeClass("st-chat");
+                $("#videowrap").removeClass("st-video");
+                $("#playlist").removeClass("st-window-playlist");
+
+                $("#st-stylesheet").remove();
+
+                if (maltweaks) //patch, fixes wrong sized header
+                    $(".wrapper #dyn_header iframe").css({ "height": "140px" });
+
+                settings.set("active", false, true)
+            },
+
+            run: function() {
+                this.state = !this.state;
+
+                if (this.state)
+                    this.enable();
+
+                if (!this.state && $(".st-window-default")[0])
+                    this.disable();
             },
         },
 
-        enable: function() {
-            const location = settings.maltweaks ? $('body') : $('head');
-
-            location.append($('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>'));
-
-            $("#st-controls-container").removeClass("st-window-default");
-
-            $.each(this.tweaks, tweak => this.tweaks[tweak].enable());
-
-            $.each(gui.buttons, function(element) {
-                const paths = this.paths;
-
-                if (paths === undefined)
+        time: {
+            run: function() {
+                if (!$(".me")[0]) //not logged in
                     return;
 
-                if (paths.length === 1)
-                    elem = $(paths[0]);
-                else
-                    elem = $(paths[settings.maltweaks ? 0 : 1]);
-
-                elem.addClass("st-window-default");
-            });
-
-            utils.settings.modify("active", true, true)
-        },
-
-        disable: function() {
-            $("#st-stylesheet").remove();
-
-            $.each(this.tweaks, tweak => this.tweaks[tweak].disable());
-
-            if (settings.maltweaks) //patch, fixes wrong sized header
-                $(".wrapper #dyn_header iframe").css({ "height": "140px" });
-
-            $(".st-window-default").removeClass("st-window-default");
-
-            utils.settings.modify("active", false, true)
-        },
-
-        refresh: () => {
-            //will have all the settings things so 
-        },
+                $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
+            }
+        }
     },
 
-    buttons: {
-        container: null,
 
-        about: {
-            funcs: [window.open],
-            params: [
-                ["http://berrytube.tv/about.php", "_blank"]
+    patches: {
+        namewrap: {
+            deps: [
+                ["SmidqeTweaks", "active"],
+                ['BerryTweaks', "videoTitle"],
+                ['SmidqeTweaks', 'videoname'],
             ],
-        },
-        settings: {},
+
+            enable: () => {
+                $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
+                $("#st-videotitle-window").addClass("active");
+            },
+
+            disable: () => {
+                $("#berrytweaks-video_title").unwrap();
+            },
+
+            run: function() {
+                const setting = settings.get("videoname");
+
+                if (setting && !($("st-videotitle-window")[0])) //prevents stacking
+                    this.enable();
+
+                if (!setting && $("st-videotitle-window")[0])
+                    this.disable();
+            }
+        }
+    },
+
+    run: function(tweak) {
+        if (tweak.deps) {
+            var found = 0;
+
+            $.each(tweak.deps, dep => {
+                var search = null;
+                switch (dep[0]) {
+                    case "SmidqeTweaks":
+                        search = settings;
+                        break;
+                    case "BerryTweaks":
+                        search = JSON.parse(localStorage.Berrytweaks).enabled;
+                        break;
+                    case "MalTweaks":
+                        search = JSON.parse(localStorage.MT);
+                        break;
+                }
+
+                found += search[dep[1]] ? 1 : 0;
+            })
+
+            console.log("ST: Deps found: " + found + "out of: " + deps.length);
+
+            if (found != deps.length) {
+                console.log("ST: Deps not found for: " + tweak.id);
+                return;
+            }
+        }
+        console.log("Running tweak");
+        tweak.run();
+    },
+
+    runGroup: function(group) {
+        $.each(group, tweak => tweaksv2.run(tweaksv2[tweak]));
+    },
+
+    runAll: function() {
+        const parent = this;
+
+        $.each(this, elem => {
+            if ($.isFunction(elem))
+                return;
+
+            parent.runGroup(elem);
+        })
+    },
+
+    get: function(group, tweak) {
+        return this[group][tweak];
+    }
+}
+
+var windows = {
+    previous: null,
+
+    values: {
         rules: {
-            paths: ["#motdwrap", "#st-wrap-motd"],
+            paths: ["#motdwrap", "#st-wrap-motd"]
         },
         header: {
             paths: ["#headwrap", "#st-wrap-header"],
@@ -184,9 +362,7 @@ var gui = {
         },
         playlist: {
             paths: ["#main #leftpane"],
-            classes: ["st-window-overlap"],
-            funcs: [smartRefreshScrollbar, scrollToPlEntry, realignPosHelper],
-            params: [null, , null]
+            classes: ["st-window-playlist", "st-window-overlap"],
         },
         users: {
             paths: ["#chatlist"],
@@ -195,235 +371,193 @@ var gui = {
 
         //sorry toast, but you don't get anything :(
         toast: {},
+    },
 
-        create: function() {
-            const obj = this;
-            const btns = $('<div>', { class: "st-buttons-container" });
+    toggle: function(key) {
+        if (key !== this.previous)
+            $(".st-window-open").removeClass("st-window-open");
 
-            this.container = $("<div>", { id: "st-controls-container", class: "st-controls-wrap st-window-default" });
-            this.container.append(btns);
+        const window = this.values[key];
+        var path = null;
 
-            $.each(this, function(element) {
-                if ($.isFunction(obj[element]) || element === "container") //skip funcs
-                    return;
+        if (window.paths.length == 2)
+            path = window.paths[settings.get("maltweaks") ? 0 : 1];
+        else
+            path = window.paths[0];
 
-                btns.append($('<button>', {
-                        class: 'st-button',
-                        id: "st-button-" + element,
-                        'data-key': element,
-                        text: element
-                    })
-                    .click(function() {
-                        obj.toggle($(this));
-                    }));
-            })
+        $(path).toggleClass("st-window-open");
 
-            this.container.append($("<div>", { id: "st-container-info", class: "st-grid" })
-                .append($("<div>", { id: "st-info-time", class: "st-grid-block", text: "Time: " }).append($("<span>")))
-                .append($("<div>", { id: "st-info-users", class: "st-grid-block", text: "Users: " }).append($("<span>")))
-                .append($("<div>", { id: "st-info-drinks-group" })
-                    .append($("<div>", { id: "st-info-drinks", class: "st-grid-block", text: "Drinks: " }).append($("<span>")))
-                    .append($("$<div>", { id: "st-info-dpm", class: "st-grid-block", text: "DPM: " }).append($("<span>")))));
+        this.previous = key;
+    },
 
-            $("body").append(this.container);
-        },
+    getPath: function(window) {
+        if (!window || !window.paths)
+            return;
 
-        toggle: function(btn) {
-            const key = btn.attr('data-key');
-            const funcs = this[key].funcs;
-            const params = this[key].params;
+        if (window.paths.length == 2)
+            return window.paths[settings.get("maltweaks") ? 0 : 1];
+        else
+            return window.paths[0];
+    },
 
-            //toast and settings have to be separate, toast won't work with calls because it doesn't exist as this script is initialised and settings have to be separate because
-            //call doesn't trigger berrytweaks at all.
-            if (key === "toast")
-                return toggle();
+    init: function() {
+        const values = this.values
+        const self = this;
 
-            if (key === "settings" && (settings.berrytweaks))
-                return showConfigMenu(true);
-
-            btn.removeClass("st-button-changed");
-
-            if (key !== "about")
-                gui.windows.view(this[key]);
-
-            if (!funcs)
+        $.each(values, key => {
+            if ($.isEmptyObject(values[key]))
                 return;
 
-            for (var i = 0; i < funcs.length; i++) {
-                if (key === "playlist" && funcs[i] === scrollToPlEntry) //special thing for playlist
-                    params[i] = Math.max($(".overview > ul > .active").index() - 2, 0); //- 2 for giving it some headroom
+            const element = $(self.getPath(values[key]))
+            const obj = values[key];
 
-                if (Array.isArray(params[i]))
-                    funcs[i].call(undefined, ...params[i]);
-                else
-                    funcs[i].call(undefined, params[i]);
+            if (obj.classes)
+                $.each(obj.classes, i => element.addClass(obj.classes[i]));
+
+            element.addClass("st-window-default");
+        });
+    }
+}
+
+var toolbar = {
+    buttons: {
+        tweaks: {
+            text: "T",
+            tooltip: "Toggle tweaks",
+            func: () => { tweaksv2.run(tweaksv2.layout.tweaks) },
+            id: "active"
+        },
+
+        video: {
+            text: "V",
+            tooltip: "Toggle video",
+            func: () => { tweaksv2.run(tweaksv2.video) },
+            id: "video"
+        },
+    },
+
+    create: function() {
+        const bar = $("<div>", { id: "st-toolbar-wrap" })
+        const buttons = this.buttons;
+
+        $.each(buttons, function(btn) {
+            const obj = $("<div>", {
+                    class: "st-button-control",
+                    id: "st-button-control-" + btn,
+                    text: buttons[btn].text,
+                    'data-key': btn,
+                })
+                .click(function() {
+                    $(this).toggleClass("active");
+
+                    buttons[btn].func();
+                })
+
+            if (!settings.get("active") && btn !== "tweaks")
+                obj.addClass("hidden");
+
+            if (settings.get(buttons[btn].id))
+                obj.addClass("active");
+
+            bar.append(obj);
+        });
+
+        $("#chatControls").append(bar);
+    }
+}
+
+var bottom = {
+    buttons: {
+        about: {
+            func: () => {
+                window.open("http://berrytube.tv/about.php", "_blank");
+            }
+        },
+
+        settings: {
+            func: () => {
+                showConfigMenu(true);
+            }
+        },
+
+        header: {
+            func: () => { windows.toggle("header") }
+        },
+
+        footer: {
+            func: () => { windows.toggle("footer") }
+        },
+
+        rules: {
+            func: () => { windows.toggle("rules") }
+        },
+
+        polls: {
+            func: () => { windows.toggle("polls") }
+        },
+
+        messages: {
+            func: () => { windows.toggle("messages") }
+        },
+
+        login: {
+            func: () => { windows.toggle("login") }
+        },
+
+        playlist: {
+            func: () => {
+                windows.toggle("playlist")
+                smartRefreshScrollbar();
+                scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2, 0));
+                realignPosHelper();
+            },
+        },
+
+        users: { func: () => { windows.toggle("users") } },
+
+        toast: {
+            func: () => {
+                toggle(); //lel
             }
         },
     },
 
-    windows: {
-        last: null,
-        view: function(btn) {
-            const open = $(".st-window-open")[0] !== undefined;
+    create: function() {
+        const buttons = this.buttons;
+        const btns = $('<div>', { class: "st-buttons-container" });
 
-            var elem = null;
-            if (btn.paths.length === 1)
-                elem = $(btn.paths[0]);
-            else
-                elem = $(btn.paths[settings.maltweaks ? 0 : 1]);
+        this.container = $("<div>", { id: "st-controls-container", class: "st-controls-wrap st-window-default" });
+        this.container.append(btns);
 
-            if (open || this.last === btn)
-                $(".st-window-open").removeClass("st-window-open");
+        $.each(buttons, (key) => {
+            if ($.isFunction(buttons[key])) //skip funcs
+                return;
 
-            if (this.last !== btn || !open) {
-                elem.addClass("st-window-open");
+            btns.append($('<button>', {
+                    class: 'st-button st-window-default',
+                    id: "st-button-" + key,
+                    'data-key': key,
+                    text: key
+                })
+                .click(() => {
+                    buttons[key].func();
+                }))
+        })
 
-                if (btn.classes !== undefined)
-                    btn.classes.forEach(c => { elem.addClass(c) });
-            }
+        this.container.append($("<div>", { id: "st-container-info", class: "st-grid" })
+            .append($("<div>", { id: "st-info-time", class: "st-grid-block", text: "Time: " }).append($("<span>")))
+            .append($("<div>", { id: "st-info-users", class: "st-grid-block", text: "Users: " }).append($("<span>")))
+            .append($("<div>", { id: "st-info-drinks-group" })
+                .append($("<div>", { id: "st-info-drinks", class: "st-grid-block", text: "Drinks: " }).append($("<span>")))
+                .append($("$<div>", { id: "st-info-dpm", class: "st-grid-block", text: "DPM: " }).append($("<span>")))));
 
-            this.last = btn;
-        },
+        $("body").append(this.container);
     },
-
-    toolbar: {
-        buttons: {
-            tweaks: {
-                text: "T",
-                tooltip: "Toggle smidqeTweaks",
-                id: "active",
-                func: () => {
-                    const layout = gui.layout;
-
-                    if (settings.active)
-                        layout.disable();
-                    else
-                        layout.enable();
-
-                    const buttons = gui.toolbar.buttons
-
-                    $.each(buttons, btn => {
-                        if (btn === "tweaks")
-                            return;
-
-                        $("#st-button-control-" + btn).toggleClass("hidden");
-                    })
-                }
-            },
-
-            video: {
-                text: "V",
-                tooltip: "Toggle video",
-                id: "video",
-                deps: [
-                    ['SmidqeTweaks', 'active'],
-                ],
-                func: () => {
-                    gui.video.toggle();
-                }
-            },
-
-            videoname: {
-                text: "W",
-                tooltip: "Show videoname",
-                id: "videoname",
-                deps: [
-                    ["SmidqeTweaks", "active"],
-                    ["BerryTweaks", "enabled"],
-                    ['BerryTweaks', 'enabled', "videoTitle"],
-                    ['SmidqeTweaks', 'videoname'],
-                ],
-                func: () => {
-                    $("#st-videotitle-window").toggleClass("active");
-                },
-            },
-        },
-
-        create: () => {
-            const bar = $("<div>", { id: "st-toolbar-wrap" })
-            const buttons = gui.toolbar.buttons;
-
-            $.each(buttons, function(btn) {
-
-                const obj = $("<div>", {
-                        class: "st-button-control",
-                        id: "st-button-control-" + btn,
-                        text: buttons[btn].text,
-                        'data-key': btn,
-                    })
-                    .click(function() {
-                        gui.toolbar.toggle($(this), buttons[$(this).attr('data-key')], true);
-                    })
-
-                if (settings[buttons[btn].id])
-                    obj.addClass("active");
-
-                if (!settings.active && btn !== "tweaks")
-                    obj.addClass("hidden");
-
-
-                const deps = buttons[btn].deps;
-                const bt = JSON.parse(localStorage["BerryTweaks"]);
-                //const mt = JSON.parse(localStorage["MT"]);
-
-                if (deps) {
-                    var depsFound = false;
-                    var search = null;
-
-                    for (var i = 0; i < deps.length; i++) {
-                        if (deps[i][0] === "BerryTweaks")
-                            search = bt;
-                        else
-                            search = settings;
-
-                        if (deps[i].length > 2)
-                            depsFound = !!search[deps[i][1]][deps[i][2]];
-                        else
-                            depsFound = !!search[deps[i][1]];
-                    }
-
-                    if (!depsFound)
-                        obj.addClass("hidden"); //disable the button
-                }
-
-                bar.append(obj);
-
-            });
-
-            $("#chatControls").append(bar);
-        },
-
-        toggle: function(handle, btn, save) {
-            handle.toggleClass('active');
-
-            if (btn.func !== undefined)
-                btn.func();
-        },
-
-        enable: (btn) => {
-            $(".st-button-control").each(() => {
-                if ($(this).attr("key") !== btn)
-                    return;
-
-                $(this).addClass("active");
-            })
-        },
-
-        disable: (btn) => {
-            $(".st-button-control").each(() => {
-                if ($(this).attr("key") !== btn)
-                    return;
-
-                $(this).removeClass("active");
-            })
-        }
-    },
-};
+}
 
 const listeners = {
     time: {
         path: "#chatlist > ul",
-        node: null, //if static then we don't need to refresh
         config: { childList: true, attributes: true, characterData: true, subtree: true }, //config for the observer
         observer: null,
         disconnect: false,
@@ -433,63 +567,38 @@ const listeners = {
         },
     },
 
-    settings: {
-        path: null,
-        node: document.body,
+    body: {
+        path: "body",
         config: { childList: true },
         observer: null,
-        disconnect: false,
         monitor: "added",
         callback(mutation) {
-            if (mutation.className !== "dialogWindow ui-draggable")
-                return;
+            if (mutation.className === "dialogWindow ui-draggable")
+                settings.show();
 
-            gui.settings.show();
-        },
-    },
+            if (mutation.id === "headwrap") {
+                clearTimeout(startTimer);
+                settings.set("maltweaks", true, true);
+            }
 
-    maltweaks: {
-        path: null,
-        node: document.body,
-        config: { childList: true },
-        observer: null,
-        disconnect: false,
-        monitor: "added",
-        callback(mutation) {
-            if (mutation.id !== "headwrap")
-                return;
-
-            utils.settings.modify("maltweaks", true, true);
-
-            if (settings.active)
-                gui.layout.enable();
+            if (settings.get("active") && settings.get("maltweaks") && !tweaksv2.layout.tweaks.state)
+                tweaksv2.run(tweaksv2.get("layout", "tweaks"));
         },
     },
 
     berrytweaks: {
-        path: null,
-        node: document.head,
+        path: "head",
         config: { childList: true },
         observer: null,
-        disconnect: false,
         monitor: "added",
         callback(mutation) {
-            if (!mutation.src)
-                return;
-
-            if (mutation.src.indexOf("atte.fi") !== -1)
-                settings.berrytweaks = true;
-
-            console.log("ST: Found berrytweaks")
-
-            if (settings.berrytweaks)
-                listeners.stop(listeners.berrytweaks);
+            if ($("head > script").attr('src').indexOf("atte.fi") !== -1)
+                settings.set("berrytweaks", true, true);
         },
     },
 
     drinks: {
         path: "#drinkWrap",
-        node: null,
         config: {
             childList: true,
             attributes: true,
@@ -497,7 +606,6 @@ const listeners = {
             subtree: true
         },
         observer: null,
-        disconnect: false,
         monitor: "all",
         callback(mutation) {
             $("#st-info-drinks > span").text($("#drinkCounter").text());
@@ -507,34 +615,34 @@ const listeners = {
 
     messages: {
         path: "#mailMessageDiv",
-        node: null,
         config: { childList: true },
         observer: null,
-        disconnect: false,
         monitor: "added",
         callback(mutation) {
-            const button = $("#st-button-messages")
-
-            if (button.hasClass("st-button-changed"))
-                return;
-
-            button.addClass("st-button-changed");
+            $("#st-button-messages").addClass("st-button-changed");
         },
     },
 
     users: {
         path: "#connectedCount",
-        node: null,
-        static: false,
         config: {
             childList: true
         },
         observer: null,
-        disconnect: false,
         monitor: "added",
         callback(mutation) {
             $("#st-info-users > span").text($("#connectedCount").text())
         },
+    },
+
+    polls: {
+        path: "#pollpane",
+        config: { childList: true, attributes: true, characterData: true, subtree: true },
+        observer: null,
+        monitor: "all",
+        callback(mutation) {
+            tweaksv2.runGroup("polls");
+        }
     },
 
     create: function(obs) {
@@ -560,11 +668,9 @@ const listeners = {
         if (!obs.observer)
             return;
 
-        if (!obs.node)
-            obs.node = $(obs.path)[0];
+        const node = $(obs.path)[0];
 
-        console.log("ST: Starting observer");
-        obs.observer.observe(obs.node, obs.config);
+        obs.observer.observe(node, obs.config);
     },
 
     stop: function(obs) {
@@ -588,54 +694,36 @@ const listeners = {
     }
 }
 
-
-const categories = {
-    Scripts: {
-        titles: ["Maltweaks", "Berrytweaks"],
-        types: ["checkbox", "checkbox"],
-        keys: ["maltweaks", "berrytweaks"]
-    },
-
-    General: {
-        titles: ["Ircify changes"],
-        types: ["checkbox"],
-        keys: ["ircChanges"]
-    },
-
-    Berrytweaks: {
-        titles: ["Wrap current video's name"],
-        types: ["checkbox"],
-        keys: ["videoname"],
-    },
-
-    Fixes: {
-        titles: ["Temporary"],
-        types: ["checkbox"],
-        keys: ["temp"]
-    }
-};
-
 function init() {
-    utils.settings.load();
+    settings.load();
+
+    //this is for the loading if nothing is showing up don't load unnecessary tweaks or wrong tweaks
+    settings.set("maltweaks", false, false);
+    settings.set("berrytweaks", false, false);
+
     //add minimum css for the chatcontrol buttons
     $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))
 
-    gui.toolbar.create();
-    gui.buttons.create();
+    toolbar.create();
+    bottom.create();
+
+    //start timer for enabling the layout incase we don't have maltweaks
+    startTimer = setTimeout(() => {
+        if (settings.get("active"))
+            tweaksv2.run(tweaksv2.get("layout", "tweaks"));
+    }, 5000)
 
     listeners.loadAll(true);
-    $("#chatpane").addClass("st-chat");
-    $("#videowrap").addClass("st-video");
-    $("#playlist").addClass("st-window-playlist");
 
     $("#st-info-users > span").text($("#connectedCount").text())
     $("#st-info-time > span").text(":(");
 
-    if ($("head > link").attr('href').indexOf("atte.fi") !== -1)
-        utils.settings.modify("berrytweaks", true, true);
+    //doesn't hurt to have checks here already
+    if ($("#headwrap")[0])
+        settings.set("maltweaks", true, true);
 
-    if (settings.active && !settings.maltweaks)
-        gui.layout.enable();
+    if ($("head > link").attr('href').indexOf("atte.fi") !== -1)
+        settings.set("berrytweaks", true, true);
 }
 
 init();

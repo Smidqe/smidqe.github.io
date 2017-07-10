@@ -274,6 +274,11 @@ body #leftpane {
     border-bottom: 1px solid #BBBBBB !important;
 }
 
+.st-window-users.wrap {
+    top: 40px;
+    height: calc(100% - 70px) !important;
+}
+
 .st-window-users ul {
     top: 0px;
     right: 0px;
@@ -334,7 +339,7 @@ body #leftpane {
     font-weight: bold;
 }
 
-.st-button-control-hidden {
+.st-button-control.hidden {
     display: none;
 }
 
@@ -354,4 +359,8 @@ body #leftpane {
 
 #rcvOverlay {
     width: 100% !important;
+}
+
+.st-window-overlap.hover {
+    opacity: 0.75;
 }
