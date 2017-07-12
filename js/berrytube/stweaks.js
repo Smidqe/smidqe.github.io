@@ -4,25 +4,38 @@ const categories = {
     Scripts: {
         titles: ["Maltweaks", "Berrytweaks"],
         types: ["checkbox", "checkbox"],
-        keys: ["maltweaks", "berrytweaks"]
+        keys: ["maltweaks", "berrytweaks"],
     },
 
     General: {
-        titles: ["Ircify changes", "Enable hovered windows"],
+        titles: ["Ircify changes"],
+        types: ["checkbox"],
+        keys: ["ircChanges"],
+    },
+
+    Tweaks: {
+        titles: ["Calculate poll average after episode", "Notify when poll is closed"],
         types: ["checkbox", "checkbox"],
-        keys: ["ircChanges", "allowHover"]
+        keys: ["calcAvg", "pollClose"],
+        tweaks: [
+            ["polls", "average"],
+            ["polls", "closure"],
+        ]
     },
 
     Berrytweaks: {
         titles: ["Wrap current video's name"],
         types: ["checkbox"],
         keys: ["videoname"],
+        tweaks: [
+            ["patches", "namewrap"]
+        ],
     },
 
     Debug: {
         titles: ["Enable debug logging", "Ircify debug"],
         types: ["checkbox", "checkbox"],
-        keys: ["debug", "ircDebug"]
+        keys: ["debug", "debugIRC"],
     }
 };
 
@@ -66,21 +79,30 @@ var settings = {
             for (var j = 0; j < titles.length; j++) {
                 const section = $("<div>", { class: 'st-settings-wrap' });
                 const category = categories[keys[i]];
+
+                var setting = $('<input>', {
+                        type: category.types[j],
+                        checked: settings.get(category.keys[j]),
+
+                        'data-key': category.keys[j],
+                    })
+                    .change(function() {
+                        settings.set($(this).attr('data-key'), !!$(this).prop('checked'), true);
+
+                        if ($(this).attr('tweak'))
+                            tweaksv2.run(tweaksv2.get({ group: $(this).attr('group'), tweak: $(this).attr('tweak') }));
+                    })
+
+                if (category.tweaks)
+                    setting.attr("group", category.tweaks[j][0]).attr("tweak", category.tweaks[j][1]);
+
                 section.append($('<div>', {
                         class: 'st-settings-setting'
                     }))
                     .append($('<label>', {
                         text: titles[j]
                     }))
-                    .append($('<input>', {
-                            type: category.types[j],
-                            checked: settings.get(category.keys[j]),
-
-                            'data-key': category.keys[j]
-                        })
-                        .change(function() {
-                            settings.set($(this).attr('data-key'), !!$(this).prop('checked'), true);
-                        }));
+                    .append(setting);
 
                 title.append(section);
             }
@@ -111,19 +133,34 @@ var utilities = {
         },
 
 
+    },
+
+    debug: {
+        log: (msg) => {
+            if (settings.get("debugIRC"))
+                utilities.chat.add("Debug", msg, "act");
+            else
+                console.log("ST_DEBUG: " + msg);
+        }
     }
 }
 
 var tweaksv2 = {
     polls: {
         average: {
-            deps: ['active', 'calcAvg'],
-            apply: function() {
-                if ($("pollpane .active")[0])
+            id: "average",
+            state: false,
+            deps: [
+                ['SmidqeTweaks', 'calcAvg']
+            ],
+            run: function() {
+                if ($("pollpane .active")[0]) //check if we have a active poll
                     return;
 
                 const buttons = $(".poll:first-child .btn:not('.close')"); // we can use index numbers to calculate the final values \\teehee
-
+                /*
+                    Check if we have a episode poll, numerical approach may not be optimal if 
+                */
                 if (buttons.length != 10) //not a episode poll (should make into a constant)
                     return;
 
@@ -145,7 +182,6 @@ var tweaksv2 = {
                 if (!number)
                     return; //prevent wrong messages
 
-                //create a ircified message
                 utilities.chat.add(this.setting.msg, value / count, this.setting.type)
             },
 
@@ -156,7 +192,11 @@ var tweaksv2 = {
         },
 
         closure: {
-            deps: ['active', 'pollClose'],
+            id: "closure",
+            state: false,
+            deps: [
+                ['SmidqeTweaks', 'pollClose']
+            ],
 
             run: () => {
                 if (!settings.get("pollClose"))
@@ -168,16 +208,44 @@ var tweaksv2 = {
                 //$("pollpane .poll:first-child").
                 //notification to the chat (ircify)
             },
+
+            setting: {
+                msg: "",
+                type: "act",
+            }
         },
     },
 
     playlist: {
+        state: false,
         notify: {
+            run: () => {
+                if (!settings.get("playlistNotify"))
+                    return;
 
+                $.each(mutation.addedNodes, () => {
+
+                })
+
+                /*
+                    Will notify of changes happening to playlist, these are:
+                        - Removal of a video
+                        - Adding a video (non vol or other)
+                        - Moving a video
+                        - Making a video to non-vol
+
+                        (Now playing is berrytweaks thing)
+                 */
+
+            },
         }
     },
 
     video: {
+        state: false,
+        deps: [
+            ["Maltweaks", "state", "video"]
+        ],
         run: function() {
             if ($("#st-button-control-video").hasClass("active"))
                 MT.disablePlayer();
@@ -188,6 +256,7 @@ var tweaksv2 = {
 
     layout: {
         tweaks: {
+            id: "tweaks",
             state: false,
             enable: function() {
                 const maltweaks = settings.get("maltweaks");
@@ -207,8 +276,11 @@ var tweaksv2 = {
                 $("#playlist").addClass("st-window-playlist");
 
                 $("#st-controls-container").removeClass("st-window-default");
-
+                //toolbar.show();
                 windows.init();
+
+                tweaksv2.runAllGroupsExcept(["layout", "video"])
+
                 settings.set("active", true, true)
             },
 
@@ -230,6 +302,8 @@ var tweaksv2 = {
                 if (maltweaks) //patch, fixes wrong sized header
                     $(".wrapper #dyn_header iframe").css({ "height": "140px" });
 
+                //toolbar.hide();
+
                 settings.set("active", false, true)
             },
 
@@ -245,6 +319,8 @@ var tweaksv2 = {
         },
 
         time: {
+            id: "time",
+            state: false,
             run: function() {
                 if (!$(".me")[0]) //not logged in
                     return;
@@ -257,6 +333,8 @@ var tweaksv2 = {
 
     patches: {
         namewrap: {
+            id: "namewrap",
+            state: false,
             deps: [
                 ["SmidqeTweaks", "active"],
                 ['BerryTweaks', "videoTitle"],
@@ -264,76 +342,112 @@ var tweaksv2 = {
             ],
 
             enable: () => {
+                if ($("#st-videotitle-window")[0])
+                    return;
+
                 $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
                 $("#st-videotitle-window").addClass("active");
+
+                $(".st-window-users").addClass("wrap");
+
             },
 
             disable: () => {
+                if (!$("#st-videotitle-window")[0]) //do not run if it doesn't exist in the first place
+                    return;
+
                 $("#berrytweaks-video_title").unwrap();
+                $(".st-window-users").removeClass("wrap");
             },
 
             run: function() {
-                const setting = settings.get("videoname");
+                this.state = settings.get("videoname");
 
-                if (setting && !($("st-videotitle-window")[0])) //prevents stacking
+                if (this.state)
                     this.enable();
-
-                if (!setting && $("st-videotitle-window")[0])
+                else
                     this.disable();
             }
         }
     },
 
     run: function(tweak) {
-        if (tweak.deps) {
+        if (!tweak)
+            return;
+
+        //only check deps upon starting it
+        if (tweak.deps && !tweak.state) {
             var found = 0;
 
             $.each(tweak.deps, dep => {
+                const deps = tweak.deps[dep];
                 var search = null;
-                switch (dep[0]) {
+
+                switch (deps[0]) {
                     case "SmidqeTweaks":
-                        search = settings;
+                        search = settings.storage;
                         break;
                     case "BerryTweaks":
-                        search = JSON.parse(localStorage.Berrytweaks).enabled;
+                        search = JSON.parse(localStorage.BerryTweaks).enabled;
                         break;
                     case "MalTweaks":
                         search = JSON.parse(localStorage.MT);
                         break;
                 }
 
-                found += search[dep[1]] ? 1 : 0;
+                if (deps[0] !== "Maltweaks")
+                    found += search[deps[1]] ? 1 : 0;
+                else
+                    found += search[deps[1]][deps[2]] ? 1 : 0;
             })
 
-            console.log("ST: Deps found: " + found + "out of: " + deps.length);
+            console.log("ST: Deps found: " + found + " out of: " + tweak.deps.length);
 
-            if (found != deps.length) {
+            if (found != tweak.deps.length) {
                 console.log("ST: Deps not found for: " + tweak.id);
                 return;
             }
         }
-        console.log("Running tweak");
+
         tweak.run();
     },
 
     runGroup: function(group) {
-        $.each(group, tweak => tweaksv2.run(tweaksv2[tweak]));
-    },
-
-    runAll: function() {
         const parent = this;
 
+        $.each(group, tweak => {
+            parent.run(group[tweak]);
+        });
+    },
+
+    runAllGroupsExcept: function(exclude) {
+        const parent = this;
         $.each(this, elem => {
-            if ($.isFunction(elem))
+            if (exclude.includes(elem))
                 return;
 
-            parent.runGroup(elem);
+            if ($.isFunction(parent[elem]))
+                return;
+
+            parent.runGroup(parent[elem]);
         })
     },
 
-    get: function(group, tweak) {
-        return this[group][tweak];
-    }
+    getGroup: function(data) {
+        if (!this[data] || $.isFunction[this[data]])
+            return undefined;
+
+        return this[data];
+    },
+
+    get: function(data) {
+        const group = this.getGroup(data.group)
+
+        if (!data.tweak)
+            return group;
+
+        return group[data.tweak];
+    },
 }
 
 var windows = {
@@ -497,7 +611,10 @@ var bottom = {
         },
 
         messages: {
-            func: () => { windows.toggle("messages") }
+            func: () => {
+                windows.toggle("messages");
+                $("#st-button-message").removeClass("st-button-changed");
+            }
         },
 
         login: {
@@ -576,13 +693,9 @@ const listeners = {
             if (mutation.className === "dialogWindow ui-draggable")
                 settings.show();
 
-            if (mutation.id === "headwrap") {
-                clearTimeout(startTimer);
-                settings.set("maltweaks", true, true);
-            }
-
-            if (settings.get("active") && settings.get("maltweaks") && !tweaksv2.layout.tweaks.state)
-                tweaksv2.run(tweaksv2.get("layout", "tweaks"));
+            //enable tweaks if we are using maltweaks and wrappage has happened
+            if (mutation.id === "headwrap" && settings.get("active") && settings.get("maltweaks") && !tweaksv2.layout.tweaks.state)
+                tweaksv2.run(tweaksv2.get({ group: "layout", tweak: "tweaks" }));
         },
     },
 
@@ -641,7 +754,7 @@ const listeners = {
         observer: null,
         monitor: "all",
         callback(mutation) {
-            tweaksv2.runGroup("polls");
+            //tweaksv2.runGroup("polls");
         }
     },
 
@@ -707,23 +820,17 @@ function init() {
     toolbar.create();
     bottom.create();
 
-    //start timer for enabling the layout incase we don't have maltweaks
-    startTimer = setTimeout(() => {
-        if (settings.get("active"))
-            tweaksv2.run(tweaksv2.get("layout", "tweaks"));
-    }, 5000)
+    //we have maltweaks :P
+    if ($("body > script")[0])
+        settings.set("maltweaks", $("body > script").attr('src').indexOf("MalTweaks") !== -1, true)
 
     listeners.loadAll(true);
 
     $("#st-info-users > span").text($("#connectedCount").text())
     $("#st-info-time > span").text(":(");
 
-    //doesn't hurt to have checks here already
-    if ($("#headwrap")[0])
-        settings.set("maltweaks", true, true);
-
-    if ($("head > link").attr('href').indexOf("atte.fi") !== -1)
-        settings.set("berrytweaks", true, true);
+    if (!settings.get("maltweaks"))
+        tweaksv2.run(tweaksv2.layout.tweaks);
 }
 
 init();

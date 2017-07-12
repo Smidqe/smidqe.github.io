@@ -275,7 +275,7 @@ body #leftpane {
 }
 
 .st-window-users.wrap {
-    top: 40px;
+    top: 40px !important;
     height: calc(100% - 70px) !important;
 }
 
