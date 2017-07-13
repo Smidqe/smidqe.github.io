@@ -259,6 +259,14 @@ body #leftpane {
     display: none !important;
 }
 
+
+/*Incase berrytweaks fails to load*/
+
+.dialogContent {
+    overflow-y: scroll;
+    max-height: 384px;
+}
+
 .berrymotes_button {
     margin-right: 5px !important;
 }
