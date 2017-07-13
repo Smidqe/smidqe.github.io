@@ -683,7 +683,7 @@ var bottom = {
         messages: {
             func: () => {
                 windows.toggle("messages");
-                $("#st-button-message").removeClass("st-button-changed");
+                $("#st-button-messages").removeClass("st-button-changed");
             }
         },
 
