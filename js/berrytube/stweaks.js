@@ -1,8 +1,9 @@
 var startTimer = null;
 
 const categories = {
+    //i might get rid of this part, not really a tweak
     Scripts: {
-        titles: ["Maltweaks", "Berrytweaks"],
+        titles: ["MalTweaks", "Berrytweaks"],
         types: ["checkbox", "checkbox"],
         keys: ["maltweaks", "berrytweaks"],
     },
@@ -14,6 +15,15 @@ const categories = {
     },
 
     Tweaks: {
+        titles: ["Remove vanilla setting button"],
+        types: ["checkbox"],
+        keys: ["hideSettings"],
+        tweaks: [
+            ["gui", "settings"],
+        ],
+    },
+
+    Polls: {
         titles: ["Calculate poll average after episode", "Notify when poll is closed"],
         types: ["checkbox", "checkbox"],
         keys: ["calcAvg", "pollClose"],
@@ -90,7 +100,7 @@ var settings = {
                         settings.set($(this).attr('data-key'), !!$(this).prop('checked'), true);
 
                         if ($(this).attr('tweak'))
-                            tweaksv2.run(tweaksv2.get({ group: $(this).attr('group'), tweak: $(this).attr('tweak') }));
+                            tweaks.run(tweaks.get({ group: $(this).attr('group'), tweak: $(this).attr('tweak') }));
                     })
 
                 if (category.tweaks)
@@ -115,6 +125,13 @@ var settings = {
 var utilities = {
     chat: {
         add: function(nick, text, type) {
+            var time = undefined;
+
+            if (settings.get("berrytweaks"))
+                time = BerryTweaks.getServerTime();
+            else
+                time = new Date();
+
             addChatMsg({
                 msg: {
                     nick,
@@ -126,6 +143,7 @@ var utilities = {
                         channel: 'main'
                     },
                     emote: type,
+                    timestamp: time,
                 },
 
                 ghost: false,
@@ -145,7 +163,7 @@ var utilities = {
     }
 }
 
-var tweaksv2 = {
+var tweaks = {
     polls: {
         average: {
             id: "average",
@@ -182,11 +200,11 @@ var tweaksv2 = {
                 if (!number)
                     return; //prevent wrong messages
 
-                utilities.chat.add(this.setting.msg, value / count, this.setting.type)
+                utilities.chat.add("ST", this.setting.msg + ": " + value / count, this.setting.type)
             },
 
             setting: {
-                msg: "Poll average: ",
+                msg: "Poll average",
                 type: "act",
             },
         },
@@ -244,13 +262,16 @@ var tweaksv2 = {
     video: {
         state: false,
         deps: [
-            ["Maltweaks", "state", "video"]
+            ["MalTweaks", "state", "video"]
         ],
+
         run: function() {
-            if ($("#st-button-control-video").hasClass("active"))
-                MT.disablePlayer();
-            else
+            if (this.state)
                 MT.restoreLocalPlayer();
+            else
+                MT.disablePlayer();
+
+            this.state = !this.state;
         }
     },
 
@@ -276,10 +297,9 @@ var tweaksv2 = {
                 $("#playlist").addClass("st-window-playlist");
 
                 $("#st-controls-container").removeClass("st-window-default");
-                //toolbar.show();
                 windows.init();
-
-                tweaksv2.runAllGroupsExcept(["layout", "video"])
+                toolbar.show();
+                tweaks.runAllGroupsExcept(["layout", "video"])
 
                 settings.set("active", true, true)
             },
@@ -299,10 +319,10 @@ var tweaksv2 = {
 
                 $("#st-stylesheet").remove();
 
+                toolbar.hide();
+
                 if (maltweaks) //patch, fixes wrong sized header
                     $(".wrapper #dyn_header iframe").css({ "height": "140px" });
-
-                //toolbar.hide();
 
                 settings.set("active", false, true)
             },
@@ -361,6 +381,9 @@ var tweaksv2 = {
             },
 
             run: function() {
+                if (!settings.get("berrytweaks"))
+                    return;
+
                 this.state = settings.get("videoname");
 
                 if (this.state)
@@ -374,6 +397,8 @@ var tweaksv2 = {
     run: function(tweak) {
         if (!tweak)
             return;
+
+        console.log(tweak);
 
         //only check deps upon starting it
         if (tweak.deps && !tweak.state) {
@@ -395,7 +420,7 @@ var tweaksv2 = {
                         break;
                 }
 
-                if (deps[0] !== "Maltweaks")
+                if (deps[0] !== "MalTweaks")
                     found += search[deps[1]] ? 1 : 0;
                 else
                     found += search[deps[1]][deps[2]] ? 1 : 0;
@@ -534,19 +559,40 @@ var windows = {
 }
 
 var toolbar = {
+    //TODO: do deps
     buttons: {
         tweaks: {
             text: "T",
             tooltip: "Toggle tweaks",
-            func: () => { tweaksv2.run(tweaksv2.layout.tweaks) },
+            func: () => {
+                tweaks.run(tweaks.layout.tweaks);
+
+
+                $(".st-button-control").each(function(elem) {
+                    console.log(elem);
+                })
+            },
             id: "active"
         },
 
         video: {
+            deps: [
+                ["smidqetweaks", "active"]
+            ],
             text: "V",
             tooltip: "Toggle video",
-            func: () => { tweaksv2.run(tweaksv2.video) },
+            func: () => { tweaks.run(tweaks.video) },
             id: "video"
+        },
+
+        message: {
+            text: "M",
+            tooltip: "Send a ircified test message",
+            func: () => {
+
+
+                utilities.chat.add("ST", "This is a small test", "act");
+            }
         },
     },
 
@@ -577,6 +623,30 @@ var toolbar = {
         });
 
         $("#chatControls").append(bar);
+    },
+
+
+
+    hide: () => {
+        const buttons = $(".st-button-control");
+
+        buttons.each((elem) => {
+            if ($(buttons[elem]).attr('data-key') === "tweaks")
+                return;
+
+            $(buttons[elem]).addClass("hidden");
+        })
+    },
+
+    show: () => {
+        const buttons = $(".st-button-control");
+
+        buttons.each((elem) => {
+            if ($(buttons[elem]).attr('data-key') === "tweaks")
+                return;
+
+            $(buttons[elem]).removeClass("hidden");
+        })
     }
 }
 
@@ -676,8 +746,6 @@ const listeners = {
     time: {
         path: "#chatlist > ul",
         config: { childList: true, attributes: true, characterData: true, subtree: true }, //config for the observer
-        observer: null,
-        disconnect: false,
         monitor: "all",
         callback(mutation) {
             $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
@@ -687,25 +755,23 @@ const listeners = {
     body: {
         path: "body",
         config: { childList: true },
-        observer: null,
         monitor: "added",
         callback(mutation) {
             if (mutation.className === "dialogWindow ui-draggable")
                 settings.show();
 
             //enable tweaks if we are using maltweaks and wrappage has happened
-            if (mutation.id === "headwrap" && settings.get("active") && settings.get("maltweaks") && !tweaksv2.layout.tweaks.state)
-                tweaksv2.run(tweaksv2.get({ group: "layout", tweak: "tweaks" }));
+            if (mutation.id === "headwrap" && settings.get("active") && settings.get("maltweaks") && !tweaks.layout.tweaks.state)
+                tweaks.run(tweaks.get({ group: "layout", tweak: "tweaks" }));
         },
     },
 
     berrytweaks: {
         path: "head",
         config: { childList: true },
-        observer: null,
         monitor: "added",
         callback(mutation) {
-            if ($("head > script").attr('src').indexOf("atte.fi") !== -1)
+            if (($("head > script").attr('src').indexOf("atte.fi") !== -1) && !settings.get("berrytweaks"))
                 settings.set("berrytweaks", true, true);
         },
     },
@@ -718,7 +784,6 @@ const listeners = {
             characterData: true,
             subtree: true
         },
-        observer: null,
         monitor: "all",
         callback(mutation) {
             $("#st-info-drinks > span").text($("#drinkCounter").text());
@@ -729,7 +794,6 @@ const listeners = {
     messages: {
         path: "#mailMessageDiv",
         config: { childList: true },
-        observer: null,
         monitor: "added",
         callback(mutation) {
             $("#st-button-messages").addClass("st-button-changed");
@@ -741,7 +805,6 @@ const listeners = {
         config: {
             childList: true
         },
-        observer: null,
         monitor: "added",
         callback(mutation) {
             $("#st-info-users > span").text($("#connectedCount").text())
@@ -751,10 +814,12 @@ const listeners = {
     polls: {
         path: "#pollpane",
         config: { childList: true, attributes: true, characterData: true, subtree: true },
-        observer: null,
         monitor: "all",
         callback(mutation) {
-            //tweaksv2.runGroup("polls");
+            if (mutation.target.id === "pollpane")
+                return;
+
+            tweaks.runGroup(tweaks.getGroup("polls"));
         }
     },
 
@@ -814,7 +879,10 @@ function init() {
     settings.set("maltweaks", false, false);
     settings.set("berrytweaks", false, false);
 
-    //add minimum css for the chatcontrol buttons
+    //only exception, just makes the video button active by default
+    settings.set("video", true, true);
+
+    //add minimum css for the chatcontrol buttons and perhaps for something else
     $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))
 
     toolbar.create();
@@ -830,7 +898,7 @@ function init() {
     $("#st-info-time > span").text(":(");
 
     if (!settings.get("maltweaks"))
-        tweaksv2.run(tweaksv2.layout.tweaks);
+        tweaks.run(tweaks.layout.tweaks);
 }
 
 init();
