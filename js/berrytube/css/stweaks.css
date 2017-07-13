@@ -252,7 +252,19 @@ body #leftpane {
 }
 
 #chatControls {
-    width: calc(100% - 5px);
+    width: 100%;
+}
+
+.settings.hidden {
+    display: none !important;
+}
+
+.berrymotes_button {
+    margin-right: 5px !important;
+}
+
+.settings {
+    margin-right: 5px !important;
 }
 
 #mailButtonDiv {
