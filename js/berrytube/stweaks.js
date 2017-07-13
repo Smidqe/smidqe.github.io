@@ -225,7 +225,7 @@ var tweaks = {
 
                 //$("pollpane .poll:first-child").
                 //notification to the chat (ircify)
-                utilities.chat.add("ST:")
+                utilities.chat.add("ST:", "Poll closed", "act");
             },
 
             setting: {
