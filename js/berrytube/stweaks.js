@@ -906,11 +906,7 @@ function init() {
     if ($("body > script")[0])
         settings.set("maltweaks", $("body > script").attr('src').indexOf("MalTweaks") !== -1, true)
 
-    $("head > link").each(function() {
-
-        if ($(this).attr('href').indexOf("atte.fi"))
-            settings.set("berrytweaks", true, true);
-    })
+    settings.set("berrytweaks", $("head > link").attr('href').indexOf("atte.fi"), true);
 
     listeners.loadAll(true);
 
