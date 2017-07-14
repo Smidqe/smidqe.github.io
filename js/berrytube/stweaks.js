@@ -175,15 +175,21 @@ var tweaks = {
                 console.log($("pollpane .active"));
                 console.log($(".poll:first-child"));
 
-                if ($("pollpane .active")[0]) //check if we have a active poll
+                if ($("#pollpane .active")[0]) //check if we have a active poll
                     return;
 
+
+
                 const buttons = $(".poll:first-child .btn:not('.close')"); // we can use index numbers to calculate the final values \\teehee
+
+                console.log("Amount of buttons present in the poll: " + buttons.length);
                 /*
                     Check if we have a episode poll, numerical approach may not be optimal if 
                 */
                 if (buttons.length != 10) //not a episode poll (should make into a constant)
                     return;
+
+                console.log("Starting calculating the average")
 
                 var number = true;
                 var value = 0;
@@ -200,8 +206,10 @@ var tweaks = {
                     count += Number($(btns[i]).text());
                 })
 
-                if (!number)
+                if (!number) {
+                    console.log("One of the labels wasn't a number, exiting");
                     return; //prevent wrong messages
+                }
 
                 utilities.chat.add("ST", this.setting.msg + ": " + value / count, this.setting.type)
             },
@@ -906,7 +914,7 @@ function init() {
     if ($("body > script")[0])
         settings.set("maltweaks", $("body > script").attr('src').indexOf("MalTweaks") !== -1, true)
 
-    settings.set("berrytweaks", $("head > link").attr('href').indexOf("atte.fi"), true);
+    settings.set("berrytweaks", $("head > link").attr('href').indexOf("atte.fi") !== -1, true);
 
     listeners.loadAll(true);
 
