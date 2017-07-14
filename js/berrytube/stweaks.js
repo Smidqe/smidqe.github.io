@@ -172,6 +172,9 @@ var tweaks = {
                 ['SmidqeTweaks', 'calcAvg']
             ],
             run: function() {
+                console.log($("pollpane .active"));
+                console.log($(".poll:first-child"));
+
                 if ($("pollpane .active")[0]) //check if we have a active poll
                     return;
 
@@ -593,7 +596,17 @@ var toolbar = {
 
 
                 utilities.chat.add("ST", "This is a small test", "act");
-            }
+            },
+            id: "testMessage",
+        },
+
+        message: {
+            text: "P",
+            tooltip: "Test out poll average",
+            func: () => {
+                //utilities.chat.add("ST", "This is a small test", "act");
+                tweaks.run(tweaks.get({ group: "polls", tweak: "average" }));
+            },
         },
     },
 
@@ -892,6 +905,12 @@ function init() {
     //we have maltweaks :P
     if ($("body > script")[0])
         settings.set("maltweaks", $("body > script").attr('src').indexOf("MalTweaks") !== -1, true)
+
+    $("head > link").each(function() {
+
+        if ($(this).attr('href').indexOf("atte.fi"))
+            settings.set("berrytweaks", true, true);
+    })
 
     listeners.loadAll(true);
 

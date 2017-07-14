@@ -262,7 +262,7 @@ body #leftpane {
 
 /*Incase berrytweaks fails to load*/
 
-.dialogContent {
+.dialogWindow:not(.berrymotes) .dialogContent {
     overflow-y: scroll;
     max-height: 384px;
 }
