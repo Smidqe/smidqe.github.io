@@ -384,3 +384,8 @@ body #leftpane {
 .st-window-overlap.hover {
     opacity: 0.75;
 }
+
+.st-setting-sub {
+    font-size: 14px;
+    margin-left: 2em;
+}

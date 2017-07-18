@@ -1,55 +1,72 @@
 var startTimer = null;
-
-const categories = {
-    //i might get rid of this part, not really a tweak
-    Scripts: {
-        titles: ["MalTweaks", "Berrytweaks"],
-        types: ["checkbox", "checkbox"],
-        keys: ["maltweaks", "berrytweaks"],
-    },
-
-    General: {
-        titles: ["Ircify changes"],
-        types: ["checkbox"],
-        keys: ["ircChanges"],
-    },
-
-    Tweaks: {
-        titles: ["Remove vanilla setting button"],
-        types: ["checkbox"],
-        keys: ["hideSettings"],
-        tweaks: [
-            ["gui", "settings"],
-        ],
-    },
-
-    Polls: {
-        titles: ["Calculate poll average after episode", "Notify when poll is closed"],
-        types: ["checkbox", "checkbox"],
-        keys: ["calcAvg", "pollClose"],
-        tweaks: [
-            ["polls", "average"],
-            ["polls", "closure"],
-        ]
-    },
-
-    Berrytweaks: {
-        titles: ["Wrap current video's name"],
-        types: ["checkbox"],
-        keys: ["videoname"],
-        tweaks: [
-            ["patches", "namewrap"]
-        ],
-    },
-
-    Debug: {
-        titles: ["Enable debug logging", "Ircify debug"],
-        types: ["checkbox", "checkbox"],
-        keys: ["debug", "debugIRC"],
-    }
-};
-
 var settings = {
+    categories: {
+        Tweaks: {
+            settings: {
+                title: "Hide original settings button",
+                type: "checkbox",
+                key: "viewSettings",
+                tweak: ["", ""]
+            },
+        },
+        Polls: {
+            average: {
+                title: "Calculate poll average",
+                type: "checkbox",
+                key: "calcAvg",
+            },
+
+            closure: {
+                title: "Notify when poll closes",
+                type: "checkbox",
+                key: "pollClose",
+            },
+        },
+        Playlist: {
+            changes: {
+                title: "Notify of playlist changes",
+                type: "checkbox",
+                key: "calcAvg",
+                subs: [{
+                        title: "Adding video",
+                        type: "checkbox",
+                        key: "notifyAdd",
+                    },
+                    {
+                        title: "Removing a video",
+                        type: "checkbox",
+                        key: "notifyRemove"
+                    },
+                    {
+                        title: "Moving a video",
+                        type: "checkbox",
+                        key: "notifyMove"
+                    },
+                    {
+                        title: "Volatile video to non-volatile",
+                        type: "checkbox",
+                        key: "notifyVol"
+                    },
+                ],
+            },
+        },
+        BerryTweaks: {
+            namewrap: {
+                title: "Move videoname to a separate line",
+                type: "checkbox",
+                key: "namewrap",
+                tweak: ["berrytweaks", "wrap"]
+            }
+        },
+        Debug: {
+            logging: {
+                title: "Enable debugging",
+                type: "checkbox",
+                key: "debug",
+            },
+        },
+    },
+
     storage: {},
     container: null,
 
@@ -72,53 +89,66 @@ var settings = {
             this.save();
     },
 
+    createSetting: function(data, sub) {
+        const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
+
+        const element = $('<input>', {
+                type: data.type,
+                checked: settings.get(data.key),
+
+                'data-key': data.key,
+            })
+            .change(function() {
+                settings.set($(this).attr('data-key'), !!$(this).prop('checked'), true);
+
+                if ($(this).attr('tweak'))
+                    tweaks.run(tweaks.get({ group: $(this).attr('group'), tweak: $(this).attr('tweak') }));
+            })
+
+        if (data.tweaks)
+            setting.attr("group", data.tweak[0]).attr("tweak", data.tweak[1]);
+
+        if (sub)
+            wrap.addClass('st-setting-sub');
+
+        return wrap.append(element);
+    },
+
     show: function() {
-        if (!this.container)
-            this.container = $('<fieldset>');
+        var cont = this.container;
 
-        this.container.empty();
-        this.container.append($('<legend>', { text: 'SmidqeTweaks' }));
+        if (!cont)
+            cont = $('<fieldset>');
 
-        const keys = Object.keys(categories);
-        for (var i = 0; i < keys.length; i++) {
-            const title = $('<div>', { class: 'st-settings-category' }).append($("<label>", { text: keys[i] }))
-            const titles = categories[keys[i]].titles;
+        cont.empty();
+        cont.append($('<legend>', { text: 'SmidqeTweaks' }));
 
-            this.container.append(title);
+        const cats = this.categories;
 
-            for (var j = 0; j < titles.length; j++) {
-                const section = $("<div>", { class: 'st-settings-wrap' });
-                const category = categories[keys[i]];
+        for (var key in cats) {
+            const cat = cats[key];
 
-                var setting = $('<input>', {
-                        type: category.types[j],
-                        checked: settings.get(category.keys[j]),
+            const group = $('<div>', {
+                class: 'st-settings-category'
+            }).append($("<label>", {
+                text: key
+            }));
 
-                        'data-key': category.keys[j],
+            cont.append(group);
+
+            for (var item in cat) {
+                const obj = cat[item];
+
+                group.append(this.createSetting(obj, false));
+
+                if (obj.subs)
+                    $.each(obj.subs, val => {
+                        group.append(this.createSetting(obj.subs[val], true));
                     })
-                    .change(function() {
-                        settings.set($(this).attr('data-key'), !!$(this).prop('checked'), true);
-
-                        if ($(this).attr('tweak'))
-                            tweaks.run(tweaks.get({ group: $(this).attr('group'), tweak: $(this).attr('tweak') }));
-                    })
-
-                if (category.tweaks)
-                    setting.attr("group", category.tweaks[j][0]).attr("tweak", category.tweaks[j][1]);
-
-                section.append($('<div>', {
-                        class: 'st-settings-setting'
-                    }))
-                    .append($('<label>', {
-                        text: titles[j]
-                    }))
-                    .append(setting);
-
-                title.append(section);
             }
         }
 
-        $("#settingsGui > ul").append($('<li>').append(this.container));
+        $("#settingsGui > ul").append($('<li>').append(cont));
     }
 };
 
@@ -167,29 +197,24 @@ var tweaks = {
     polls: {
         average: {
             id: "average",
+            node: null,
             state: false,
             deps: [
                 ['SmidqeTweaks', 'calcAvg']
             ],
             run: function() {
-                console.log($("pollpane .active"));
-                console.log($(".poll:first-child"));
+                //if the poll has ten buttons
+                if ($(".poll:first-child .btn:not('.close')").length == 10 && this.node == null)
+                    this.node = $(".poll:first-child");
 
-                if ($("#pollpane .active")[0]) //check if we have a active poll
+                if (this.node == null)
                     return;
 
-
-
-                const buttons = $(".poll:first-child .btn:not('.close')"); // we can use index numbers to calculate the final values \\teehee
-
-                console.log("Amount of buttons present in the poll: " + buttons.length);
-                /*
-                    Check if we have a episode poll, numerical approach may not be optimal if 
-                */
-                if (buttons.length != 10) //not a episode poll (should make into a constant)
+                if (this.node.hasClass("active")) //check if we have a active poll
                     return;
 
-                console.log("Starting calculating the average")
+                const buttons = this.node.find(".btn:not('.close')");
+                //const buttons = $(".poll:first-child .btn:not('.close')"); // we can use index numbers to calculate the final values \\teehee
 
                 var number = true;
                 var value = 0;
@@ -206,11 +231,10 @@ var tweaks = {
                     count += Number($(btns[i]).text());
                 })
 
-                if (!number) {
-                    console.log("One of the labels wasn't a number, exiting");
-                    return; //prevent wrong messages
-                }
+                if (!number)
+                    return;
 
+                this.node = null;
                 utilities.chat.add("ST", this.setting.msg + ": " + value / count, this.setting.type)
             },
 
@@ -248,14 +272,29 @@ var tweaks = {
 
     playlist: {
         state: false,
+        deps: [
+            ["SmidqeTweaks", "playlistNotify"]
+        ],
         notify: {
-            run: () => {
+            run: (mutation) => {
                 if (!settings.get("playlistNotify"))
                     return;
 
+                /*
+                title
+                time
+                */
+
                 $.each(mutation.addedNodes, () => {
+                    //grab the title from the 
+                    if (settings.get("playlistAdd"))
+                        utilities.chat.add("ST", )
+                })
+
+                $.each(mutation.removedNodes, () => {
 
                 })
+
 
                 /*
                     Will notify of changes happening to playlist, these are:
@@ -601,18 +640,16 @@ var toolbar = {
             text: "M",
             tooltip: "Send a ircified test message",
             func: () => {
-
-
                 utilities.chat.add("ST", "This is a small test", "act");
             },
             id: "testMessage",
         },
 
-        message: {
+        poll: {
             text: "P",
             tooltip: "Test out poll average",
             func: () => {
-                //utilities.chat.add("ST", "This is a small test", "act");
+                utilities.chat.add("ST", "Testing poll average", "act");
                 tweaks.run(tweaks.get({ group: "polls", tweak: "average" }));
             },
         },
@@ -914,7 +951,13 @@ function init() {
     if ($("body > script")[0])
         settings.set("maltweaks", $("body > script").attr('src').indexOf("MalTweaks") !== -1, true)
 
-    settings.set("berrytweaks", $("head > link").attr('href').indexOf("atte.fi") !== -1, true);
+    $("head > link").each(function() {
+        if (settings.get("berrytweaks"))
+            return;
+
+        if ($(this).attr("href").indexOf("atte.fi"))
+            settings.set("berrytweaks", true, true)
+    });
 
     listeners.loadAll(true);
 
