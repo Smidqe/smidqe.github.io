@@ -5,8 +5,8 @@ var settings = {
             settings: {
                 title: "Hide original settings button",
                 type: "checkbox",
-                key: "viewSettings",
-                tweak: ["", ""]
+                key: "showSettings",
+                tweak: ["general", "settings"]
             },
         },
         Polls: {
@@ -63,6 +63,11 @@ var settings = {
                 title: "Enable debugging",
                 type: "checkbox",
                 key: "debug",
+                subs: [{
+                    title: "As chat messages",
+                    type: "checkbox",
+                    key: "ircdebug",
+                }],
             },
         },
     },
@@ -95,7 +100,6 @@ var settings = {
         const element = $('<input>', {
                 type: data.type,
                 checked: settings.get(data.key),
-
                 'data-key': data.key,
             })
             .change(function() {
@@ -105,8 +109,8 @@ var settings = {
                     tweaks.run(tweaks.get({ group: $(this).attr('group'), tweak: $(this).attr('tweak') }));
             })
 
-        if (data.tweaks)
-            setting.attr("group", data.tweak[0]).attr("tweak", data.tweak[1]);
+        if (data.tweak)
+            element.attr("group", data.tweak[0]).attr("tweak", data.tweak[1]);
 
         if (sub)
             wrap.addClass('st-setting-sub');
@@ -179,24 +183,73 @@ var utilities = {
                 ghost: false,
             }, "#chatbuffer");
         },
-
-
     },
 
     debug: {
-        log: (msg) => {
+        log: (msg, test) => {
             if (settings.get("debugIRC"))
                 utilities.chat.add("Debug", msg, "act");
             else
                 console.log("ST_DEBUG: " + msg);
         }
+    },
+
+    deps: {
+        check: (deps) => {
+            var found = 0;
+
+            if (!deps)
+                return true;
+
+            $.each(deps, dep => {
+                const obj = deps[dep];
+                var search = null;
+
+                switch (obj[0]) {
+                    case "SmidqeTweaks":
+                        search = settings.storage;
+                        break;
+                    case "BerryTweaks":
+                        search = JSON.parse(localStorage.BerryTweaks).enabled;
+                        break;
+                    case "MalTweaks":
+                        search = JSON.parse(localStorage.MT);
+                        break;
+                }
+
+                if (obj[0] !== "MalTweaks")
+                    found += search[obj[1]] ? 1 : 0;
+                else
+                    found += search[obj[1]][obj[2]] ? 1 : 0;
+            })
+
+            return found == deps.length;
+        }
     }
 }
 
 var tweaks = {
+    general: {
+        settings: {
+            state: false,
+            deps: [
+                ["SmidqeTweaks", 'showSettings']
+            ],
+            run: function() {
+                this.state = settings.get('showSettings');
+
+                const element = $(".settings");
+
+                if (this.state)
+                    element.addClass("hidden");
+                else
+                    element.removeClass("hidden");
+            }
+        }
+    },
+
     polls: {
         average: {
-            id: "average",
             node: null,
             state: false,
             deps: [
@@ -214,15 +267,13 @@ var tweaks = {
                     return;
 
                 const buttons = this.node.find(".btn:not('.close')");
-                //const buttons = $(".poll:first-child .btn:not('.close')"); // we can use index numbers to calculate the final values \\teehee
 
                 var number = true;
                 var value = 0;
                 var count = 0;
 
                 $.each(btns, i => {
-                    if (isNaN($(btns[i]).text()))
-                        number = false;
+                    number = !isNaN($(btns[i]).text());
 
                     if (!number)
                         return;
@@ -251,16 +302,9 @@ var tweaks = {
                 ['SmidqeTweaks', 'pollClose']
             ],
 
-            run: () => {
-                if (!settings.get("pollClose"))
-                    return;
-
-                if ($("pollpane .active")[0]) //we have open poll
-                    return;
-
-                //$("pollpane .poll:first-child").
-                //notification to the chat (ircify)
-                utilities.chat.add("ST:", "Poll closed", "act");
+            run: (mutation) => {
+                if (mutation.attributeName === "class" && !$(mutation.target).hasClass("active"))
+                    utilities.chat.add("ST", "Poll closed", "act");
             },
 
             setting: {
@@ -271,11 +315,13 @@ var tweaks = {
     },
 
     playlist: {
-        state: false,
-        deps: [
-            ["SmidqeTweaks", "playlistNotify"]
-        ],
+        //this could be split into multiple tweaks,
+        //but would require multiple listeners :(
         notify: {
+            state: false,
+            deps: [
+                ["SmidqeTweaks", "playlistNotify"]
+            ],
             run: (mutation) => {
                 if (!settings.get("playlistNotify"))
                     return;
@@ -285,17 +331,41 @@ var tweaks = {
                 time
                 */
 
-                $.each(mutation.addedNodes, () => {
-                    //grab the title from the 
-                    if (settings.get("playlistAdd"))
-                        utilities.chat.add("ST", )
-                })
+                //volatile videos have 'volatile' class
 
-                $.each(mutation.removedNodes, () => {
+                if (settings.get("playlistAdd")) {
+                    $.each(mutation.addedNodes, (elem) => {
+                        //grab the title from the 
+                        const element = mutation.addedNodes[elem];
 
-                })
+                        if (!element)
+                            return;
 
+                        const title = $(element).find(".title").text();
 
+                        utilities.chat.add("ST", title + " was added to the playlist")
+                    })
+                }
+
+                if (settings.get("playlistDelete")) {
+                    $.each(mutation.removedNodes, (val) => {
+                        const element = mutation.removedNodes[val];
+
+                        if (!element)
+                            return;
+
+                        const title = $(element).find(".title").text();
+
+                        if ($(element).hasClass("volatile"))
+                            return;
+
+                        utilities.chat.add("ST", title + " was removed from the playlist")
+                    })
+                }
+
+                if (settings.get("playlistVolatile")) {
+
+                }
                 /*
                     Will notify of changes happening to playlist, these are:
                         - Removal of a video
@@ -402,14 +472,14 @@ var tweaks = {
     },
 
 
-    patches: {
-        namewrap: {
+    berrytweaks: {
+        wrap: {
             id: "namewrap",
             state: false,
             deps: [
                 ["SmidqeTweaks", "active"],
                 ['BerryTweaks', "videoTitle"],
-                ['SmidqeTweaks', 'videoname'],
+                ['SmidqeTweaks', 'namewrap'],
             ],
 
             enable: () => {
@@ -434,8 +504,9 @@ var tweaks = {
             run: function() {
                 if (!settings.get("berrytweaks"))
                     return;
+                this.state = settings.get("namewrap");
 
-                this.state = settings.get("videoname");
+
 
                 if (this.state)
                     this.enable();
@@ -449,41 +520,9 @@ var tweaks = {
         if (!tweak)
             return;
 
-        console.log(tweak);
-
         //only check deps upon starting it
-        if (tweak.deps && !tweak.state) {
-            var found = 0;
-
-            $.each(tweak.deps, dep => {
-                const deps = tweak.deps[dep];
-                var search = null;
-
-                switch (deps[0]) {
-                    case "SmidqeTweaks":
-                        search = settings.storage;
-                        break;
-                    case "BerryTweaks":
-                        search = JSON.parse(localStorage.BerryTweaks).enabled;
-                        break;
-                    case "MalTweaks":
-                        search = JSON.parse(localStorage.MT);
-                        break;
-                }
-
-                if (deps[0] !== "MalTweaks")
-                    found += search[deps[1]] ? 1 : 0;
-                else
-                    found += search[deps[1]][deps[2]] ? 1 : 0;
-            })
-
-            console.log("ST: Deps found: " + found + " out of: " + tweak.deps.length);
-
-            if (found != tweak.deps.length) {
-                console.log("ST: Deps not found for: " + tweak.id);
-                return;
-            }
-        }
+        if (!tweak.state && !utilities.deps.check(tweak.deps))
+            return;
 
         tweak.run();
     },
@@ -617,18 +656,14 @@ var toolbar = {
             tooltip: "Toggle tweaks",
             func: () => {
                 tweaks.run(tweaks.layout.tweaks);
-
-
-                $(".st-button-control").each(function(elem) {
-                    console.log(elem);
-                })
             },
             id: "active"
         },
 
         video: {
             deps: [
-                ["smidqetweaks", "active"]
+                ["SmidqeTweaks", "active"],
+                ["SmidqeTweaks", "maltweaks"],
             ],
             text: "V",
             tooltip: "Toggle video",
@@ -638,6 +673,10 @@ var toolbar = {
 
         message: {
             text: "M",
+            deps: [
+                ["SmidqeTweaks", "active"],
+                ["SmidqeTweaks", "debug"],
+            ],
             tooltip: "Send a ircified test message",
             func: () => {
                 utilities.chat.add("ST", "This is a small test", "act");
@@ -647,6 +686,10 @@ var toolbar = {
 
         poll: {
             text: "P",
+            deps: [
+                ["SmidqeTweaks", "active"],
+                ["SmidqeTweaks", "debug"],
+            ],
             tooltip: "Test out poll average",
             func: () => {
                 utilities.chat.add("ST", "Testing poll average", "act");
@@ -672,7 +715,9 @@ var toolbar = {
                     buttons[btn].func();
                 })
 
-            if (!settings.get("active") && btn !== "tweaks")
+            obj.attr('title', buttons[btn].tooltip);
+
+            if (!utilities.deps.check(buttons[btn].deps) && btn !== "tweaks")
                 obj.addClass("hidden");
 
             if (settings.get(buttons[btn].id))
@@ -684,27 +729,36 @@ var toolbar = {
         $("#chatControls").append(bar);
     },
 
+    toggle: (data) => {
+        if (data.refresh)
+            console.log("");
+    },
 
+    hide: function() {
+        const buttons = this.buttons;
 
-    hide: () => {
-        const buttons = $(".st-button-control");
+        $.each(buttons, (btn) => {
+            const element = $("#st-button-control-" + btn);
 
-        buttons.each((elem) => {
-            if ($(buttons[elem]).attr('data-key') === "tweaks")
+            if (element.attr('data-key') === "tweaks")
                 return;
 
-            $(buttons[elem]).addClass("hidden");
+            if (utilities.deps.check(buttons[btn].deps))
+                element.addClass("hidden");
         })
     },
 
-    show: () => {
-        const buttons = $(".st-button-control");
+    show: function() {
+        const buttons = this.buttons;
 
-        buttons.each((elem) => {
-            if ($(buttons[elem]).attr('data-key') === "tweaks")
+        $.each(buttons, (btn) => {
+            const element = $("#st-button-control-" + btn);
+
+            if (element.attr('data-key') === "tweaks")
                 return;
 
-            $(buttons[elem]).removeClass("hidden");
+            if (utilities.deps.check(buttons[btn].deps))
+                element.removeClass("hidden");
         })
     }
 }
@@ -754,7 +808,13 @@ var bottom = {
             func: () => {
                 windows.toggle("playlist")
                 smartRefreshScrollbar();
-                scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2, 0));
+
+                const index = Math.max($(".overview > ul > .active").index() - 2);
+
+                if (settings.get('debug'))
+                    utilities.debug.log("Current active video's index: " + index);
+
+                scrollToPlEntry(index, 0);
                 realignPosHelper();
             },
         },
@@ -807,7 +867,7 @@ const listeners = {
         config: { childList: true, attributes: true, characterData: true, subtree: true }, //config for the observer
         monitor: "all",
         callback(mutation) {
-            $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
+            tweaks.run(tweaks.layout.time);
         },
     },
 
@@ -819,13 +879,12 @@ const listeners = {
             if (mutation.className === "dialogWindow ui-draggable")
                 settings.show();
 
-            //enable tweaks if we are using maltweaks and wrappage has happened
             if (mutation.id === "headwrap" && settings.get("active") && settings.get("maltweaks") && !tweaks.layout.tweaks.state)
                 tweaks.run(tweaks.get({ group: "layout", tweak: "tweaks" }));
         },
     },
 
-    berrytweaks: {
+    berrytweaks: { //if there will be more than one use for this, change the name
         path: "head",
         config: { childList: true },
         monitor: "added",
@@ -882,6 +941,17 @@ const listeners = {
         }
     },
 
+    playlist: {
+        path: "#playlist",
+        config: { childList: true, attributes: true, characterData: true, subtree: true },
+        monitor: "all",
+        callback(mutation) {
+            console.log(mutation);
+            console.log(mutation.addedNodes);
+            console.log(mutation.removedNodes);
+        }
+    },
+
     create: function(obs) {
         return new MutationObserver(function(mutations) {
             mutations.forEach((mutation) => {
@@ -901,13 +971,28 @@ const listeners = {
         obs.observer = this.create(obs);
     },
 
+    wait: function(obs) {
+        var id = setInterval(func, 500, obs);
+
+        function func(obs) {
+            if (!$(obs.path)[0])
+                return;
+
+            clearInterval(id);
+            listeners.start(obs);
+        }
+    },
+
     start: function(obs) {
         if (!obs.observer)
             return;
 
-        const node = $(obs.path)[0];
+        const element = $(obs.path)[0];
 
-        obs.observer.observe(node, obs.config);
+        if (!element)
+            this.wait(obs);
+        else
+            obs.observer.observe(element, obs.config);
     },
 
     stop: function(obs) {
@@ -947,6 +1032,10 @@ function init() {
     toolbar.create();
     bottom.create();
 
+    //set the active as false just incase, 
+    if (!settings.get("active"))
+        settings.set("active", false, true);
+
     //we have maltweaks :P
     if ($("body > script")[0])
         settings.set("maltweaks", $("body > script").attr('src').indexOf("MalTweaks") !== -1, true)
@@ -964,7 +1053,7 @@ function init() {
     $("#st-info-users > span").text($("#connectedCount").text())
     $("#st-info-time > span").text(":(");
 
-    if (!settings.get("maltweaks"))
+    if (!settings.get("maltweaks") && settings.get("active"))
         tweaks.run(tweaks.layout.tweaks);
 }
 

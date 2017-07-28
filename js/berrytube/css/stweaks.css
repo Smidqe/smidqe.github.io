@@ -228,7 +228,7 @@ button.st-button:first-letter {
     top: 0px;
     left: auto;
     position: fixed;
-    height: 100% !important;
+    height: calc(100% - 2px) !important;
     width: 30% !important;
 }
 
