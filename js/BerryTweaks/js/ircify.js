@@ -29,7 +29,7 @@ const self = {
             ghost: false
         }, '#chatbuffer');
 
-        if (type === "part")
+        if (type === 'part')
             delete window.CHATLIST[nick];
     },
     addUser(nick) {
