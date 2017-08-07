@@ -1,4 +1,4 @@
-BerryTweaks.modules['ircify'] = (function() {
+BerryTweaks.modules['ircify'] = (function(){
 'use strict';
 
 const self = {
@@ -10,14 +10,14 @@ const self = {
     partTimeoutHandles: {},
     holdActs: true,
     act(nick, type, time, overrideHold) {
-        if (!nick || (self.holdActs && !overrideHold))
+        if ( !nick || (self.holdActs && !overrideHold) )
             return;
 
         addChatMsg({
             msg: {
                 nick,
                 msg: `<span class="berrytweaks-ircify-${type}">${self.verbs[type]}</span>`,
-                metadata: {
+                metadata:  {
                     graymute: false,
                     nameflaunt: false,
                     flair: null,
@@ -33,17 +33,18 @@ const self = {
             delete window.CHATLIST[nick];
     },
     addUser(nick) {
-        if (nick === window.NAME)
+        if ( nick === window.NAME )
             self.holdActs = false;
 
-        if (self.partTimeoutHandles[nick]) {
+        if ( self.partTimeoutHandles[nick] ){
             clearTimeout(self.partTimeoutHandles[nick]);
             self.partTimeoutHandles[nick] = null;
-        } else
+        }
+        else
             self.act(nick, 'join', BerryTweaks.getServerTime());
     },
     rmUser(nick) {
-        if (self.partTimeoutHandles[nick])
+        if ( self.partTimeoutHandles[nick] )
             return;
 
         const time = BerryTweaks.getServerTime();
@@ -53,7 +54,7 @@ const self = {
         }, BerryTweaks.getSetting('timeoutSmoothing', 5) * 1000);
     },
     enable() {
-        if (window.CHATLIST.hasOwnProperty(window.NAME))
+        if ( window.CHATLIST.hasOwnProperty(window.NAME) )
             self.holdActs = false;
     },
     addSettings(container) {
@@ -74,7 +75,7 @@ const self = {
                     width: '3em'
                 },
                 value: BerryTweaks.getSetting('timeoutSmoothing', 5)
-            }).change(function() {
+            }).change(function(){
                 BerryTweaks.setSetting('timeoutSmoothing', +$(this).val());
             })
         ).append(
@@ -87,14 +88,14 @@ const self = {
 };
 
 BerryTweaks.patch(window, 'addUser', data => {
-    if (!self.enabled)
+    if ( !self.enabled )
         return;
 
     self.addUser(data.nick);
 });
 
 BerryTweaks.patch(window, 'rmUser', nick => {
-    if (!self.enabled)
+    if ( !self.enabled )
         return;
 
     self.rmUser(nick);

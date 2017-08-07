@@ -72,6 +72,7 @@ var settings = {
                 title: "Enable debugging",
                 type: "checkbox",
                 key: "debug",
+                //tweak: ["debug", "show"],
                 subs: [{
                         title: "As chat messages",
                         type: "checkbox",
@@ -456,7 +457,10 @@ var tweaks = {
                         }
                     case "moved":
                         msg += " was moved";
-
+                        
+                        if (change.changed)
+                            msg += " and was made into permanent";
+                        
                         break;
                 }
 
