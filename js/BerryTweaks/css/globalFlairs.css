@@ -1,0 +1,16 @@
+#chatlist > ul > li {
+    position: relative;
+}
+
+#chatlist > ul > li .berrytweaks-flair {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 16px;
+    height: 16px;
+}
+
+#chatlist > ul > li .berrytweaks-localtime {
+    right: 20px !important;
+}

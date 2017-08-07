@@ -1,0 +1,8 @@
+#chatlist > ul > li {
+    border-left-width: 0 !important;
+}
+
+#chatlist > ul > li.admin > .chatlistname,
+#chatlist > ul > li.assistant > .chatlistname {
+    text-decoration: underline;
+}

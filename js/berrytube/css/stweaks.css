@@ -185,10 +185,6 @@ button.st-button:first-letter {
     left: auto;
 }
 
-.st-logged {
-    width: 100%;
-}
-
 #chatpane.st-chat #chatlist {
     display: none;
 }
@@ -334,6 +330,8 @@ body #leftpane {
     left: 0px;
     z-index: 5;
     top: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 
@@ -350,6 +348,8 @@ body #leftpane {
 #berrytweaks-video_title {
     float: none;
     text-align: center;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 
@@ -388,4 +388,8 @@ body #leftpane {
 .st-setting-sub {
     font-size: 14px;
     margin-left: 2em;
+}
+
+.msg-stplaylist {
+    opacity: 1.0;
 }

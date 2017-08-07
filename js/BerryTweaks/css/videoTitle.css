@@ -1,0 +1,7 @@
+#berrytweaks-video_title {
+    float: left;
+}
+
+#tweakbutts ~ #berrytweaks-video_title {
+    margin-left: 10px;
+}
