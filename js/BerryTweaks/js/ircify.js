@@ -29,7 +29,8 @@ const self = {
             ghost: false
         }, '#chatbuffer');
 
-        delete window.CHATLIST[nick];
+        if (type === "part")
+            delete window.CHATLIST[nick];
     },
     addUser(nick) {
         if (nick === window.NAME)
