@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         BerryTweaks
-// @namespace    https://atte.fi/berrytweaks/
+// @name         BerryTweaks - Smidqes fork
+// @namespace    https://smidqe.github.io/
 // @version      0.5
 // @description  A collection of BerryTube tweaks
 // @author       Atte
@@ -10,8 +10,8 @@
 // @match        http://tunnel.q-z.xyz/*
 // @match        http://btc.berrytube.tv:8000/*
 // @match        https://bt-proxy.atte.fi/*
-// @updateURL    https://atte.fi/berrytweaks/berrytweaks.user.js
-// @downloadURL  https://atte.fi/berrytweaks/berrytweaks.user.js
+// @updateURL    https://smidqe.github.io/js/BerryTweaks/js/init.js
+// @downloadURL  https://smidqe.github.io/js/BerryTweaks/js/init.js
 // @grant        none
 // ==/UserScript==
 
@@ -19,7 +19,7 @@
 'use strict';
 
 const script = document.createElement('script');
-script.setAttribute('src', 'https://atte.fi/berrytweaks/min/js/init.js?_=' + (new Date()).getTime());
+script.setAttribute('src', 'https://smidqe.github.io/js/BerryTweaks/js/init.js?_=' + (new Date()).getTime());
 document.head.appendChild(script);
 
 })();

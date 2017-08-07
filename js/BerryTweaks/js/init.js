@@ -189,7 +189,7 @@ const self = {
                 self.libWaiters[name] = [after];
 
                 const isAbsolute = name.indexOf('://') !== -1;
-                $.getScript(isAbsolute ? name : `https://atte.fi/berrytweaks/js/lib/${name}.js`, () => {
+                $.getScript(isAbsolute ? name : `https://smidqe.github.io/js/BerryTweaks/js/lib/${name}.js`, () => {
                     if ( isAbsolute )
                         self.lib[name] = true;
 
@@ -226,7 +226,7 @@ const self = {
             return;
         }
 
-        $.getScript(`https://atte.fi/berrytweaks/js/${name}.js`, () => {
+        $.getScript(`https://smidqe.github.io/js/BerryTweaks/js/${name}.js`, () => {
             const mod = self.modules[name];
             if ( !mod )
                 return;
