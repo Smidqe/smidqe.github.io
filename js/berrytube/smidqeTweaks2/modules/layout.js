@@ -1,23 +1,26 @@
-const self = {
-    modules: {},
-    names: ['bottom', 'infobox', 'toolbar', 'windows'],
+function load() {
+    const self = {
+        modules: {},
+        names: ['bottom', 'infobox', 'toolbar', 'windows'],
 
-    loadModules: () => {
-        $.each(names, index => {
-            const name = names[index];
+        loadModules: () => {
+            $.each(names, index => {
+                const name = names[index];
 
-            $.getScript(`https://smidqe.github.io/js/berrytube/SmidqeTweaks2/layout/${name}.js`, () => {
+                $.getScript(`https://smidqe.github.io/js/berrytube/SmidqeTweaks2/layout/${name}.js`, () => {
 
+                })
             })
-        })
-    },
-    init: () => {
-        //wait 
+        },
+        init: () => {
+            //wait 
 
-        $.each(self.modules, name => {
-            self.modules[name].init();
-        })
-    },
+            $.each(self.modules, name => {
+                self.modules[name].init();
+            })
+        },
+    }
+
+    return self;
 }
-
-SmidqeTweaks.layout = self;
+SmidqeTweaks.layout = load();
