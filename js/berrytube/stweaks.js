@@ -1,21 +1,50 @@
 /*
     Future ideas:
-        - Squee on RCV messages
-        - 
+        - squee on certain emotes
+            - additionally only from certain persons
+            - move this into another userscript?
 
-    TODO:
-        - Fix the playlist and polls
-        - Separate the changes thingy from playlist
+        - Break the user count to groups
+            -  on hover
+
+        - copy the emote text by middle clicking the emote
+            - with effects
+            - to chat input (default is clipboard) 
+        
+        - 
         
 */
 var settings = {
     categories: {
         Tweaks: {
+            rcvsquee: {
+                title: "Squee on RCV messages",
+                type: "checkbox",
+                key: "squeeRCV",
+                subs: [{
+                    title: "Apply highlight",
+                    type: 'checkbox',
+                    key: 'paintRCV'
+                }]
+            },
+            emotecopy: {
+                title: "Copy the emote by middle clicking it",
+                type: 'checkbox',
+                key: 'emotecopy',
+            },
+        },
+        Layout: {
             settings: {
                 title: "Hide original settings button",
                 type: "checkbox",
                 key: "showSettings",
                 tweak: ["general", "settings"]
+            },
+
+            usergroups: {
+                title: "Show usergroups",
+                type: "checkbox",
+                key: "showUsergroups"
             },
         },
         Polls: {
@@ -52,7 +81,7 @@ var settings = {
                         key: "playlistMove"
                     },
                     {
-                        title: "Volatile video to non-volatile",
+                        title: "Volatile changes",
                         type: "checkbox",
                         key: "playlistVol"
                     },
@@ -72,7 +101,7 @@ var settings = {
                 title: "Enable debugging",
                 type: "checkbox",
                 key: "debug",
-                //tweak: ["debug", "show"],
+                tweak: ["debug", "showButtons"],
                 subs: [{
                         title: "As chat messages",
                         type: "checkbox",
@@ -112,7 +141,6 @@ var settings = {
 
     createSetting: function(data, sub) {
         const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
-
         const element = $('<input>', {
                 type: data.type,
                 checked: settings.get(data.key),
@@ -173,69 +201,118 @@ var settings = {
     }
 };
 
-var utilities = {
-    chat: {
-        add: function(nick, text, type) {
-            var time = null;
+//chat related thingies
+const chat = {
+    //adds a message to chat
+    add: (nick, text, type) => {
+        var time = null;
 
-            if (settings.get("berrytweaks"))
-                time = BerryTweaks.getServerTime();
-            else
-                time = new Date();
+        //get the server time from berrytweaks if it is enabled
+        if (settings.get("berrytweaks"))
+            time = BerryTweaks.getServerTime();
+        else
+            time = new Date();
 
-            addChatMsg({
-                msg: {
-                    nick,
-                    msg: text,
-                    metadata: {
-                        graymute: false,
-                        nameflaunt: false,
-                        flair: null,
-                        channel: 'main'
-                    },
-                    emote: type,
-                    timestamp: time,
+        addChatMsg({
+            msg: {
+                nick,
+                msg: text,
+                metadata: {
+                    graymute: false,
+                    nameflaunt: false,
+                    flair: null,
+                    channel: 'main'
                 },
+                emote: type,
+                timestamp: time,
+            },
 
-                ghost: false,
-            }, "#chatbuffer");
+            ghost: false,
+        }, "#chatbuffer");
 
-            delete CHATLIST[nick];
-        },
+        //prevent tabcomplete on non existant/wrong users
+        delete CHATLIST[nick];
     },
 
-    getUsers: () => {
+    //gets all messages posted by one person, that are still existing in the buffer
+    getFromNick: (nick) => {
+        const msgs = $("." + nick);
+    },
+
+    getNicks: () => {
         //gets users from the userlist (not chatlist)
         const nodes = $(".chatlistname");
         const result = {};
 
         $.each(nodes, index => {
-            result[$(nodes[index]).text()] = {};
+            result[$(nodes[index]).text()] = '';
         })
 
         return result;
     },
 
-    fixChatlist: () => {
-        //clears all not present names from the chatlist
-        const users = utilities.getUsers();
+    getEmote: () => {
+        //use an mouseevent \\hmmm
+        /*
+        struct: 
+            {
+                ids: array
+            }
+        */
+    },
+}
 
-        $.each(window.CHATLIST, (nick) => {
-            if (!users[nick])
-                delete window.CHATLIST[nick];
+const debug = {
+    log: (msg) => {
+        if (settings.get('ircdebug'))
+            chat.add('DEBUG', msg, 'act');
+        else
+            console.log(msg);
+    }
+}
+
+const playlist = {
+    duration: (str) => {
+        const values = str.split(":").reverse();
+        var ms = 0;
+
+        //really shouldn't need days
+        if (values.length > 3)
+            return;
+
+        $.each(values, (index) => {
+            ms += Math.pow(60, index) * 1000 * parseInt(values[index])
         })
+
+        if (isNaN(ms))
+            return -1;
+
+        return ms;
     },
 
-    debug: {
-        log: (msg, test) => {
-            if (settings.get("debugIRC"))
-                utilities.chat.add("Debug", msg, "act");
-            else
-                console.log("ST_DEBUG: " + msg);
-        }
+    pos: (title) => {
+        const elements = $("#plul > li > .title");
+        var position = -1;
+
+        $.each(elements, index => {
+            if (position != -1)
+                return;
+
+            if ($(elements[index]).text() === title)
+                position = index;
+        })
+
+        return position;
     },
 
+    exists: (title) => {
+        return playlist.pos(title) != -1;
+    },
+}
+
+var utilities = {
     deps: {
+
         check: (deps) => {
             var found = 0;
 
@@ -267,6 +344,28 @@ var utilities = {
             return found == deps.length;
         }
     },
+
+    containsMultiple: (string, words, all, minFound) => {
+        if (!string || !words)
+            return false;
+
+        var found = 0;
+
+        for (var word in words)
+            found += (string.indexOf(words[word]) !== -1) ? 1 : 0;
+
+        if (all && found === words.length)
+            return true;
+
+        if (found >= minFound)
+            return true;
+
+        return false;
+    },
+
+    contains: (string, word) => {
+        return utilities.containsMultiple(string, [word], true);
+    },
 }
 
 var tweaks = {
@@ -286,12 +385,55 @@ var tweaks = {
                 else
                     element.removeClass("hidden");
             }
+        },
+
+    },
+
+    users: {
+        amount: {
+            state: false,
+            run: () => {
+                $("#st-info-users > span").text($("#connectedCount").text())
+            },
+        },
+
+        groups: {
+            state: false,
+            deps: [
+                ['SmidqeTweaks', 'showUsergroups'],
+            ],
+
+            run: () => {
+                const values = $("#connectedCountWrapper").attr('title').split("<br />");
+                const element = $('<div>', { id: 'st-info-users-groups' });
+
+                element.empty();
+
+                $.each(values, index => {
+                    if (values[index].length == 0)
+                        return;
+
+                    element.append($('<div>', { class: 'st-info-users-group' }).text(values[index]));
+                })
+            },
+        }
+    },
+
+    debug: {
+        buttons: {
+            deps: [
+                ['SmidqeTweaks', 'active'],
+                ['SmidqeTweaks', 'showButtons']
+            ],
+            state: false,
+            run: function() {
+                this.state = !this.state;
+            },
         }
     },
 
     polls: {
         average: {
-
             state: false,
             prevTimestamp: 0,
             deps: [
@@ -301,7 +443,7 @@ var tweaks = {
                 if (!mutation)
                     return;
 
-                if (mutation.attributeName !== "class" && $(mutation.target).hasClass("active"))
+                if (mutation.attributeName !== "class" || $(mutation.target).hasClass("active"))
                     return;
 
                 const timestamp = (new Date()).getTime();
@@ -313,12 +455,14 @@ var tweaks = {
 
                 const buttons = $(mutation.target).find(".btn:not('.close')");
 
-                //there would be 11 buttons
+                //there would be 11 buttons, 0..10
                 if (buttons.length != 11)
-                    return
+                    return;
 
                 var number = true;
                 var value = 0;
+                console.log("Amount of buttons in the poll: " + buttons.length);
+
                 var count = 0;
 
                 $.each(buttons, i => {
@@ -331,8 +475,14 @@ var tweaks = {
                     count += Number($(buttons[i]).text());
                 })
 
-                if (number) //if the poll really was ep poll
-                    utilities.chat.add("Poll average is ", value / count, 'act')
+                if (!number)
+                    return;
+
+                const average = value / count;
+                const msg = "average is " + average;
+
+                debug.log("Poll average is: " + average);
+                chat.add("Episode average", msg, 'rcv');
             },
         },
 
@@ -343,217 +493,281 @@ var tweaks = {
             deps: [
                 ['SmidqeTweaks', 'pollClose']
             ],
-
+            //rewrite this one 
             run: function(mutation) {
                 if (!mutation)
                     return;
 
-                if (mutation.attributeName === "class" && mutation.attributeOldValue.indexOf("active") != -1) {
-                    const timestamp = ((new Date()).getTime());
+                if (!mutation.oldValue)
+                    return;
 
-                    if (timestamp - this.prevTimestamp < 2000)
-                        return;
+                if (mutation.attributeName !== "class" || $(mutation.target).hasClass("active") || $(mutation.target).hasClass('btn'))
+                    return;
 
-                    this.prevTimestamp = timestamp;
-                    utilities.chat.add("ST", "Poll: " + $(mutation.target).find(".title").text() + ", closed", "act");
-                }
+                if (mutation.oldValue.indexOf("active") === -1)
+                    return;
+
+                console.log(mutation);
+
+                const timestamp = (new Date()).getTime();
+
+                //throttle the messages
+                if (timestamp - this.prevTimestamp < 1000)
+                    return;
+
+                this.prevTimestamp = timestamp;
+
+                const msg = $(mutation.target).find(".title").text() + 'was closed';
+
+                chat.add('Poll', msg, 'act');
             },
         },
     },
 
-
-    /*
-    change : {
-        position: -1,
-        timestamp: -1,
-        title: null,
-        node: null,
-        moved: false,
-        action: null,
-        volatile: false,
-        changed: false,
-    },
-    */
     playlist: {
         notify: {
             state: false,
             prevTimestamp: null,
             defaultTimeout: 1000,
-            messages: [],
-            changes: [], //will hold the nodes
+            changes: {},
             deps: [
                 ["SmidqeTweaks", "playlistNotify"]
             ],
-            get: function(title) {
-                for (var i = 0; i < this.changes.length; i++)
-                    if (this.changes[i].title === title)
-                        return this.changes[i];
-
-                return undefined;
-            },
-            exists: function(title) {
-                return this.get(title) != undefined;
-            },
-
-            modify: function(title, data) {
-                const change = this.get(title);
+            modify: function(change, data, sub, message) {
+                const self = this;
 
                 if (!change)
                     return;
 
                 $.each(data, (key) => {
-                    change[key] = data[key];
+                    if (key === 'start')
+                        return;
+
+                    if ($.isPlainObject(change[key])) //little bit of recursion
+                        self.modify(change[key], data[key], true);
+                    else
+                        change[key] = data[key];
                 })
 
-                change.timestamp = (new Date()).getTime();
-            },
-            add: function(mutation, action) {
-                const element = {};
-                const timestamp = (new Date()).getTime();
-                const node = $(mutation);
-
-                element.title = node.find(".title").text();
-                element.timestamp = timestamp;
-                element.position = $("#plul > li").index(node);
-                element.action = action;
-                element.moved = false;
-                element.node = mutation;
-                element.volatile = node.hasClass("volatile");
-                element.changed = false;
-
-                this.changes.push(element);
-            },
-            helper: (node, messages, setting, message) => {
-                if (!settings.get(setting))
+                if (sub)
                     return;
 
-                const title = node.find(".title").text();
+                if (change.timestamp)
+                    change.timestamp = (new Date()).getTime();
 
-                if (title !== "")
-                    messages.push({ title: title, text: message });
+                if (message)
+                    self.message(change);
+
+                console.log(change);
+            },
+            remove: function(title, message) {
+                const change = this.changes[title];
+
+                if (!change)
+                    return;
+
+                change.state.action = 'removed';
+
+                //if we have added a non volatile video, don't announce it being removed
+                if (message && !change.state.volatile)
+                    this.message(change);
+
+                delete this.changes[title];
+            },
+            add: function(node, action) {
+                const change = {};
+                const self = this;
+
+                change.title = node.find(".title").text();
+                change.livestream = playlist.duration(node.find('.time').text()) === -1;
+                change.timestamp = (new Date()).getTime();
+                change.position = playlist.pos(change.title);
+
+                change.state = {
+                    action: action,
+                    active: node.hasClass('active'),
+                    volatile: node.hasClass('volatile'),
+                    changed: action === 'changed',
+                }
+
+                self.changes[change.title] = change;
             },
             message: (change) => {
-                console.log(change);
-                var msg = "";
+                var msg = change.title;
 
-                msg += change.title;
-                switch (change.action) {
-                    case "add":
-                        {
-                            msg += " was added to playlist";
+                if (change.state.action === 'changed' && change.state.active)
+                    return;
 
-                            if (change.changed)
-                                msg += " and was made into permanent";
+                if (change.state.volatile && !change.state.changed)
+                    msg += ' (volatile)';
 
-                            break;
-                        }
-                    case "remove":
-                        {
-                            if (change.volatile)
-                                msg += " (volatile)"
-
-                            msg += " was removed from playlist";
-                            break;
-                        }
-                    case "moved":
-                        msg += " was moved";
-                        
-                        if (change.changed)
-                            msg += " and was made into permanent";
-                        
+                switch (change.state.action) {
+                    case 'added':
+                        msg += ' was added to playlist';
+                        break;
+                    case 'removed':
+                        msg += ' was removed from playlist';
+                        break;
+                    case 'moved':
+                        msg += ' was moved';
+                        break;
+                    case 'changed':
+                        msg += ' was changed to ' + (change.state.volatile ? 'volatile' : 'permanent');
                         break;
                 }
 
-                utilities.chat.add("PLAYLIST", msg, 'act');
+                if (change.state.action !== 'changed' && change.state.changed)
+                    msg += ' and was changed to ' + (change.state.volatile ? 'volatile' : 'permanent');
 
+                chat.add("Playlist modification", msg, 'act');
             },
-            init: function() {
-                this.clear = setInterval(() => {
-                    const self = tweaks.playlist.notify;
+            isItem: (node) => {
+                if (!node)
+                    return false;
 
-                    var remove = [];
-                    const timestamp = (new Date()).getTime();
+                const title = node.find(".title").text();
 
-                    $.each(self.changes, (index) => {
-                        if (timestamp - self.changes[index].timestamp < self.defaultTimeout)
-                            return;
+                if (!node.prop('tagName'))
+                    return false;
 
-                        remove.push(index);
-                    })
+                if (!node.prop("tagName").toLowerCase() === "li")
+                    return false;
 
-                    for (var i = 0; i < remove.length; i++)
-                        self.message(self.changes.splice(remove[i], 1)[0]);
+                if (!title)
+                    return false;
 
-                }, 1500);
+                if (title.length === 0)
+                    return false;
+
+                return true;
             },
             run: function(mutation) {
                 const self = this;
 
-                if (!self.clear)
-                    self.init();
-
                 if (!mutation)
                     return;
 
-                if (mutation.addedNodes.length > 10 || mutation.removedNodes.length > 10)
-                    return;
-
                 $.each(mutation.addedNodes, (index) => {
-                    const node = $(mutation.addedNodes[index]);
-
-                    if (!node.prop("tagName") === "li")
+                    if (!self.isItem($(mutation.addedNodes[index])))
                         return;
 
+                    const node = $(mutation.addedNodes[index]);
                     const title = node.find(".title").text();
 
-                    if (title.length === 0)
-                        return;
+                    if (!self.changes[title])
+                        self.add(node, 'added');
 
-                    if (!self.exists(title))
-                        self.add(mutation.addedNodes[index], "add");
-                    else
-                        self.modify(title, {}); //update timestamp
+                    const change = self.changes[title];
 
-                    if (self.exists(title)) {
-                        const change = self.get(title);
+                    if (change.state.action === 'removed') {
+                        if (change.timeout)
+                            clearTimeout(change.timeout);
 
-                        if (change.action === "remove")
-                            self.modify(title, { action: "moved", position: $("#plul > li").index(node) })
+                        const position = playlist.pos(change.title)
+
+                        //only modify the things if we actually have a position (-1 means nothing is loaded yet)
+                        if (position != -1)
+                            self.modify(change, { position: position, state: { action: 'moved' } }, false, true)
                     }
-                })
+
+                    if (change.state.action === "added")
+                        self.message(change);
+
+                    if (change.livestream) //fixes multiple livestreams
+                        self.remove(change.title, true);
+                });
 
                 $.each(mutation.removedNodes, (index) => {
-                    const node = $(mutation.removedNodes[index]);
-
-                    if (!node.prop("tagName") === "li")
+                    if (!self.isItem($(mutation.removedNodes[index])))
                         return;
 
+                    const node = $(mutation.removedNodes[index]);
                     const title = node.find(".title").text();
 
-                    if (title.length === 0)
-                        return;
+                    if (!self.changes[title])
+                        self.add(node, 'removed');
 
-                    if (!self.exists(title))
-                        self.add(mutation.removedNodes[index], "remove");
+                    const change = self.changes[title];
 
-                    if (self.exists(title))
-                        self.modify(title, {}); //update the timestamp;
-                })
+                    console.log("Title: " + change.title + ", Current position: " + playlist.pos(change.title) + ", position: " + change.position);
 
-                //check if the element was changed into volatile
-                //
-                /*
+                    if (change.state.action !== 'removed')
+                        self.modify(change, { state: { action: 'removed' } }, false, false)
+
+                    if (change.state.active || change.livestream)
+                        self.remove(change.title, true);
+                    else
+                        change.timeout = setTimeout(() => { tweaks.playlist.notify.remove(change.title, true) }, 1000); //for possible change
+                });
+
                 const node = $(mutation.target);
-                const prevValue = mutation.attributeOldValue;
-                const title = node.find(".title").text();
+                const title = node.find('.title').text();
+                const change = self.changes[title];
 
-                if (node.prop("tagName") === "li" && !node.hasClass("volatile") && prevValue) {
-                    if (prevValue.indexOf("volatile") !== -1)
-                        self.modify(title, { volatile: false })
+                if (mutation.type !== "attributes" || mutation.attributeName !== "class")
+                    return;
+
+                if (!change || !self.isItem(node))
+                    return;
+
+                //check if the livestream is active, enabling the removal
+                if (change.livestream && node.hasClass('active')) {
+                    change.state.active = true;
+                    return;
                 }
-                */
+
+                //modify the current video
+                if (node.hasClass('active') && !change.timeout && !change.state.active) //need to start the timeout
+                    self.modify(change, { state: { active: true } });
+
+                //checks if we have a nonvolatile added into the playlist
+                if (utilities.contains(mutation.oldValue, 'active') && change.state.active && !change.state.volatile)
+                    self.remove(change.title, false);
+
+                var changed = false;
+                const timestamp = (new Date()).getTime();
+
+                //throttle the changes (is this unnecessary?, test tomorrow)
+                if (change.state.changed && (timestamp - change.timestamp < 1000))
+                    return;
+
+                //instead of checking if the node has volatile, check the old value
+                if (node.hasClass('volatile') && !change.state.volatile)
+                    changed = true;
+
+                if (utilities.contains(mutation.oldValue, 'volatile') && change.state.volatile && !node.hasClass('volatile'))
+                    changed = true;
+
+                if (changed)
+                    self.modify(change, { state: { action: 'changed', changed: true, volatile: node.hasClass('volatile') } }, false, true);
             },
         },
+    },
+
+    chat: {
+        rcv: {
+            state: false,
+            deps: [
+                ["SmidqeTweaks", "squeeRCV"]
+            ],
+            run: function(mutation) {
+                if (!mutation)
+                    return;
+
+                const node = $(mutation);
+
+                if (!node.hasClass('message'))
+                    return;
+
+                const rcv = node.hasClass("rcv");
+
+                if (rcv)
+                    window.doSqueeNotify();
+
+                if (rcv && settings.get('paintRCV'))
+                    node.addClass("highlight");
+            }
+        }
     },
 
     video: {
@@ -574,21 +788,23 @@ var tweaks = {
     layout: {
         tweaks: {
             id: "tweaks",
+            maltweaks: false,
             state: false,
+            wrap: () => {
+                $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
+                $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
+                $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
+            },
             enable: function(data) {
-                const maltweaks = settings.get("maltweaks");
                 const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
-                const location = maltweaks ? $('body') : $('head');
+                const location = this.maltweaks ? $('body') : $('head');
 
                 settings.set("active", true, true)
 
                 location.append(stylesheet);
 
-                if (!maltweaks) {
-                    $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
-                    $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
-                    $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
-                }
+                if (!this.maltweaks)
+                    this.wrap();
 
                 $("#chatpane").addClass("st-chat");
                 $("#videowrap").addClass("st-video");
@@ -601,24 +817,22 @@ var tweaks = {
             },
 
             disable: function(data) {
-                const maltweaks = settings.get('maltweaks');
-
-                if (!maltweaks)
+                if (!this.maltweaks)
                     $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
 
                 settings.set("active", false, true)
 
-                $("#chatpane").removeClass("st-chat");
-                $("#videowrap").removeClass("st-video");
-                $("#playlist").removeClass("st-window-playlist");
-
+                $("#chatpane, #videowrap, #playlist").removeClass("st-chat st-video st-window-playlist");
                 $("#st-stylesheet").remove();
+
                 toolbar.state("hide");
-                if (maltweaks) //patch, fixes wrong sized header
+
+                if (this.maltweaks) //patch, fixes wrong sized header when exiting from tweaks
                     $(".wrapper #dyn_header iframe").css({ "height": "140px" });
             },
 
             run: function(data) {
+                this.maltweaks = settings.get('maltweaks');
                 this.state = !this.state;
 
                 if (this.state)
@@ -708,7 +922,7 @@ var tweaks = {
     },
 
     getGroup: function(data) {
-        if (!this[data] || $.isFunction[this[data]])
+        if (!this[data] || $.isFunction(this[data]))
             return undefined;
 
         return this[data];
@@ -815,7 +1029,8 @@ var toolbar = {
             func: () => {
                 tweaks.run(tweaks.layout.tweaks);
             },
-            id: "active"
+            id: "active",
+            toggleable: true,
         },
 
         video: {
@@ -823,6 +1038,7 @@ var toolbar = {
                 ["SmidqeTweaks", "active"],
                 ["SmidqeTweaks", "maltweaks"],
             ],
+            toggleable: true,
             text: "V",
             tooltip: "Toggle video",
             func: () => { tweaks.run(tweaks.video) },
@@ -835,24 +1051,12 @@ var toolbar = {
                 ["SmidqeTweaks", "active"],
                 ["SmidqeTweaks", "debug"],
             ],
+            toggleable: false,
             tooltip: "Send a ircified test message",
             func: () => {
-                utilities.chat.add("ST", "This is a small test", "act");
+                chat.add("ST", "This is a small test", "rcv");
             },
             id: "testMessage",
-        },
-
-        poll: {
-            text: "P",
-            deps: [
-                ["SmidqeTweaks", "active"],
-                ["SmidqeTweaks", "debug"],
-            ],
-            tooltip: "Test out poll average",
-            func: () => {
-                utilities.chat.add("ST", "Testing poll average", "act");
-                tweaks.run(tweaks.get({ group: "polls", tweak: "average" }));
-            },
         },
     },
 
@@ -868,9 +1072,12 @@ var toolbar = {
                     'data-key': btn,
                 })
                 .click(function() {
-                    $(this).toggleClass("active");
+                    const button = buttons[btn];
 
-                    buttons[btn].func();
+                    if (button.toggleable)
+                        $(this).toggleClass("active");
+
+                    button.func();
                 })
 
             obj.attr('title', buttons[btn].tooltip);
@@ -953,9 +1160,6 @@ var bottom = {
 
                 const index = Math.max($(".overview > ul > .active").index() - 2);
 
-                if (settings.get('debug'))
-                    utilities.debug.log("Current active video's index: " + index);
-
                 scrollToPlEntry(index, 0);
                 realignPosHelper();
             },
@@ -968,6 +1172,27 @@ var bottom = {
                 toggle(); //lel
             }
         },
+    },
+
+    createGridBlock: (uid, newClass, text) => {
+        const element = $("<div>");
+
+        if (uid)
+            element.attr('id', uid);
+
+        if (newClass)
+            element.attr('class', newClass);
+
+        if (text)
+            element.attr('text', text);
+
+        element.append($("<span>"));
+
+        return element;
+    },
+
+    showUsergroups: () => {
+
     },
 
     create: function() {
@@ -991,6 +1216,8 @@ var bottom = {
                     buttons[key].func();
                 }))
         })
+
+        //modify this to accept
 
         this.container.append($("<div>", { id: "st-container-info", class: "st-grid" })
             .append($("<div>", { id: "st-info-time", class: "st-grid-block", text: "Time: " }).append($("<span>")))
@@ -1031,7 +1258,10 @@ const listeners = {
         config: { childList: true },
         monitor: "added",
         callback(mutation) {
-            if (($("head > script").attr('src').indexOf("atte.fi") !== -1) && !settings.get("berrytweaks"))
+            if (settings.get('berrytweaks'))
+                return;
+
+            if ($("head > script").attr('href').indexOf("atte.fi") !== -1)
                 settings.set("berrytweaks", true, true);
         },
     },
@@ -1046,7 +1276,15 @@ const listeners = {
         },
         monitor: "all",
         callback(mutation) {
-            $("#st-info-drinks > span").text($("#drinkCounter").text());
+            var count = $("#drinkCounter").text();
+            const elem = $("#st-info-drinks > span");
+
+            //if NaN then just show many, because the default message is too long and breaks the layout
+            if (isNaN(count))
+                elem.text("Many")
+            else
+                $("#st-info-drinks > span").text(count);
+
             $("#st-info-dpm > span").text($(".dpmCounter").text().substring(5))
         },
     },
@@ -1067,19 +1305,28 @@ const listeners = {
         },
         monitor: "added",
         callback(mutation) {
-            $("#st-info-users > span").text($("#connectedCount").text())
+            tweaks.runGroup(tweaks.users);
         },
     },
 
     polls: {
         path: "#pollpane",
-        config: { childList: true, attributes: true, characterData: true, subtree: true },
+        config: { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true },
         monitor: "all",
         callback(mutation) {
             if (mutation.target.id === "pollpane")
                 return;
 
             tweaks.runGroup(tweaks.getGroup("polls"), mutation);
+        }
+    },
+
+    chat: {
+        path: "#chatbuffer",
+        config: { childList: true, attributes: true, characterData: true, subtree: true },
+        monitor: "added",
+        callback(mutation) {
+            tweaks.runGroup(tweaks.getGroup("chat"), mutation);
         }
     },
 
@@ -1144,6 +1391,8 @@ const listeners = {
 
     loadAll: function(start) {
         $.each(this, function(key) {
+            console.log(key);
+
             if ($.isFunction(listeners[key])) //skip funcs
                 return;
 
@@ -1153,6 +1402,19 @@ const listeners = {
             if (start)
                 listeners.start(obs);
         });
+    }
+}
+
+function patch(container, func, callback) {
+    const original = container[func];
+
+    if (!original)
+        return;
+
+    container[func] = function() {
+        const before = original.apply(this, arguments);
+        callback.apply(this, arguments);
+        return before;
     }
 }
 
@@ -1196,11 +1458,6 @@ function init() {
 
     if (!settings.get("maltweaks") && settings.get("active"))
         tweaks.run(tweaks.layout.tweaks);
-
-    //removes nonexistant users from chatlist (prevents false squees)
-    setInterval(() => {
-        utilities.fixChatlist();
-    }, 1000);
 }
 
 init();
