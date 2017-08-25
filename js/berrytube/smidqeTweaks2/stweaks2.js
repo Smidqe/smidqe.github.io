@@ -6,7 +6,7 @@ const self = {
     layout: {},
     interval: -1,
     names: {
-        modules: ['chat', 'layout', 'playlist', 'settings', 'listeners'],
+        modules: ['settings', 'chat', 'layout', 'playlist', 'listeners'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups'],
     },
 
