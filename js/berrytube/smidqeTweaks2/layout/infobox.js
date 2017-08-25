@@ -1,10 +1,13 @@
-const self = {
+function load() {
+    const self = {
 
 
 
-    init: () => {
+        init: () => {
 
-    },
+        },
+    }
+
+    return self;
 }
-
-SmidqeTweaks.layout['infobox'] = self;
+SmidqeTweaks.modules.layout.modules.infobox = load();

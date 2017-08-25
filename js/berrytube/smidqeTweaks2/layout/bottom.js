@@ -6,13 +6,7 @@ function load() {
         windows: [],
 
         create: () => {
-            $.each(titles, index => {
 
-
-                $('').on('click', () => {
-                    SmidqeTweaks.layout.windows.toggle(keys[index]);
-                })
-            })
         },
 
         init: () => {
@@ -22,4 +16,4 @@ function load() {
 
     return self;
 }
-SmidqeTweaks.layout.modules.bottom = load();
+SmidqeTweaks.modules.layout.modules.bottom = load();

@@ -71,4 +71,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.modules.layout.windows = load();
+SmidqeTweaks.modules.layout.modules.windows = load();
