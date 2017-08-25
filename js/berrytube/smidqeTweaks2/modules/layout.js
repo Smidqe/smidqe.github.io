@@ -38,13 +38,13 @@ function load() {
             //load the listeners
             self.settings = SmidqeTweaks.settings;
 
-            self.configs.maltweaks.func = self.handleMaltweaks;
-            self.configs.berrytweaks.func = self.handleBerryTweaks;
+            self.listeners.maltweaks.func = self.handleMaltweaks;
+            self.listeners.berrytweaks.func = self.handleBerryTweaks;
 
             self.settings.set('maltweaks', false, true);
             self.settings.set('berrytweaks', false, true)
 
-            $.each(self.configs, (key, value) => {
+            $.each(self.listeners, (key, value) => {
                 self.listeners[key].observer = SmidqeTweaks.listeners.create(value);
                 SmidqeTweaks.listeners.start(self.listeners[key]);
             });
