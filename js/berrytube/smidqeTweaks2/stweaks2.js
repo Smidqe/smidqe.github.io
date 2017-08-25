@@ -27,7 +27,10 @@ const self = {
     load: () => {
         $.each(self.names.modules, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
-
+                //check if the module needs starting
+                //layout is currently the only one that does need that
+                if (self.modules[name].init)
+                    self.modules[name].init();
             })
         })
 

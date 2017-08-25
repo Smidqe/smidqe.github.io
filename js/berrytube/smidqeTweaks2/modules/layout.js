@@ -52,7 +52,7 @@ function load() {
 
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
-                    self.modules[name].init();
+                    self.modules[value].init();
                 })
             });
         },
