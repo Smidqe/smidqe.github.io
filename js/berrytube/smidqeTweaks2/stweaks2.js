@@ -4,7 +4,7 @@ const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
     names: {
-        modules: ['chat', 'layout', 'playlist', 'settings'],
+        modules: ['chat', 'layout', 'playlist', 'settings', 'listeners'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups'],
     },
 
@@ -42,7 +42,7 @@ const self = {
             self.settings.show();
         })
 
-
+        self.layout.init();
     },
 }
 
