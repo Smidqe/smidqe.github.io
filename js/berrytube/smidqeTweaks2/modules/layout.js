@@ -1,9 +1,6 @@
 function load() {
     const self = {
-        listeners: {},
-        modules: {},
-        names: ['bottom', 'infobox', 'toolbar', 'windows', 'wraps'],
-        configs: {
+        listeners: {
             maltweaks: {
                 path: "body",
                 config: { childList: true },
@@ -16,6 +13,8 @@ function load() {
                 monitor: "added",
             }
         },
+        modules: {},
+        names: ['bottom', 'infobox', 'toolbar', 'windows', 'wraps'],
         handleMaltweaks: (mutation) => {
             const isMaltweaks = self.settings.get('maltweaks');
 
@@ -35,17 +34,6 @@ function load() {
             SmidqeTweaks.settings.set("berrytweaks", true, true);
             self.listeners['berrytweaks'].disconnect();
         },
-        start: () => {
-            window.setTimeout(function() {
-                if (self.modules.length == self.names.length) {
-                    $.each(self.modules, name => {
-                        self.modules[name].init();
-                    })
-                } else {
-                    window.setTimeout(self.start, 250);
-                }
-            }, 250);
-        },
         init: () => {
             //load the listeners
             self.settings = SmidqeTweaks.settings;
@@ -57,7 +45,7 @@ function load() {
             self.settings.set('berrytweaks', false, true)
 
             $.each(self.configs, (key, value) => {
-                self.listeners[key] = SmidqeTweaks.listeners.load(value);
+                self.listeners[key].observer = SmidqeTweaks.listeners.create(value);
                 SmidqeTweaks.listeners.start(self.listeners[key]);
             });
 
@@ -70,8 +58,9 @@ function load() {
                 clearInterval(SmidqeTweaks.interval);
             }, 250)
 
-            if (!SmidqeTweaks.settings.get('maltweaks') && SmidqeTweaks.settings.get('active'))
-                self.start();
+            $.each(self.modules, name => {
+                self.modules[name].init();
+            })
         },
     }
 
