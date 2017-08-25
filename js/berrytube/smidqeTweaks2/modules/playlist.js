@@ -40,4 +40,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.playlist = load();
+SmidqeTweaks.modules.playlist = load();

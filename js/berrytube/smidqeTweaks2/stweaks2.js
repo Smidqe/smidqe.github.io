@@ -3,6 +3,8 @@
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
+    layout: {},
+    interval: -1,
     names: {
         modules: ['chat', 'layout', 'playlist', 'settings', 'listeners'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups'],
@@ -33,6 +35,7 @@ const self = {
         })
         */
     },
+
     init: () => {
         self.load();
 
@@ -41,8 +44,6 @@ const self = {
         self.patch(window, 'showConfigMenu', () => {
             self.settings.show();
         })
-
-        self.layout.init();
     },
 }
 

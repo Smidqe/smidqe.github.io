@@ -36,9 +36,15 @@ function load() {
             self.listeners['berrytweaks'].disconnect();
         },
         start: () => {
-            $.each(self.modules, name => {
-                self.modules[name].init();
-            })
+            window.setTimeout(function() {
+                if (self.modules.length == self.names.length) {
+                    $.each(self.modules, name => {
+                        self.modules[name].init();
+                    })
+                } else {
+                    window.setTimeout(self.start, 250);
+                }
+            }, 250);
         },
         init: () => {
             //load the listeners
@@ -52,14 +58,19 @@ function load() {
 
             $.each(self.configs, (key, value) => {
                 self.listeners[key] = SmidqeTweaks.listeners.load(value);
-                self.listeners[key].start();
+                SmidqeTweaks.listeners.start(self.listeners[key]);
             });
 
             $.each(names, index => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/SmidqeTweaks2/layout/${names[index]}.js`)
             });
 
-            if (!SmidqeTweaks.settings.get('maltweak') && SmidqeTweaks.settings.get('active'))
+            self.interval = setInterval(function() {
+                console.log(this, self);
+                clearInterval(SmidqeTweaks.interval);
+            }, 250)
+
+            if (!SmidqeTweaks.settings.get('maltweaks') && SmidqeTweaks.settings.get('active'))
                 self.start();
         },
     }
