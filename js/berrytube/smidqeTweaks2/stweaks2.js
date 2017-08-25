@@ -26,7 +26,9 @@ const self = {
     },
     load: () => {
         $.each(self.names.modules, (index, name) => {
-            $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`)
+            $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
+
+            })
         })
 
         /*

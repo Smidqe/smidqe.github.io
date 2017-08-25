@@ -1,5 +1,6 @@
 function load() {
     const self = {
+        settings: null,
         listeners: {
             maltweaks: {
                 path: "body",
@@ -28,15 +29,15 @@ function load() {
                 self.start();
         },
         handleBerryTweaks: () => {
-            if ($("head > script").attr('href').indexOf("atte.fi") === -1)
+            if ($("head > link").attr('href').indexOf("atte.fi") === -1)
                 return;
 
-            SmidqeTweaks.settings.set("berrytweaks", true, true);
+            self.settings.set("berrytweaks", true, true);
             self.listeners['berrytweaks'].disconnect();
         },
         init: () => {
             //load the listeners
-            self.settings = SmidqeTweaks.settings;
+            self.settings = SmidqeTweaks.modules.settings;
 
             self.listeners.maltweaks.func = self.handleMaltweaks;
             self.listeners.berrytweaks.func = self.handleBerryTweaks;
@@ -45,27 +46,18 @@ function load() {
             self.settings.set('berrytweaks', false, true)
 
             $.each(self.listeners, (key, value) => {
-                self.listeners[key].observer = SmidqeTweaks.listeners.create(value);
-                SmidqeTweaks.listeners.start(self.listeners[key]);
+                self.listeners[key].observer = SmidqeTweaks.modules.listeners.create(value);
+                SmidqeTweaks.modules.listeners.start(self.listeners[key]);
             });
 
             $.each(self.names, (index, value) => {
-                $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`)
-            });
-
-            self.interval = setInterval(function() {
-                if (self.modules.length != self.names.length)
-                    return;
-
-                $.each(self.modules, name => {
+                $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
                     self.modules[name].init();
                 })
-
-                clearInterval(self.interval);
-            }, 250)
+            });
         },
     }
 
     return self;
 }
-SmidqeTweaks.layout = load();
+SmidqeTweaks.modules.layout = load();

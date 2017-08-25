@@ -73,4 +73,4 @@ function load() {
 
     return self;
 }
-SmidqeTweaks.settings = load();
+SmidqeTweaks.modules.settings = load();

@@ -34,4 +34,4 @@ function load() {
     }
     return self;
 }
-SmidqeTweaks.chat = load();
+SmidqeTweaks.modules.chat = load();
