@@ -49,8 +49,8 @@ function load() {
                 SmidqeTweaks.listeners.start(self.listeners[key]);
             });
 
-            $.each(self.names, index => {
-                $.getScript(`https://smidqe.github.io/js/berrytube/SmidqeTweaks2/layout/${names[index]}.js`)
+            $.each(self.names, (index, value) => {
+                $.getScript(`https://smidqe.github.io/js/berrytube/SmidqeTweaks2/layout/${value}.js`)
             });
 
             self.interval = setInterval(function() {
