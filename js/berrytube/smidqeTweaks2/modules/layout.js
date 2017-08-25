@@ -54,13 +54,17 @@ function load() {
             });
 
             self.interval = setInterval(function() {
-                console.log(this, self);
-                clearInterval(SmidqeTweaks.interval);
+                if (self.modules.length != self.names.length)
+                    return;
+
+                $.each(self.modules, name => {
+                    self.modules[name].init();
+                })
+
+                clearInterval(self.interval);
             }, 250)
 
-            $.each(self.modules, name => {
-                self.modules[name].init();
-            })
+
         },
     }
 
