@@ -51,7 +51,7 @@ function load() {
             self.settings.set('berrytweaks', false, true)
 
             $.each(self.configs, (key, value) => {
-                self.listeners[key] = SmidqeTweaks.modules.listeners.load(value);
+                self.listeners[key] = SmidqeTweaks.listeners.load(value);
                 self.listeners[key].start();
             });
 
