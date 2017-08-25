@@ -6,13 +6,19 @@ function load() {
         get: (key, fallback) => {
             return self.storage[key] || fallback;
         },
+        set: (key, value, save) => {
+            self.storage[key] = value;
+
+            if (save)
+                self.save();
+        },
         load: () => {
-            self.storage = JSON.parse(localStorage.SmidqeTweaks || '{}')
+            self.storage = JSON.parse(localStorage.SmidqeTweaks2 || '{}')
         },
         save: () => {
-            localStorage.SmidqeTweaks = JSON.stringify(self.storage);
+            localStorage.SmidqeTweaks2 = JSON.stringify(self.storage);
         },
-        create: (data, sub) => {
+        create: (data) => {
             const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
             const element = $('<input>', {
                     type: data.type,
@@ -24,7 +30,7 @@ function load() {
                     self.refresh();
                 })
 
-            if (sub)
+            if (data.sub)
                 wrap.addClass('st-setting-sub');
 
             return wrap.append(element);
@@ -38,8 +44,6 @@ function load() {
             cont.empty();
             cont.append($('<legend>', { text: 'SmidqeTweaks' }));
 
-            $("#settingsGui > ul").append($('<li>').append(cont));
-
             //create the groups
             $.each(self.groups, (key, val) => {
                 cont.append($('<div>', {
@@ -50,18 +54,20 @@ function load() {
             })
 
             //add to those groups
-            $.each(SmidqeTweaks.modules, (key, mod) => {
+            $.each(SmidqeTweaks.scripts, (key, mod) => {
                 if (!mod.settings)
                     return;
 
                 //add every setting
                 $.each(mod.settings, (key, val) => {
-                    const setting = self.settings.create(val, !!val.sub)
-                    const group = '.st-settings-group.' + mod.group;
+                    const setting = self.settings.create(val);
+                    const group = cont.find('.st-settings-group.' + mod.group);
 
                     $(group).append(setting);
                 })
             })
+
+            $("#settingsGui > ul").append($('<li>').append(cont));
         }
     }
 
