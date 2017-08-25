@@ -49,7 +49,7 @@ function load() {
                 SmidqeTweaks.listeners.start(self.listeners[key]);
             });
 
-            $.each(names, index => {
+            $.each(self.names, index => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/SmidqeTweaks2/layout/${names[index]}.js`)
             });
 
