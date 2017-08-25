@@ -1,22 +1,25 @@
-const self = {
-    element: null,
-    buttons: {},
-    titles: ["About", ""],
-    windows: [],
+function load() {
+    const self = {
+        element: null,
+        buttons: {},
+        titles: ["About", ""],
+        windows: [],
 
-    create: () => {
-        $.each(titles, index => {
+        create: () => {
+            $.each(titles, index => {
 
 
-            $('').on('click', () => {
-                SmidqeTweaks.layout.windows.toggle(keys[index]);
+                $('').on('click', () => {
+                    SmidqeTweaks.layout.windows.toggle(keys[index]);
+                })
             })
-        })
-    },
+        },
 
-    init: () => {
+        init: () => {
 
-    },
+        },
+    }
+
+    return self;
 }
-
-SmidqeTweaks.layout['bottom'] = self;
+SmidqeTweaks.layout.modules.bottom = load();

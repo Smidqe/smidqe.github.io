@@ -51,4 +51,8 @@ function load() {
             obs.observer.disconnect();
         },
     }
+
+    return self;
 }
+
+SmidqeTweaks.listeners = load();

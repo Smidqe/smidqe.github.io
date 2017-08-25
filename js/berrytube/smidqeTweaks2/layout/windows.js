@@ -67,6 +67,8 @@ function load() {
             })
         }
     }
+
+    return self;
 }
 
 SmidqeTweaks.modules.layout.windows = load();
