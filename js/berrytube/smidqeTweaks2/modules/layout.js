@@ -4,18 +4,16 @@ function load() {
         modules: {},
         names: ['bottom', 'infobox', 'toolbar', 'windows', 'wraps'],
         configs: {
-            body: {
+            maltweaks: {
                 path: "body",
                 config: { childList: true },
                 monitor: "added",
-                func: self.handleMaltweaks,
             },
 
             berrytweaks: { //if there will be more than one use for this, change the name
                 path: "head",
                 config: { childList: true },
                 monitor: "added",
-                func: self.handleBerryTweaks,
             }
         },
         handleMaltweaks: (mutation) => {
@@ -45,6 +43,9 @@ function load() {
         init: () => {
             //load the listeners
             self.settings = SmidqeTweaks.settings;
+
+            self.configs.maltweaks.func = self.handleMaltweaks;
+            self.configs.berrytweaks.func = self.handleBerryTweaks;
 
             self.settings.set('maltweaks', false, true);
             self.settings.set('berrytweaks', false, true)
