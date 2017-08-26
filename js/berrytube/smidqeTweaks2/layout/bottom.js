@@ -129,7 +129,7 @@ function load() {
             })
 
 
-
+            $('body').append(self.bar.container);
         },
     }
 
