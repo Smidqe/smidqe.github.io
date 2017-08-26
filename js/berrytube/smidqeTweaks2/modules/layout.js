@@ -90,13 +90,16 @@ function load() {
 
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
+                    console.log("Loading module " + value);
                     self.modules[value].init();
                 })
             });
 
             setTimeout(() => {
-                self.listeners['maltweaks'].observer.disconnect();
-            }, 15000)
+                $.each(self.listeners, (key) => {
+                    self.listeners[key].observer.disconnect();
+                })
+            }, 30000)
         },
     }
 
