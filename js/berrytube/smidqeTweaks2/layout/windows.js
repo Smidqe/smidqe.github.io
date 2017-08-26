@@ -8,13 +8,16 @@ function load() {
         settings: null,
         modules: {
             rules: {
-                paths: ["#motdwrap", "#st-wrap-motd"]
+                paths: ["#motdwrap", "#st-wrap-motd"],
+                classes: [],
             },
             header: {
                 paths: ["#headwrap", "#st-wrap-header"],
+                classes: [],
             },
             footer: {
                 paths: ["#main #footwrap", "#st-wrap-footer"],
+                classes: [],
             },
             polls: {
                 paths: ["#pollpane"],
@@ -26,6 +29,7 @@ function load() {
             },
             login: {
                 paths: [".wrapper #headbar"],
+                classes: [],
             },
             playlist: {
                 paths: ["#main #leftpane"],
