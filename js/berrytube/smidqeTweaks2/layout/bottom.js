@@ -107,6 +107,8 @@ function load() {
             $.each(data.callbacks, (key, value) => {
                 button.on(key, value());
             })
+
+            return button;
         },
 
         createGridBlock: (key, data) => {
@@ -125,7 +127,7 @@ function load() {
             console.log("loading bottom buttons")
 
             $.each(self.buttons, (key, value) => {
-                self.createButton(key, value);
+                self.bar.buttons.append(self.createButton(key, value));
             })
 
 
