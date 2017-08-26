@@ -105,7 +105,7 @@ function load() {
             })
 
             $.each(data.callbacks, (key, value) => {
-                button.on(key, value());
+                button.on(key, value);
             })
 
             return button;
@@ -114,8 +114,6 @@ function load() {
         createGridBlock: (key, data) => {
             const block = $("<div>", { id: "st-container-info", class: "st-grid" });
 
-            if (data.group)
-            ;
         },
         init: () => {
             self.windows = SmidqeTweaks.modules.layout.modules.windows;
