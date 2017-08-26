@@ -4,7 +4,7 @@ function load() {
 
 
         init: () => {
-
+            console.log('loading infobox');
         },
     }
 

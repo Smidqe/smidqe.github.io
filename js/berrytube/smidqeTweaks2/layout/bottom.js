@@ -10,7 +10,7 @@ function load() {
         },
 
         init: () => {
-
+            console.log("loading bottom buttons")
         },
     }
 

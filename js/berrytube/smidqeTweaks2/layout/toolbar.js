@@ -51,11 +51,15 @@ function load() {
             })
         },
         init: () => {
+            console.log('loading toolbar');
+
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
 
             $.each(self.buttons, (key, value) => {
                 self.create(value);
             })
+
+            $('#chatControls').append(self.bar);
         },
     };
 
