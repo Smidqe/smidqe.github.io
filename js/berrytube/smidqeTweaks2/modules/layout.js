@@ -20,7 +20,7 @@ function load() {
             }
         },
         modules: {},
-        names: ['bottom', 'infobox', 'toolbar', 'windows', 'wraps'],
+        names: ['bottom', 'infobox', 'toolbar', 'windows', 'wraps', 'chat', 'playlist', 'video'],
         handleMaltweaks: (mutation) => {
             const isMaltweaks = self.settings.get('maltweaks');
 
@@ -50,6 +50,12 @@ function load() {
 
             location.append(stylesheet);
 
+            /*
+            $.each(self.modules, (key, value) => {
+                value.enable();
+            })
+            */
+
             if (!self.settings.get('maltweaks'))
                 self.modules.wraps.enable();
 
@@ -64,6 +70,12 @@ function load() {
                 $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
 
             self.settings.set("active", false, true)
+
+            /*
+            $.each(self.modules, (key, value) => {
+                value.disable();
+            })
+            */
 
             $("#chatpane, #videowrap, #playlist").removeClass("st-chat st-video st-window-playlist");
             $("#st-stylesheet").remove();

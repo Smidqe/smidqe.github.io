@@ -41,6 +41,12 @@ function load() {
             },
         },
 
+        show: (key) => {
+
+        },
+        hide: () => {
+
+        },
         toggle: (key) => {
             if (key !== self.previous)
                 $(".st-window-open").removeClass("st-window-open");
@@ -54,9 +60,7 @@ function load() {
             self.previous = key;
         },
 
-        init: () => {
-            self.settings = SmidqeTweaks.modules.settings;
-
+        enable: () => {
             $.each(self.modules, (key, value) => {
                 var pathIndex = 0;
 
@@ -69,6 +73,10 @@ function load() {
 
                 $(value.paths[pathIndex]).addClass('st-window-default');
             })
+        },
+
+        init: () => {
+            self.settings = SmidqeTweaks.modules.settings;
         }
     }
 
