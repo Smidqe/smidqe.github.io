@@ -124,7 +124,7 @@ function load() {
 
             console.log("loading bottom buttons")
 
-            $.each(buttons, (key, value) => {
+            $.each(self.buttons, (key, value) => {
                 self.createButton(key, value);
             })
 
