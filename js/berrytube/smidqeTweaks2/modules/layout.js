@@ -1,3 +1,8 @@
+/*
+Add more files to layout
+    - video, chat, playlist \\hmmm
+*/
+
 function load() {
     const self = {
         settings: null,
@@ -25,15 +30,48 @@ function load() {
             if (mutation.id === 'headwrap' && !isMaltweaks)
                 self.settings.set('maltweaks', true, true);
 
-            if (self.settings.get("active") && self.settings.get("maltweaks"))
+            if (self.settings.get("active") && self.settings.get("maltweaks")) {
+                self.listeners['maltweaks'].observer.disconnect();
                 self.start();
+            }
         },
         handleBerryTweaks: () => {
             if ($("head > link").attr('href').indexOf("atte.fi") === -1)
                 return;
 
             self.settings.set("berrytweaks", true, true);
-            self.listeners['berrytweaks'].disconnect();
+            self.listeners['berrytweaks'].observer.disconnect();
+        },
+        enable: () => {
+            const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
+            const location = self.settings.get('maltweaks') ? $('body') : $('head');
+
+            self.settings.set("active", true, true)
+
+            location.append(stylesheet);
+
+            if (!self.settings.get('maltweaks'))
+                self.modules.wraps.enable();
+
+            $("#chatpane").addClass("st-chat");
+            $("#videowrap").addClass("st-video");
+            $("#playlist").addClass("st-window-playlist");
+
+            $("#st-controls-container").removeClass("st-window-default");
+        },
+        disable: () => {
+            if (!self.settings.get('maltweaks'))
+                $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
+
+            self.settings.set("active", false, true)
+
+            $("#chatpane, #videowrap, #playlist").removeClass("st-chat st-video st-window-playlist");
+            $("#st-stylesheet").remove();
+
+            self.modules.toolbar.hide();
+
+            if (self.settings.get('maltweaks')) //patch, fixes wrong sized header when exiting from tweaks
+                $(".wrapper #dyn_header iframe").css({ "height": "140px" });
         },
         init: () => {
             //load the listeners
@@ -55,6 +93,10 @@ function load() {
                     self.modules[value].init();
                 })
             });
+
+            setTimeout(() => {
+                self.listeners['maltweaks'].observer.disconnect();
+            }, 15000)
         },
     }
 

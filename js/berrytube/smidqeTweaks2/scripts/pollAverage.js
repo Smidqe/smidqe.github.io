@@ -48,7 +48,7 @@ const self = {
         })
     },
     disable: () => {
-
+        SmidqeTweaks.patch(window, 'closePoll', (data) => {}) //remove the callback
     }
 }
 

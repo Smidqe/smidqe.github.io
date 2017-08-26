@@ -1,15 +1,16 @@
 //this will be a fully rewritten smidqetweaks, trying to go without using mutationobserver
 //
+
+/*
+
+*/
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
-    layout: {},
-    interval: -1,
     names: {
-        modules: ['settings', 'chat', 'layout', 'playlist', 'listeners'],
+        modules: ['settings', 'listeners', 'layout', 'chat', 'playlist'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups'],
     },
-
     refresh: () => {},
     patch: (container, func, callback) => {
         const original = container[func];
@@ -29,8 +30,10 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
                 //check if the module needs starting
                 //layout is currently the only one that does need that
-                if (self.modules[name].init)
-                    self.modules[name].init();
+                const mod = self.modules[name];
+
+                if (mod.runnable)
+                    mod.init();
             })
         })
 

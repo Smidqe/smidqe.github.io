@@ -5,6 +5,7 @@
 */
 function load() {
     const self = {
+        settings: null,
         modules: {
             rules: {
                 paths: ["#motdwrap", "#st-wrap-motd"]
@@ -40,30 +41,29 @@ function load() {
             if (key !== self.previous)
                 $(".st-window-open").removeClass("st-window-open");
 
-            const window = self.modules[key];
             var pathIndex = 0;
-
-            if (element.paths.length == 2 && SmidqeTweaks.settings.get('maltweaks'))
+            if (element.paths.length == 2 && self.settings.get('maltweaks'))
                 pathIndex = 1;
 
-            $(window.paths[pathIndex]).toggleClass("st-window-open");
+            $(self.modules[key].paths[pathIndex]).toggleClass("st-window-open");
 
             self.previous = key;
         },
 
         init: () => {
-            $.each(modules, (key) => {
-                const element = modules[key];
+            self.settings = SmidqeTweaks.modules.settings;
+
+            $.each(self.modules, (key, value) => {
                 var pathIndex = 0;
 
-                if (element.paths.length == 2 && SmidqeTweaks.settings.get('maltweaks'))
+                if (value.paths.length == 2 && self.settings.get('maltweaks'))
                     pathIndex = 1;
 
-                $.each(element.classes, c => {
-                    $(element.paths[pathIndex]).addClass(element.classes[c]);
+                $.each(value.classes, c => {
+                    $(value.paths[pathIndex]).addClass(value.classes[c]);
                 })
 
-                $(element.paths[pathIndex]).addClass('st-window-default');
+                $(value.paths[pathIndex]).addClass('st-window-default');
             })
         }
     }
