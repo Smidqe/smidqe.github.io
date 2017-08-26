@@ -5,6 +5,7 @@ Add more files to layout
 
 function load() {
     const self = {
+        runnable: true,
         settings: null,
         listeners: {
             maltweaks: {

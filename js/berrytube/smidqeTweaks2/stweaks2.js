@@ -8,7 +8,7 @@ const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
     names: {
-        modules: ['settings', 'listeners', 'layout', 'chat', 'playlist'],
+        modules: ['settings', 'listeners', 'chat', 'playlist', 'layout', ],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups'],
     },
     refresh: () => {},
