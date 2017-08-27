@@ -31,7 +31,7 @@ function load() {
 
             if (self.settings.get("active") && self.settings.get("maltweaks")) {
                 self.listeners['maltweaks'].observer.disconnect();
-                self.start();
+                self.enable();
             }
         },
         handleBerryTweaks: () => {
@@ -84,7 +84,7 @@ function load() {
 
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
-                    setTimeout(self.modules[value].init(), 500);
+                    self.modules[value].init();
                 })
             });
 

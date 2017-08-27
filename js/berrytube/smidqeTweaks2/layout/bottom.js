@@ -103,19 +103,31 @@ function load() {
 
                 console.log(key, window);
 
-                self.windows.toggle(key);
+                //helps with ajax calls
+                SmidqeTweaks.getModule('windows', 'layout').toggle(key);
             })
 
             $.each(data.callbacks, (key, value) => {
                 button.on(key, value);
             })
 
-            return button;
+            self.bar.buttons.append(button)
         },
 
         createGridBlock: (key, data) => {
-            const block = $("<div>", { id: "st-container-info", class: "st-grid" });
+            const group = $('<div>', { id: 'st-info-group-' + key });
 
+            $.each(data.ids, (index, value) => {
+                const element = $('<div>', { id: 'st-info-' + value, class: 'st-grid-block' }).append($("<span>"));
+
+                if (data.group)
+                    group.append(element);
+                else
+                    self.bar.grid.append(element);
+            })
+
+            if (data.group)
+                self.bar.grid.append(group);
         },
         enable: () => {
             $(self.bar.container).removeClass('st-window-default');
@@ -124,18 +136,22 @@ function load() {
             $(self.bar.container).addClass('st-window-default');
         },
         init: () => {
-            self.windows = SmidqeTweaks.modules.layout.modules.windows;
             self.bar.buttons = $('<div>', { class: "st-buttons-container" });
             self.bar.container = $("<div>", { id: "st-controls-container", class: "st-controls-wrap st-window-default" });
+            self.bar.grid = $("<div>", { id: "st-container-info", class: "st-grid" });
 
             self.bar.container.append(self.bar.buttons);
+            self.bar.container.append(self.bar.grid);
 
             console.log("loading bottom buttons")
 
             $.each(self.buttons, (key, value) => {
-                self.bar.buttons.append(self.createButton(key, value));
+                self.createButton(key, value);
             })
 
+            $.each(self.grids, (key, value) => {
+                self.createGridBlock(key, value);
+            })
 
             $('body').append(self.bar.container);
         },
@@ -144,3 +160,4 @@ function load() {
     return self;
 }
 SmidqeTweaks.modules.layout.modules.bottom = load();
+//SmidqeTweaks.addModule('bottom', ')

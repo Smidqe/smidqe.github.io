@@ -57,7 +57,7 @@ const self = {
             cont.append($('<legend>', { text: 'SmidqeTweaks' }));
 
             //create the groups
-            $.each(self.groups, (key, val) => {
+            $.each(self.settings.groups, (key, val) => {
                 cont.append($('<div>', {
                     class: 'st-settings-group ' + val,
                 }).append($('<label>', {
@@ -91,6 +91,13 @@ const self = {
     },
     removeModule: (title) => {
         delete self.modules[title];
+    },
+    getModule: (title, _from) => {
+        if (_from === 'layout')
+            return self.modules.layout[title];
+
+        if (_from === 'main')
+            return self.modules[title];
     },
     refresh: () => {
         $.each(self.modules, (key, mod) => {
