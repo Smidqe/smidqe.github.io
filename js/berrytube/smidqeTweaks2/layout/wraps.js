@@ -2,7 +2,7 @@ function load() {
     const self = {
         settings: null,
         enable: () => {
-            if (settings.get('maltweaks'))
+            if (self.settings.get('maltweaks'))
                 return;
 
             $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
@@ -10,7 +10,7 @@ function load() {
             $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
         },
         disable: () => {
-            if (settings.get('maltweaks'))
+            if (self.settings.get('maltweaks'))
                 return;
 
             $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
