@@ -101,6 +101,8 @@ function load() {
                 if (!window)
                     return;
 
+                console.log(key);
+
                 self.windows.toggle(key);
             })
 
