@@ -118,7 +118,7 @@ function load() {
             const group = $('<div>', { id: 'st-info-group-' + key });
 
             $.each(data.ids, (index, value) => {
-                const element = $('<div>', { id: 'st-info-' + value, class: 'st-grid-block' }).append($("<span>"));
+                const element = $('<div>', { id: 'st-info-' + value, class: 'st-grid-block', text: data.titles[index] }).append($("<span>"));
 
                 if (data.group)
                     group.append(element);

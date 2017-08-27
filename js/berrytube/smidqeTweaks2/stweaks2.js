@@ -99,6 +99,12 @@ const self = {
         if (_from === 'main')
             return self.modules[title];
     },
+    getScript: (title) => {
+        return self.scripts[title];
+    },
+    addScript: (title, script) => {
+        self.scripts[title] = script;
+    },
     refresh: () => {
         $.each(self.modules, (key, mod) => {
             mod.disable();

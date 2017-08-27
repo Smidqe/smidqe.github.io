@@ -78,13 +78,13 @@ function load() {
             self.settings.set('maltweaks', false, true);
             self.settings.set('berrytweaks', false, true)
 
-            if ($("head > link").attr('href').indexOf("atte.fi") === -1)
-                self.settings.set('berrytweaks', true, true);
-
             $.each(self.listeners, (key, value) => {
                 self.listeners[key].observer = SmidqeTweaks.modules.listeners.create(value);
                 SmidqeTweaks.modules.listeners.start(self.listeners[key]);
             });
+
+            if ($("head > link").attr('href').indexOf("atte.fi") === -1)
+                self.settings.set('berrytweaks', true, true);
 
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
