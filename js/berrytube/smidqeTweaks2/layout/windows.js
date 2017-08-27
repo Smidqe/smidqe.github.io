@@ -71,7 +71,18 @@ function load() {
         },
 
         disable: () => {
+            $.each(self.modules, (key, value) => {
+                var pathIndex = 0;
 
+                if (value.paths.length == 2 && self.settings.get('maltweaks'))
+                    pathIndex = 1;
+
+                $.each(value.classes, c => {
+                    $(value.paths[pathIndex]).removeClass(value.classes[c]);
+                })
+
+                $('.st-window-default').removeClass('st-window-default');
+            })
         },
 
         init: () => {
