@@ -81,7 +81,7 @@ function load() {
         },
 
         init: () => {
-            self.settings = SmidqeTweaks.modules.settings;
+            self.settings = SmidqeTweaks.settings;
         }
     }
 

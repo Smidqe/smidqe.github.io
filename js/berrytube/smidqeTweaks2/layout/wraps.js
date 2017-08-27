@@ -16,7 +16,7 @@ function load() {
             $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
         },
         init: () => {
-            self.settings = SmidqeTweaks.modules.settings;
+            self.settings = SmidqeTweaks.settings;
         },
     }
 

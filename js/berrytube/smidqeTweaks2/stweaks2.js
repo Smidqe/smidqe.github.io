@@ -8,8 +8,79 @@ const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
     names: {
-        modules: ['settings', 'listeners', 'layout', 'chat', 'playlist'],
+        modules: ['listeners', 'chat', 'playlist', 'layout'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups'],
+    },
+    settings: {
+        container: null,
+        storage: {},
+        groups: ['chat', 'polls', 'playlist', 'patches'],
+        get: (key, fallback) => {
+            return self.settings.storage[key] || fallback;
+        },
+        set: (key, value, save) => {
+            self.settings.storage[key] = value;
+
+            if (save)
+                self.save();
+        },
+        load: () => {
+            self.storage = JSON.parse(localStorage.SmidqeTweaks2 || '{}')
+        },
+        save: () => {
+            localStorage.SmidqeTweaks2 = JSON.stringify(self.settings.storage);
+        },
+        create: (data) => {
+            const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
+            const element = $('<input>', {
+                    type: data.type,
+                    checked: self.settings.get(data.key),
+                    'data-key': data.key,
+                })
+                .change(function() {
+                    self.settings.save();
+                    //self.refresh();
+                })
+
+            if (data.sub)
+                wrap.addClass('st-setting-sub');
+
+            return wrap.append(element);
+        },
+        show: () => {
+            var cont = self.settings.container;
+
+            if (!cont)
+                cont = $('<fieldset>');
+
+            cont.empty();
+            cont.append($('<legend>', { text: 'SmidqeTweaks' }));
+
+            //create the groups
+            $.each(self.groups, (key, val) => {
+                cont.append($('<div>', {
+                    class: 'st-settings-group ' + val,
+                }).append($('<label>', {
+                    text: (val[0].toUpperCase() + val.slice(1)),
+                })));
+            })
+
+            //add to those groups
+            $.each(self.scripts, (key, mod) => {
+                if (!mod.settings)
+                    return;
+
+                //add every setting
+                $.each(mod.settings, (key, val) => {
+                    const setting = self.settings.create(val);
+                    const group = cont.find('.st-settings-group.' + mod.group);
+
+                    $(group).append(setting);
+                })
+            })
+
+            $("#settingsGui > ul").append($('<li>').append(cont));
+        }
     },
     addModule: (title, mod, _to) => {
         if (_to === 'layout')
@@ -50,8 +121,6 @@ const self = {
     load: () => {
         $.each(self.names.modules, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
-                //check if the module needs starting
-                //layout is currently the only one that does need that
                 const mod = self.modules[name];
 
                 if (mod.runnable)
@@ -65,6 +134,7 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`)
         })
         */
+
     },
 
     init: () => {

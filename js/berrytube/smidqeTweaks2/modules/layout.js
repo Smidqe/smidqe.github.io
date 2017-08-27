@@ -69,7 +69,7 @@ function load() {
         },
         init: () => {
             //load the listeners
-            self.settings = SmidqeTweaks.modules.settings;
+            self.settings = SmidqeTweaks.settings;
 
             self.listeners.maltweaks.func = self.handleMaltweaks;
             self.listeners.berrytweaks.func = self.handleBerryTweaks;
@@ -84,7 +84,7 @@ function load() {
 
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
-                    self.modules[value].init();
+                    setTimeout(self.modules[value].init(), 500);
                 })
             });
 
