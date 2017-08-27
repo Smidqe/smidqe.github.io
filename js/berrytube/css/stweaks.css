@@ -35,6 +35,12 @@
     grid-template-columns: 1fr 1fr;
 }
 
+#st-info-group-drinks {
+    display: grid;
+    grid-column: 1 / 3;
+    grid-template-columns: 1fr 1fr;
+}
+
 .st-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
