@@ -22,7 +22,7 @@ const self = {
             self.settings.storage[key] = value;
 
             if (save)
-                self.save();
+                self.settings.save();
         },
         load: () => {
             self.storage = JSON.parse(localStorage.SmidqeTweaks2 || '{}')

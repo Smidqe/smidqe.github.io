@@ -1,5 +1,6 @@
 function load() {
     const self = {
+        settings: null,
         bar: null,
         buttons: {
             tweaks: {
@@ -10,7 +11,7 @@ function load() {
                 alwaysVisible: true,
                 callbacks: {
                     click: () => {
-                        if (SmidqeTweaks.modules.settings.get('active'))
+                        if (self.settings.get('active'))
                             SmidqeTweaks.modules.layout.disable();
                         else
                             SmidqeTweaks.modules.layout.enable();
@@ -58,6 +59,7 @@ function load() {
             })
         },
         init: () => {
+            self.settings = SmidqeTweaks.settings;
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
 
             $.each(self.buttons, (key, value) => {
