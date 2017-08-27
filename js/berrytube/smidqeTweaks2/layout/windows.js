@@ -8,15 +8,15 @@ function load() {
         settings: null,
         modules: {
             rules: {
-                paths: ["#motdwrap", "#st-wrap-motd"],
+                paths: ["#st-wrap-motd", "#motdwrap"],
                 classes: [],
             },
             header: {
-                paths: ["#headwrap", "#st-wrap-header"],
+                paths: ["#st-wrap-header", "#headwrap", ],
                 classes: [],
             },
             footer: {
-                paths: ["#main #footwrap", "#st-wrap-footer"],
+                paths: ["#st-wrap-footer", "#main #footwrap", ],
                 classes: [],
             },
             polls: {
@@ -74,6 +74,10 @@ function load() {
 
                 $(value.paths[pathIndex]).addClass('st-window-default');
             })
+        },
+
+        disable: () => {
+
         },
 
         init: () => {
