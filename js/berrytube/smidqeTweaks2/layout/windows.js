@@ -41,18 +41,12 @@ function load() {
             },
         },
 
-        show: (key) => {
-
-        },
-        hide: () => {
-
-        },
         toggle: (key) => {
             if (key !== self.previous)
                 $(".st-window-open").removeClass("st-window-open");
 
             var pathIndex = 0;
-            if (element.paths.length == 2 && self.settings.get('maltweaks'))
+            if (self.modules[key].paths.length == 2 && self.settings.get('maltweaks'))
                 pathIndex = 1;
 
             $(self.modules[key].paths[pathIndex]).toggleClass("st-window-open");
