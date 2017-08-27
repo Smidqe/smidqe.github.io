@@ -115,6 +115,12 @@ function load() {
             const block = $("<div>", { id: "st-container-info", class: "st-grid" });
 
         },
+        enable: () => {
+            $(self.bar.container).removeClass('st-window-default');
+        },
+        disable: () => {
+            $(self.bar.container).addClass('st-window-default');
+        },
         init: () => {
             self.windows = SmidqeTweaks.modules.layout.modules.windows;
             self.bar.buttons = $('<div>', { class: "st-buttons-container" });

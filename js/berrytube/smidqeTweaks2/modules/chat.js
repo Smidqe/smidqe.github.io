@@ -30,7 +30,12 @@ function load() {
             delete CHATLIST[nick];
         },
 
+        getFromNick: () => {
 
+        },
+        getEmotes: () => {
+
+        },
     }
     return self;
 }

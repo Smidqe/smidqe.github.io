@@ -2,6 +2,32 @@ const self = {
     listener: null,
     prevTimestamp: null,
     defaultTimeout: 1000,
+    settings: {
+        title: "Notify of playlist changes (WIP)",
+        type: "checkbox",
+        key: "playlistNotify",
+        subs: [{
+                title: "Adding video",
+                type: "checkbox",
+                key: "playlistAdd",
+            },
+            {
+                title: "Removing a video",
+                type: "checkbox",
+                key: "playlistRemove"
+            },
+            {
+                title: "Moving a video",
+                type: "checkbox",
+                key: "playlistMove"
+            },
+            {
+                title: "Volatile changes",
+                type: "checkbox",
+                key: "playlistVol"
+            },
+        ],
+    },
     changes: {},
     modify: function(change, data, sub, message) {
         const self = this;
@@ -87,7 +113,7 @@ const self = {
         if (change.state.action !== 'changed' && change.state.changed)
             msg += ' and was changed to ' + (change.state.volatile ? 'volatile' : 'permanent');
 
-        chat.add("Playlist modification", msg, 'act');
+        SmidqeTweaks.modules.chat.add("Playlist modification", msg, 'act');
     },
     isItem: (node) => {
         if (!node)

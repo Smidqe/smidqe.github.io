@@ -6,9 +6,14 @@ function load() {
                 id: 'tweaks',
                 text: 'T',
                 tooltip: 'Toggle tweaks',
+                deps: [],
+                alwaysVisible: true,
                 callbacks: {
                     click: () => {
-                        //SmidqeTweaks.modules.layout.toggle();
+                        if (SmidqeTweaks.modules.settings.get('active'))
+                            SmidqeTweaks.modules.layout.disable();
+                        else
+                            SmidqeTweaks.modules.layout.enable();
                     },
                     mouseenter: () => {},
                     mouseleft: () => {}
@@ -34,7 +39,7 @@ function load() {
 
             self.bar.append(button)
         },
-        show: () => {
+        enable: () => {
             $.each(self.buttons, (key, value) => {
                 /*
                 if (!SmidqeTweaks.checkDeps(value.deps))
@@ -45,14 +50,14 @@ function load() {
                 $('#st-button-control-' + value.id).removeClass('hidden');
             })
         },
-        hide: () => {
+        disable: () => {
             $.each(self.buttons, (key, value) => {
-                $('#st-button-control-' + value.id).addClass('hidden');
+
+                if (!value.alwaysVisible)
+                    $('#st-button-control-' + value.id).addClass('hidden');
             })
         },
         init: () => {
-            console.log('loading toolbar');
-
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
 
             $.each(self.buttons, (key, value) => {

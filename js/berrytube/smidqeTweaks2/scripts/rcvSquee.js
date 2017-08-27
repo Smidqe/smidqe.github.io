@@ -1,8 +1,16 @@
 const self = {
-    settings: {
-        title: 'Squee on RCV messages',
-        type: 'checkbox',
-    },
+    settings: [{
+            title: 'Squee on RCV messages',
+            type: 'checkbox',
+            key: 'squeeRCV'
+        },
+        {
+            title: 'Highlight the message',
+            type: 'checkbox',
+            key: 'highlightRCV',
+            sub: true,
+        }
+    ],
     enabled: false,
     disable: () => {
         self.enabled = false;

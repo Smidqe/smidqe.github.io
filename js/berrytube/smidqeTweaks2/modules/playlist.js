@@ -31,10 +31,12 @@ function load() {
 
             return position;
         },
-
         exists: (title) => {
             return playlist.pos(title) != -1;
         },
+        amount: () => {
+            return $("#plul > li").length;
+        }
     }
 
     return self;

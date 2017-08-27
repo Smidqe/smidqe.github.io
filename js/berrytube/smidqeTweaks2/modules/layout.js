@@ -21,14 +21,12 @@ function load() {
             }
         },
         modules: {},
-        names: ['bottom', 'infobox', 'toolbar', 'windows', 'wraps', 'chat', 'playlist', 'video'],
+        names: ['windows', 'bottom', 'infobox', 'toolbar', 'wraps', 'chat', 'playlist', 'video'],
         handleMaltweaks: (mutation) => {
-            const isMaltweaks = self.settings.get('maltweaks');
-
             if (mutation.id !== 'headwrap')
                 return;
 
-            if (mutation.id === 'headwrap' && !isMaltweaks)
+            if (mutation.id === 'headwrap' && !self.settings.get('maltweaks'))
                 self.settings.set('maltweaks', true, true);
 
             if (self.settings.get("active") && self.settings.get("maltweaks")) {
@@ -44,6 +42,10 @@ function load() {
             self.listeners['berrytweaks'].observer.disconnect();
         },
         enable: () => {
+            $.each(self.listeners, (key, value) => {
+                value.observer.disconnect();
+            });
+
             const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
             const location = self.settings.get('maltweaks') ? $('body') : $('head');
 
@@ -51,37 +53,16 @@ function load() {
 
             location.append(stylesheet);
 
-            /*
-            $.each(self.modules, (key, value) => {
-                value.enable();
+            $.each(self.modules, (key, mod) => {
+                mod.enable();
             })
-            */
-
-            if (!self.settings.get('maltweaks'))
-                self.modules.wraps.enable();
-
-            $("#chatpane").addClass("st-chat");
-            $("#videowrap").addClass("st-video");
-            $("#playlist").addClass("st-window-playlist");
-
-            $("#st-controls-container").removeClass("st-window-default");
         },
         disable: () => {
-            if (!self.settings.get('maltweaks'))
-                $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
-
             self.settings.set("active", false, true)
 
-            /*
-            $.each(self.modules, (key, value) => {
-                value.disable();
+            $.each(self.modules, (key, mod) => {
+                mod.disable();
             })
-            */
-
-            $("#chatpane, #videowrap, #playlist").removeClass("st-chat st-video st-window-playlist");
-            $("#st-stylesheet").remove();
-
-            self.modules.toolbar.hide();
 
             if (self.settings.get('maltweaks')) //patch, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
@@ -103,7 +84,6 @@ function load() {
 
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
-                    console.log("Loading module " + value);
                     self.modules[value].init();
                 })
             });

@@ -8,10 +8,32 @@ const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
     names: {
-        modules: ['settings', 'listeners', 'chat', 'playlist', 'layout', ],
+        modules: ['settings', 'listeners', 'layout', 'chat', 'playlist'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups'],
     },
-    refresh: () => {},
+    addModule: (title, mod, _to) => {
+        if (_to === 'layout')
+            self.modules.layout.modules[title] = mod
+
+        if (_to === 'main')
+            self.modules[title] = mod;
+    },
+    removeModule: (title) => {
+        delete self.modules[title];
+    },
+    refresh: () => {
+        $.each(self.modules, (key, mod) => {
+            mod.disable();
+            mod.enable();
+        })
+
+        /*
+        $.each(self.scripts, (key, script) => {
+            script.disable();
+            script.enable();
+        })
+        */
+    },
     patch: (container, func, callback) => {
         const original = container[func];
 
@@ -38,6 +60,7 @@ const self = {
         })
 
         /*
+        //will be enabled once I finish the modules, and the layout part of this rewrite \\abbored
         $.each(self.names.scripts, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`)
         })
