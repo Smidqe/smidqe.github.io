@@ -31,6 +31,8 @@ const self = {
             localStorage.SmidqeTweaks2 = JSON.stringify(self.settings.storage);
         },
         create: (data) => {
+            console.log(data);
+
             const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
             const element = $('<input>', {
                     type: data.type,

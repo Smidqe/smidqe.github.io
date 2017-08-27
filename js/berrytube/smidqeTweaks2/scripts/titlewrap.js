@@ -1,11 +1,11 @@
 function load() {
     const self = {
         group: 'patches',
-        settings: {
-            title: 'Squee on specific emotes',
+        settings: [{
+            title: 'Wrap videotitle to separate line',
             type: 'checkbox',
-        },
-        enabled: false,
+            key: 'titleWrap'
+        }],
         disable: () => {
 
         },
