@@ -1,17 +1,10 @@
 function load() {
     const self = {
-        settings: [{
-                title: 'Squee on RCV messages',
-                type: 'checkbox',
-                key: 'squeeRCV'
-            },
-            {
-                title: 'Highlight the message',
-                type: 'checkbox',
-                key: 'highlightRCV',
-                sub: true,
-            }
-        ],
+        settings: {
+            title: 'Squee on specific emotes',
+            type: 'checkbox',
+
+        },
         enabled: false,
         disable: () => {
             self.enabled = false;
@@ -19,7 +12,7 @@ function load() {
         enable: () => {
             self.enabled = true;
 
-            patch(window, 'addChatMsg', (data, _to) => {
+            SmidqeTweaks.patch(window, 'addChatMsg', (data, _to) => {
                 if (!self.enabled)
                     return;
 
@@ -33,6 +26,7 @@ function load() {
             })
         }
     }
+
     return self;
 }
-SmidqeTweaks.scripts['rcvSquee'] = load();
+SmidqeTweaks.scripts.emoteSquee = load();

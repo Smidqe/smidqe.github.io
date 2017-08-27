@@ -9,7 +9,7 @@ const self = {
     scripts: {}, //
     names: {
         modules: ['listeners', 'chat', 'playlist', 'layout'],
-        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups'],
+        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'time', 'titlewrap'],
     },
     settings: {
         container: null,
@@ -94,7 +94,7 @@ const self = {
     },
     getModule: (title, _from) => {
         if (_from === 'layout')
-            return self.modules.layout[title];
+            return self.modules.layout.modules[title];
 
         if (_from === 'main')
             return self.modules[title];
@@ -143,15 +143,10 @@ const self = {
             })
         })
 
-
-
-        /*
         //will be enabled once I finish the modules, and the layout part of this rewrite \\abbored
         $.each(self.names.scripts, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`)
         })
-        */
-
     },
 
     init: () => {
