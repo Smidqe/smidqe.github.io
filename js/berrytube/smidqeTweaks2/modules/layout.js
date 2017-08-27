@@ -21,7 +21,7 @@ function load() {
             }
         },
         modules: {},
-        names: ['windows', 'bottom', 'infobox', 'toolbar', 'wraps', 'chat', 'playlist', 'video'],
+        names: ['windows', 'infobox', 'toolbar', 'wraps', 'chat', 'playlist', 'video', 'bottom'],
         handleMaltweaks: (mutation) => {
             if (mutation.id !== 'headwrap')
                 return;
