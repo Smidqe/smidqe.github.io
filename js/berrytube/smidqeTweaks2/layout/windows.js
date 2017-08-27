@@ -61,6 +61,7 @@ function load() {
         },
 
         enable: () => {
+            console.log("Adding necessary classes to elements");
             $.each(self.modules, (key, value) => {
                 var pathIndex = 0;
 
