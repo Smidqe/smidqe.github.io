@@ -96,12 +96,12 @@ function load() {
             //these are always there
             button.on('click', function() {
                 const key = $(this).attr('key');
-                const window = $(this).attr('window');
+                const window = !!$(this).attr('window');
 
                 if (!window)
                     return;
 
-                console.log(key);
+                console.log(key, window);
 
                 self.windows.toggle(key);
             })
