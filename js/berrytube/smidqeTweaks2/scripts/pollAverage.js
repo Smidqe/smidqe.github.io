@@ -1,8 +1,8 @@
 function load() {
     const self = {
-        settings: {
+        settings: [{
 
-        },
+        }],
         deps: [
             ['SmidqeTweaks', 'calcAvg']
         ],

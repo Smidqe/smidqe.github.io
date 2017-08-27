@@ -1,10 +1,10 @@
 function load() {
     const self = {
-        settings: {
+        settings: [{
             title: 'Squee on specific emotes',
             type: 'checkbox',
 
-        },
+        }],
         enabled: false,
         disable: () => {
             self.enabled = false;
