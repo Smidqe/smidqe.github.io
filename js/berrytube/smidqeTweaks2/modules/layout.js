@@ -30,6 +30,7 @@ function load() {
                 self.settings.set('maltweaks', true, true);
 
             if (self.settings.get("active") && self.settings.get("maltweaks")) {
+                console.log("Starting layout");
                 self.listeners['maltweaks'].observer.disconnect();
                 self.enable();
             }
@@ -76,6 +77,9 @@ function load() {
 
             self.settings.set('maltweaks', false, true);
             self.settings.set('berrytweaks', false, true)
+
+            if ($("head > link").attr('href').indexOf("atte.fi") === -1)
+                self.settings.set('berrytweaks', true, true);
 
             $.each(self.listeners, (key, value) => {
                 self.listeners[key].observer = SmidqeTweaks.modules.listeners.create(value);

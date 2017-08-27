@@ -25,7 +25,7 @@ const self = {
                 self.settings.save();
         },
         load: () => {
-            self.storage = JSON.parse(localStorage.SmidqeTweaks2 || '{}')
+            self.settings.storage = JSON.parse(localStorage.SmidqeTweaks2 || '{}')
         },
         save: () => {
             localStorage.SmidqeTweaks2 = JSON.stringify(self.settings.storage);
@@ -126,6 +126,8 @@ const self = {
         }
     },
     load: () => {
+        self.settings.load();
+
         $.each(self.names.modules, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
                 const mod = self.modules[name];
@@ -134,6 +136,8 @@ const self = {
                     mod.init();
             })
         })
+
+
 
         /*
         //will be enabled once I finish the modules, and the layout part of this rewrite \\abbored
