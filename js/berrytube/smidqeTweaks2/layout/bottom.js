@@ -96,7 +96,7 @@ function load() {
             //these are always there
             button.on('click', function() {
                 const key = $(this).attr('key');
-                const window = !!$(this).attr('window');
+                const window = $(this).attr('window') === "true";
 
                 if (!window)
                     return;
