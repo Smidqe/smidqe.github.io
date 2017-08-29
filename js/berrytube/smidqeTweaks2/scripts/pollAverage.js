@@ -1,5 +1,6 @@
 function load() {
     const self = {
+        group: 'poll',
         settings: [{
 
         }],
@@ -44,13 +45,15 @@ function load() {
 
         enable: () => {
             SmidqeTweaks.patch(window, 'closePoll', (data) => {
+                /*
+                if (!self.enabled)
+                    return;
+                */
                 console.log("Poll closed");
                 console.log(data);
             })
         },
-        disable: () => {
-            SmidqeTweaks.patch(window, 'closePoll', (data) => {}) //remove the callback
-        }
+        disable: () => {}
     }
     return self;
 }

@@ -1,10 +1,12 @@
 function load() {
     const self = {
+        group: 'playlist',
+        playlist: null,
         listener: null,
         prevTimestamp: null,
         defaultTimeout: 1000,
         settings: [{
-                title: "Notify of playlist changes (WIP)",
+                title: "Notify of playlist changes",
                 type: "checkbox",
                 key: "playlistNotify",
             },
@@ -140,6 +142,7 @@ function load() {
 
             return true;
         },
+        /* REWRITE THIS EVENTUALLY */
         run: (mutation) => {
             if (!mutation)
                 return;
@@ -243,6 +246,8 @@ function load() {
         },
 
         enable: () => {
+            self.playlist = SmidqeTweaks.getModule('playlist', 'main');
+
             self.listener = new MutationObserver(function(mutations) {
                 mutations.forEach((mutation) => {
                     self.run(mutation);

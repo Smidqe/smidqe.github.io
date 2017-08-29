@@ -35,11 +35,15 @@ function load() {
             return playlist.pos(title) != -1;
         },
         amount: () => {
-            return $("#plul > li").length;
-        }
+            return window.PLAYLIST.length;
+        },
+
+        getLink: (title) => {
+
+        },
     }
 
     return self;
 }
 
-SmidqeTweaks.modules.playlist = load();
+SmidqeTweaks.addModule('playlist', load(), 'main');

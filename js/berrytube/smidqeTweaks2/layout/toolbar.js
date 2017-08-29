@@ -73,4 +73,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.modules.layout.modules.toolbar = load();
+SmidqeTweaks.addModule('toolbar', load(), 'layout');

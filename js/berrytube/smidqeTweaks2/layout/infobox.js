@@ -1,3 +1,9 @@
+/*
+    Will hold more specific information
+        - Previous video drink counts
+        - More specific user grouping
+        - 
+*/
 function load() {
     const self = {
         element: null,
@@ -11,10 +17,11 @@ function load() {
 
         },
         init: () => {
-            console.log('loading infobox');
+
         },
     }
 
     return self;
 }
-SmidqeTweaks.modules.layout.modules.infobox = load();
+
+SmidqeTweaks.addModule('infobox', load(), 'layout');

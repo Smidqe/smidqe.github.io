@@ -23,4 +23,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.modules.layout.modules.wraps = load();
+SmidqeTweaks.addModule('wraps', load(), 'layout');

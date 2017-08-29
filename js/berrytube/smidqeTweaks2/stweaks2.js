@@ -2,19 +2,27 @@
 //
 
 /*
+    TODO:
+        - Move chat, listeners, and playlist into libs folder
+        - Load libs before any modules are loaded
 
+        Create better method for loading the modules and scripts
+        - If the module/script uses modules that haven't been added yet
+        add them into a array, and everytime a module has been loaded, check the dependencies again
+        - This way the order doesn't matter.
 */
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
+    recheck: {},
     names: {
-        modules: ['listeners', 'chat', 'playlist', 'layout'],
+        modules: ['layout', 'listeners', 'chat', 'playlist'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'time', 'titlewrap'],
     },
     settings: {
         container: null,
         storage: {},
-        groups: ['chat', 'polls', 'playlist', 'patches'],
+        groups: ['tweaks', 'chat', 'polls', 'playlist', 'patches'],
         get: (key, fallback) => {
             return self.settings.storage[key] || fallback;
         },
@@ -31,8 +39,6 @@ const self = {
             localStorage.SmidqeTweaks2 = JSON.stringify(self.settings.storage);
         },
         create: (data) => {
-            console.log(data);
-
             const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
             const element = $('<input>', {
                     type: data.type,
@@ -133,6 +139,25 @@ const self = {
             return before;
         }
     },
+    checkRequired: (mod) => {
+        console.log(mod);
+
+        if (!mod.requires)
+            return true;
+
+
+
+        var result = true;
+
+        $.each(mod.requires, (index) => {
+            if (!result) //if it is false
+                return;
+
+            result = self.modules[mod.requires[index]] !== undefined;
+        })
+
+        return result;
+    },
     load: () => {
         self.settings.load();
 
@@ -140,17 +165,28 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
                 const mod = self.modules[name];
 
-                if (mod.runnable)
-                    mod.init();
+                if (!self.checkRequired(mod))
+                    self.recheck[name] = mod;
+
+                $.each(self.recheck, (key, value) => {
+                    console.log(key, value);
+
+                    if (self.checkRequired(value)) {
+                        self.modules[key].init();
+                        delete self.recheck[name];
+                    }
+                })
             })
         })
 
-        //will be enabled once I finish the modules, and the layout part of this rewrite \\abbored
         $.each(self.names.scripts, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`)
         })
     },
-
+    test: (event) => {
+        console.log("Should print something")
+        console.log(event);
+    },
     init: () => {
         self.load();
 
@@ -158,6 +194,10 @@ const self = {
 
         self.patch(window, 'showConfigMenu', () => {
             self.settings.show();
+        })
+
+        self.patch(window, 'closePoll', (data) => {
+            console.log(data);
         })
     },
 }

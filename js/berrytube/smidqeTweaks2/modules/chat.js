@@ -30,13 +30,24 @@ function load() {
             delete CHATLIST[nick];
         },
 
-        getFromNick: () => {
+        getMessages: (user) => {
+            if (!user)
+                return null;
+
 
         },
-        getEmotes: () => {
+        //could be expanded more
+        getEmotes: (user) => {
+            var query = null;
 
+            if (!user)
+                query = $('.berryemote');
+            else
+                query = $('#chatbuffer > .' + user + ' .berryemote');
+
+            return query;
         },
     }
     return self;
 }
-SmidqeTweaks.modules.chat = load();
+SmidqeTweaks.addModule('chat', load(), 'main');

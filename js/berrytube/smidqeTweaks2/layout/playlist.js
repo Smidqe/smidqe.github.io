@@ -14,4 +14,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.modules.layout.modules.playlist = load();
+SmidqeTweaks.addModule('playlist', load(), 'layout');

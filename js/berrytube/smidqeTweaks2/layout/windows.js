@@ -40,45 +40,39 @@ function load() {
                 classes: ["st-window-users"],
             },
         },
+        getPath: (key) => {
+            var index = 0;
 
+            if (self.modules[key].paths.length == 2 && self.settings.get('maltweaks'))
+                index = 1;
+
+            return self.modules[key].paths[index];
+        },
         toggle: (key) => {
             if (key !== self.previous)
                 $(".st-window-open").removeClass("st-window-open");
 
-            var pathIndex = 0;
-            if (self.modules[key].paths.length == 2 && self.settings.get('maltweaks'))
-                pathIndex = 1;
-
-            $(self.modules[key].paths[pathIndex]).toggleClass("st-window-open");
+            $(self.getPath(key)).toggleClass("st-window-open");
 
             self.previous = key;
         },
 
         enable: () => {
-            console.log("Adding necessary classes to elements");
             $.each(self.modules, (key, value) => {
-                var pathIndex = 0;
-
-                if (value.paths.length == 2 && self.settings.get('maltweaks'))
-                    pathIndex = 1;
+                const path = self.getPath(key);
 
                 $.each(value.classes, c => {
-                    $(value.paths[pathIndex]).addClass(value.classes[c]);
+                    $(path).addClass(value.classes[c]);
                 })
 
-                $(value.paths[pathIndex]).addClass('st-window-default');
+                $(path).addClass('st-window-default');
             })
         },
 
         disable: () => {
             $.each(self.modules, (key, value) => {
-                var pathIndex = 0;
-
-                if (value.paths.length == 2 && self.settings.get('maltweaks'))
-                    pathIndex = 1;
-
                 $.each(value.classes, c => {
-                    $(value.paths[pathIndex]).removeClass(value.classes[c]);
+                    $(self.getPath(key)).removeClass(value.classes[c]);
                 })
 
                 $('.st-window-default').removeClass('st-window-default');
@@ -93,4 +87,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.modules.layout.modules.windows = load();
+SmidqeTweaks.addModule('windows', load(), 'layout');

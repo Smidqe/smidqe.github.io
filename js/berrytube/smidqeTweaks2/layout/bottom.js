@@ -1,6 +1,6 @@
 function load() {
     const self = {
-        windows: null,
+        bar: {},
         grids: {
             time: {
                 group: false,
@@ -83,7 +83,6 @@ function load() {
                 },
             },
         },
-        bar: {},
         createButton: (key, data) => {
             const button = $('<button>', {
                 class: 'st-button st-window-default',
@@ -94,18 +93,10 @@ function load() {
             })
 
             //these are always there
-            button.on('click', function() {
-                const key = $(this).attr('key');
-                const window = $(this).attr('window') === "true";
-
-                if (!window)
-                    return;
-
-                console.log(key, window);
-
-                //helps with ajax calls
-                SmidqeTweaks.getModule('windows', 'layout').toggle(key);
-            })
+            if (data.window)
+                button.on('click', function() {
+                    SmidqeTweaks.getModule('windows', 'layout').toggle($(this).attr('key'));
+                })
 
             $.each(data.callbacks, (key, value) => {
                 button.on(key, value);
@@ -143,8 +134,6 @@ function load() {
             self.bar.container.append(self.bar.buttons);
             self.bar.container.append(self.bar.grid);
 
-            console.log("loading bottom buttons")
-
             $.each(self.buttons, (key, value) => {
                 self.createButton(key, value);
             })
@@ -159,5 +148,5 @@ function load() {
 
     return self;
 }
-SmidqeTweaks.modules.layout.modules.bottom = load();
-//SmidqeTweaks.addModule('bottom', ')
+
+SmidqeTweaks.addModule('bottom', load(), 'layout');

@@ -15,4 +15,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.modules.layout.modules.chat = load();
+SmidqeTweaks.addModule('chat', load(), 'layout');

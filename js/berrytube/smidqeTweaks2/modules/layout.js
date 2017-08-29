@@ -7,6 +7,7 @@ function load() {
     const self = {
         runnable: true,
         settings: null,
+        requires: ['listeners'],
         listeners: {
             maltweaks: {
                 path: "body",
@@ -29,11 +30,8 @@ function load() {
             if (mutation.id === 'headwrap' && !self.settings.get('maltweaks'))
                 self.settings.set('maltweaks', true, true);
 
-            if (self.settings.get("active") && self.settings.get("maltweaks")) {
-                console.log("Starting layout");
-                self.listeners['maltweaks'].observer.disconnect();
+            if (self.settings.get("active") && self.settings.get("maltweaks"))
                 self.enable();
-            }
         },
         handleBerryTweaks: () => {
             if ($("head > link").attr('href').indexOf("atte.fi") === -1)
@@ -83,7 +81,8 @@ function load() {
                 SmidqeTweaks.modules.listeners.start(self.listeners[key]);
             });
 
-            if ($("head > link").attr('href').indexOf("atte.fi") === -1)
+            //check if we have berrytweaks already in the m
+            if (window.BerryTweaks)
                 self.settings.set('berrytweaks', true, true);
 
             $.each(self.names, (index, value) => {
@@ -102,4 +101,5 @@ function load() {
 
     return self;
 }
-SmidqeTweaks.modules.layout = load();
+
+SmidqeTweaks.addModule('layout', load(), 'main');

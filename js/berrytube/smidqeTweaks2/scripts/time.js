@@ -1,7 +1,8 @@
 function load() {
     const self = {
+        group: 'tweaks',
         settings: [{
-            title: 'Show time 12Hr format',
+            title: 'Show time in 12 hr format',
             type: 'checkbox',
             key: 'showTime'
         }],

@@ -15,4 +15,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.modules.layout.modules.video = load();
+SmidqeTweaks.addModule('video', load(), 'layout');
