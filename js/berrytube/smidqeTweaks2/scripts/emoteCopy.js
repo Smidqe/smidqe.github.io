@@ -25,4 +25,4 @@ function load() {
 
     return self;
 }
-SmidqeTweaks.scripts.emoteCopy = load();
+SmidqeTweaks.scripts['emoteCopy'] = load();

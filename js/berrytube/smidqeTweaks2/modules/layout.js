@@ -6,7 +6,6 @@ Add more files to layout
 function load() {
     const self = {
         runnable: true,
-        settings: null,
         requires: ['listeners'],
         listeners: {
             maltweaks: {
@@ -33,17 +32,17 @@ function load() {
             if (mutation.id !== 'headwrap')
                 return;
 
-            if (mutation.id === 'headwrap' && !self.settings.get('maltweaks'))
+            if (mutation.id === 'headwrap' && !SmidqeTweaks.settings.get('maltweaks'))
                 self.settings.set('maltweaks', true, true);
 
-            if (self.settings.get("active") && self.settings.get("maltweaks"))
+            if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks"))
                 self.waitForModules(self.enable);
         },
         handleBerryTweaks: () => {
             if ($("head > link").attr('href').indexOf("atte.fi") === -1)
                 return;
 
-            self.settings.set("berrytweaks", true, true);
+            SmidqeTweaks.settings.set("berrytweaks", true, true);
             self.listeners['berrytweaks'].observer.disconnect();
         },
         enable: () => {
@@ -54,7 +53,7 @@ function load() {
             const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
             const location = self.settings.get('maltweaks') ? $('body') : $('head');
 
-            self.settings.set("active", true, true)
+            SmidqeTweaks.settings.set("active", true, true)
 
             location.append(stylesheet);
 
@@ -69,20 +68,18 @@ function load() {
                 mod.disable();
             })
 
-            if (self.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
+            if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
         },
         init: () => {
             //load the listeners
             console.log("Starting ")
 
-            self.settings = SmidqeTweaks.settings;
-
             self.listeners.maltweaks.func = self.handleMaltweaks;
             self.listeners.berrytweaks.func = self.handleBerryTweaks;
 
-            self.settings.set('maltweaks', false, true);
-            self.settings.set('berrytweaks', false, true)
+            SmidqeTweaks.settings.set('maltweaks', false, true);
+            SmidqeTweaks.settings.set('berrytweaks', false, true)
 
             $.each(self.listeners, (key, value) => {
                 self.listeners[key].observer = SmidqeTweaks.modules.listeners.create(value);
@@ -91,7 +88,7 @@ function load() {
 
             //check if we have berrytweaks already in the m
             if (window.BerryTweaks)
-                self.settings.set('berrytweaks', true, true);
+                SmidqeTweaks.settings.set('berrytweaks', true, true);
 
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {

@@ -26,6 +26,8 @@ function load() {
         },
 
     }
+
+    return self;
 }
 
 SmidqeTweaks.addModule('time', load(), 'main');

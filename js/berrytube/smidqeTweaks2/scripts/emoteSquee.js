@@ -12,4 +12,4 @@ function load() {
 
     return self;
 }
-SmidqeTweaks.scripts.emoteSquee = load();
+SmidqeTweaks.scripts['emoteSquee'] = load();

@@ -35,6 +35,7 @@ function load() {
                 title: "Notify of playlist changes",
                 type: "checkbox",
                 key: "playlistNotify",
+                tweak: true,
             },
             {
                 title: "Adding video",
@@ -63,8 +64,6 @@ function load() {
         ],
         changes: {},
         modify: function(change, data, sub, message) {
-            const self = this;
-
             if (!change)
                 return;
 
@@ -99,14 +98,17 @@ function load() {
             delete this.changes[title];
         },
         add: function(node, action) {
-            if (self.changes[node.find(".title").text])
-                return self.changes[node.find(".title").text];
+            const title = node.find(".title").text()
+
+            //return the already existing value
+            if (self.changes[title])
+                return self.changes[title];
 
             const change = {};
             const self = this;
 
-            change.title = node.find(".title").text();
-            change.livestream = playlist.duration(node.find('.time').text()) === -1;
+            change.title = title;
+            change.livestream = playlist.duration(change.title) === -1;
             change.timestamp = (new Date()).getTime();
             change.position = playlist.pos(change.title);
 
@@ -117,7 +119,9 @@ function load() {
                 changed: action === 'changed',
             }
 
+            //add the change into changes
             self.changes[change.title] = change;
+
             return change;
         },
         message: (change) => {
@@ -131,17 +135,37 @@ function load() {
 
             switch (change.state.action) {
                 case 'added':
-                    msg += ' was added to playlist';
-                    break;
+                    {
+                        if (!SmidqeTweaks.settings.get('playlistAdd'))
+                            return;
+
+                        msg += ' was added to playlist';
+                        break;
+                    }
                 case 'removed':
-                    msg += ' was removed from playlist';
-                    break;
+                    {
+                        if (!SmidqeTweaks.settings.get('playlistRemove'))
+                            return;
+
+                        msg += ' was removed from playlist';
+                        break;
+                    }
                 case 'moved':
-                    msg += ' was moved';
-                    break;
+                    {
+                        if (!SmidqeTweaks.settings.get('playlistMoved'))
+                            return;
+
+                        msg += ' was moved';
+                        break;
+                    }
                 case 'changed':
-                    msg += ' was changed to ' + (change.state.volatile ? 'volatile' : 'permanent');
-                    break;
+                    {
+                        if (!SmidqeTweaks.settings.get('playlistVol'))
+                            return;
+
+                        msg += ' was changed to ' + (change.state.volatile ? 'volatile' : 'permanent');
+                        break;
+                    }
             }
 
             if (change.state.action !== 'changed' && change.state.changed)
@@ -149,16 +173,20 @@ function load() {
 
             SmidqeTweaks.modules.chat.add("Playlist modification", msg, 'act');
         },
+        hasString: (string, sub) => {
+            if (!string)
+                return false;
+
+            return string.indexOf(sub) != -1;
+        },
         isItem: (node) => {
-            if (!node)
-                return false;
-
             const title = node.find(".title").text();
+            const tag = node.prop('tagName')
 
-            if (!node.prop('tagName'))
+            if (!tag)
                 return false;
 
-            if (!node.prop("tagName").toLowerCase() === "li")
+            if (!tag.toLowerCase() === "li")
                 return false;
 
             if (!title)
@@ -169,13 +197,7 @@ function load() {
 
             return true;
         },
-        /* REWRITE THIS EVENTUALLY */
         run: (mutation) => {
-            if (!mutation)
-                return;
-
-
-            /*
             $.each(mutation.addedNodes, (index, value) => {
                 const node = $(value);
 
@@ -188,18 +210,18 @@ function load() {
                 if (change.state.action === 'removed') {
                     clearTimeout(change.timeout);
 
-                    if (playlist.pos(change.title) != -1)
-                        self.modify(change, { position: playlist.pos(change.title), state: { action: 'moved' } }, false, true)
+                    if (position != -1)
+                        self.modify(change, { position: position, state: { action: 'moved' } }, false, true)
                 }
 
                 if (change.state.action === 'added')
                     self.message(change);
-
-
             })
-            
+
             $.each(mutation.removedNodes, (index, value) => {
-                if (!self.isItem($(mutation.removedNodes[index])))
+                const node = $(value);
+
+                if (!self.isItem(node))
                     return;
 
                 const change = self.add(node, 'removed');
@@ -213,100 +235,21 @@ function load() {
                     change.timeout = setTimeout(() => { self.remove(change.title, true) }, 1000); //for possible move
             })
 
-            */
-
-            $.each(mutation.addedNodes, (index) => {
-                if (!self.isItem($(mutation.addedNodes[index])))
-                    return;
-
-                const node = $(mutation.addedNodes[index]);
-                const title = node.find(".title").text();
-
-                if (!self.changes[title])
-                    self.add(node, 'added');
-
-                const change = self.changes[title];
-
-                if (change.state.action === 'removed') {
-                    if (change.timeout)
-                        clearTimeout(change.timeout);
-
-                    const position = playlist.pos(change.title)
-
-                    //only modify the things if we actually have a position (-1 means nothing is loaded yet)
-                    if (position != -1)
-                        self.modify(change, { position: position, state: { action: 'moved' } }, false, true)
-                }
-
-                if (change.state.action === "added")
-                    self.message(change);
-
-                if (change.livestream) //fixes multiple livestreams
-                    self.remove(change.title, true);
-            });
-
-            $.each(mutation.removedNodes, (index) => {
-                if (!self.isItem($(mutation.removedNodes[index])))
-                    return;
-
-                const node = $(mutation.removedNodes[index]);
-                const title = node.find(".title").text();
-
-                if (!self.changes[title])
-                    self.add(node, 'removed');
-
-                const change = self.changes[title];
-
-                if (change.state.action !== 'removed')
-                    self.modify(change, { state: { action: 'removed' } }, false, false)
-
-                if (change.state.active || change.livestream)
-                    self.remove(change.title, true);
-                else
-                    change.timeout = setTimeout(() => { self.remove(change.title, true) }, 1000); //for possible change
-            });
-
-            const node = $(mutation.target);
-            const title = node.find('.title').text();
-            const change = self.changes[title];
-
-            /*
-                REWRITE THIS PART
-            */
-
-
-            if (mutation.type !== "attributes" || mutation.attributeName !== "class")
-                return;
-
-            if (!change || !self.isItem(node))
-                return;
-
-            //check if the livestream is active, enabling the removal
-            if (change.livestream && node.hasClass('active')) {
-                change.state.active = true;
-                return;
-            }
-
-            //modify the current video
-            if (node.hasClass('active') && !change.timeout && !change.state.active) //need to start the timeout
-                self.modify(change, { state: { active: true } });
-
-            //checks if we have a nonvolatile added into the playlist
-            if (utilities.contains(mutation.oldValue, 'active') && change.state.active && !change.state.volatile)
-                self.remove(change.title, false);
-
             var changed = false;
-            const timestamp = (new Date()).getTime();
+            const node = $(mutation.target);
 
-            //throttle the changes (is this unnecessary?, test tomorrow)
-            if (change.state.changed && (timestamp - change.timestamp < 1000))
+            if (!self.isItem(node))
                 return;
 
-            //instead of checking if the node has volatile, check the old value
+            const change = self.changes[node.find('.title').text()];
+
+            if (!change)
+                return;
+
             if (node.hasClass('volatile') && !change.state.volatile)
                 changed = true;
 
-            if (utilities.contains(mutation.oldValue, 'volatile') && change.state.volatile && !node.hasClass('volatile'))
+            if (self.hasString(mutation.oldValue, 'volatile') != -1 && change.state.volatile && !node.hasClass('volatile'))
                 changed = true;
 
             if (changed)

@@ -1,12 +1,11 @@
 function load() {
     const self = {
         bar: null,
-        buttons: {
-            tweaks: {
+        buttons: [{
                 id: 'tweaks',
                 text: 'T',
                 tooltip: 'Toggle tweaks',
-                deps: [],
+                setting: 'active',
                 alwaysVisible: true,
                 callbacks: {
                     click: () => {
@@ -15,11 +14,18 @@ function load() {
                         else
                             SmidqeTweaks.modules.layout.enable();
                     },
-                    mouseenter: () => {},
-                    mouseleft: () => {}
                 }
             },
-        },
+            {
+                id: 'video',
+                text: 'V',
+                tooltip: 'Show/Hide the video',
+                callbacks: {
+
+                },
+                deps: [],
+            }
+        ],
         create: (data) => {
             const button = $("<div>", {
                 class: "st-button-control",
@@ -38,7 +44,7 @@ function load() {
             if (data.tooltip)
                 button.attr('title', data.tooltip);
 
-            if (data.active)
+            if (SmidqeTweaks.settings.get(button.setting))
                 button.addclass('active');
 
             self.bar.append(button)

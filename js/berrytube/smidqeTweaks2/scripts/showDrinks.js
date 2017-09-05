@@ -5,6 +5,8 @@
 */
 function load() {
     const self = {
+
+
         settings: [{
             title: 'Show drink count in chat',
             type: 'checkbox',
@@ -12,6 +14,9 @@ function load() {
         }],
 
         enabled: false,
+        update: () => {
+
+        },
         disable: () => {
             self.enabled = true;
         },
@@ -25,3 +30,5 @@ function load() {
 
     return self;
 }
+
+SmidqeTweaks.scripts['showDrinks'] = load();

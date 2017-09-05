@@ -18,12 +18,12 @@ const self = {
     check: {},
     names: {
         modules: ['layout', 'listeners', 'chat', 'playlist'],
-        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'time', 'titlewrap'],
+        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titlewrap'],
     },
     settings: {
         container: null,
         storage: {},
-        groups: ['tweaks', 'chat', 'polls', 'playlist', 'patches'],
+        groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],
         get: (key, fallback) => {
             return self.settings.storage[key] || fallback;
         },
@@ -45,7 +45,7 @@ const self = {
                     type: data.type,
                     checked: self.settings.get(data.key),
                     'data-key': data.key,
-                    'tweak': data.sub == undefined,
+                    'tweak': data.tweak,
                 })
                 .change(function() {
                     self.settings.save();
@@ -66,6 +66,19 @@ const self = {
 
             return wrap.append(element);
         },
+        append: (mod) => {
+            if (!mod.settings)
+                return;
+
+            console.log(mod.settings);
+
+            $.each(mod.settings, (key, val) => {
+                const setting = self.settings.create(val);
+                const group = cont.find('.st-settings-group.' + mod.group);
+
+                $(group).append(setting);
+            })
+        },
         show: () => {
             var cont = self.settings.container;
 
@@ -85,17 +98,15 @@ const self = {
             })
 
             //add to those groups
+            console.log(self.modules);
+            console.log(self.scripts);
+
+            $.each(self.modules, (key, mod) => {
+                self.settings.append(mod);
+            })
+
             $.each(self.scripts, (key, mod) => {
-                if (!mod.settings)
-                    return;
-
-                //add every setting
-                $.each(mod.settings, (key, val) => {
-                    const setting = self.settings.create(val);
-                    const group = cont.find('.st-settings-group.' + mod.group);
-
-                    $(group).append(setting);
-                })
+                self.settings.append(mod);
             })
 
             $("#settingsGui > ul").append($('<li>').append(cont));
@@ -208,7 +219,7 @@ const self = {
             self.settings.set('polldata', data, true);
         })
 
-        console.log(self.getTime());
+
     },
 }
 

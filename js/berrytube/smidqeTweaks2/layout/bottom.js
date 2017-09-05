@@ -136,15 +136,14 @@ function load() {
         disable: () => {
             $(self.bar.container).addClass('st-window-default');
         },
-        updateDrinks: () => {
-            var count = $("#drinkCounter").text();
+        updateDrinks: (data) => {
             const elem = $("#st-info-drinks > span");
 
             //if NaN then just show many, because the default message is too long and breaks the layout
-            if (isNaN(count))
+            if (isNaN(data))
                 elem.text("Many")
             else
-                elem.text(count);
+                elem.text(data);
         },
         init: () => {
             self.bar.buttons = $('<div>', { class: "st-buttons-container" });

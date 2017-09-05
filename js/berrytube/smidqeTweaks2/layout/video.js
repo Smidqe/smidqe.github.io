@@ -10,7 +10,7 @@ function load() {
             $("#videowrap").removeClass("st-video");
         },
         init: () => {
-
+            SmidqeTweaks.settings.set('video', true);
         },
     }
 
