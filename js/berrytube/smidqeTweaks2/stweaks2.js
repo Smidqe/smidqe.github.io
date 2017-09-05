@@ -191,11 +191,11 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
                 const script = self.scripts[name]
 
-                //if we have some default functionality/or the way the script is built
-                //start it
-                //some scripts like showDrinks or  by default show things
                 if (script.init)
                     script.init();
+
+                if (self.settings.get(name))
+                    script.enable();
             })
         })
     },

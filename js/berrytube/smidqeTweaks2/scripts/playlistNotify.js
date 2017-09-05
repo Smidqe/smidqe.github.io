@@ -258,15 +258,18 @@ function load() {
 
         enable: () => {
             self.playlist = SmidqeTweaks.getModule('playlist', 'main');
-
-            self.listener = new MutationObserver(function(mutations) {
-                mutations.forEach((mutation) => {
+            self.listeners = SmidqeTweaks.getModule('listeners', 'main');
+            self.observer = {
+                monitor: 'all',
+                config: { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true },
+                path: "#plul",
+                callback: (mutation) => {
                     self.run(mutation);
-                });
-            });
+                }
+            }
 
-            self.config = { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true };
-            self.listener.observe($("#plul")[0], self.config);
+            self.listeners.load(obs);
+            self.listeners.start(obs);
         },
         disable: () => {
             self.listener.disconnect();
