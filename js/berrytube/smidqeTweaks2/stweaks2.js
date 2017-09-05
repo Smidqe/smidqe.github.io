@@ -18,7 +18,7 @@ const self = {
     check: {},
     names: {
         modules: ['layout', 'listeners', 'chat', 'playlist', 'time'],
-        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titlewrap'],
+        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titleWrap'],
     },
     settings: {
         container: null,
@@ -212,8 +212,6 @@ const self = {
             console.log(data);
             self.settings.set('polldata', data, true);
         })
-
-        console.log(self.modules['time'].getTime());
     },
 }
 
