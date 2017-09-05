@@ -16,7 +16,10 @@ function load() {
             if (hours >= 12 && SmidqeTweaks.settings.get('12hour'))
                 hours -= 12;
 
-            return hours + ":" + time.getUTCMinutes() + " " + detail;
+            var msg = hours + ":" + time.getUTCMinutes();
+
+            if (SmidqeTweaks.settings.get('12hour'))
+                msg += " " + detail;
         },
     }
 

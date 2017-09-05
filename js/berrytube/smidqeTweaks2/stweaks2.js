@@ -48,7 +48,7 @@ const self = {
                     'tweak': data.tweak,
                 })
                 .change(function() {
-                    self.settings.save();
+                    self.settings.set($(this).attr('data-key'), $(this).prop('checked'), true);
 
                     if (!$(this).attr('tweak'))
                         return;

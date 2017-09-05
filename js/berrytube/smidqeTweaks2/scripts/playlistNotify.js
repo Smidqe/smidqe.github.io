@@ -264,6 +264,9 @@ function load() {
                     self.run(mutation);
                 });
             });
+
+            self.config = { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true };
+            self.listener.observe($("#plul")[0], self.config);
         },
         disable: () => {
             self.listener.disconnect();
