@@ -4,13 +4,19 @@ function load() {
         settings: [{
             title: 'Wrap videotitle to separate line',
             type: 'checkbox',
-            key: 'titleWrap'
+            key: 'titleWrap',
+            tweak: true,
         }],
-        disable: () => {
 
+        disable: () => {
+            $("#berrytweaks-video_title").unwrap();
+            $(".st-window-users").removeClass("wrap");
         },
         enable: () => {
+            $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
+            $("#st-videotitle-window").addClass("active");
 
+            $(".st-window-users").addClass("wrap");
         }
     }
 

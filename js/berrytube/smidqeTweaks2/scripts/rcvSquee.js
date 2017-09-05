@@ -4,7 +4,8 @@ function load() {
         settings: [{
                 title: 'Squee on RCV messages',
                 type: 'checkbox',
-                key: 'squeeRCV'
+                key: 'rcvSquee',
+                tweak: true,
             },
             {
                 title: 'Highlight the message',
@@ -19,12 +20,10 @@ function load() {
         },
         enable: () => {
             self.enabled = true;
-
-            patch(window, 'addChatMsg', (data, _to) => {
-                if (!self.enabled)
-                    return;
-
-                if (data.msg.emote !== 'rcv')
+        },
+        init: () => {
+            SmidqeTweaks.patch(window, 'addChatMsg', (data, _to) => {
+                if (!self.enabled || data.msg.emote !== 'rcv')
                     return;
 
                 doSqueeNotify();
@@ -32,7 +31,7 @@ function load() {
                 if (SmidqeTweaks.settings.get('highlightRCV'))
                     $('.msg-' + data.msg.nick + ':last-child > .rcv').addClass('highlight');
             })
-        }
+        },
     }
     return self;
 }

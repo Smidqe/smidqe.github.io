@@ -1,6 +1,8 @@
 function load() {
     const self = {
+        hide: () => {
 
+        },
         enable: () => {
             $("#videowrap").addClass("st-video");
         },

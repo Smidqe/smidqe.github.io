@@ -1,20 +1,21 @@
-//this will be a fully rewritten smidqetweaks, trying to go without using mutationobserver
-//
-
 /*
-    TODO:
-        - Move chat, listeners, and playlist into libs folder
-        - Load libs before any modules are loaded
+    FUTURE:
+        - MODULES:
+            - infobox.js
+                * Will hold all logic regarding the infobox
+    
+        - SCRIPTS:
+            - showFullscreen.js
+                * Will enable fullscreen mode where the chat is hidden, only squees will show up
+                - Video will be almost fullscreen (minus the bottom)
+                    - This is because 
 
-        Create better method for loading the modules and scripts
-        - If the module/script uses modules that haven't been added yet
-        add them into a array, and everytime a module has been loaded, check the dependencies again
-        - This way the order doesn't matter.
+            - 
 */
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
-    recheck: {},
+    check: {},
     names: {
         modules: ['layout', 'listeners', 'chat', 'playlist'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'time', 'titlewrap'],
@@ -44,10 +45,20 @@ const self = {
                     type: data.type,
                     checked: self.settings.get(data.key),
                     'data-key': data.key,
+                    'tweak': data.sub == undefined,
                 })
                 .change(function() {
                     self.settings.save();
-                    //self.refresh();
+
+                    if (!$(this).attr('tweak'))
+                        return;
+
+                    const script = self.scripts[$(this).attr('data-key')]
+
+                    if ($(this).prop('checked'))
+                        script.enable();
+                    else
+                        script.disable();
                 })
 
             if (data.sub)
@@ -97,8 +108,12 @@ const self = {
         if (_to === 'main')
             self.modules[title] = mod;
     },
-    removeModule: (title) => {
-        delete self.modules[title];
+    removeModule: (title, _from) => {
+        if (_from === 'main')
+            delete self.modules[title];
+
+        if (_from === 'layout')
+            delete self.modules.layout[title];
     },
     getModule: (title, _from) => {
         if (_from === 'layout')
@@ -112,19 +127,6 @@ const self = {
     },
     addScript: (title, script) => {
         self.scripts[title] = script;
-    },
-    refresh: () => {
-        $.each(self.modules, (key, mod) => {
-            mod.disable();
-            mod.enable();
-        })
-
-        /*
-        $.each(self.scripts, (key, script) => {
-            script.disable();
-            script.enable();
-        })
-        */
     },
     patch: (container, func, callback) => {
         const original = container[func];
@@ -140,23 +142,28 @@ const self = {
         }
     },
     checkRequired: (mod) => {
-        console.log(mod);
-
         if (!mod.requires)
             return true;
-
-
 
         var result = true;
 
         $.each(mod.requires, (index) => {
-            if (!result) //if it is false
+            if (!result) //if it is false, doesn't matter if others are fine
                 return;
 
             result = self.modules[mod.requires[index]] !== undefined;
         })
 
         return result;
+    },
+    recheck: () => {
+        $.each(self.check, (key, value) => {
+            if (!self.checkRequired(value))
+                return;
+
+            delete self.check[key];
+            self.modules[key].init();
+        })
     },
     load: () => {
         self.settings.load();
@@ -166,26 +173,26 @@ const self = {
                 const mod = self.modules[name];
 
                 if (!self.checkRequired(mod))
-                    self.recheck[name] = mod;
+                    self.check[name] = mod;
 
-                $.each(self.recheck, (key, value) => {
-                    console.log(key, value);
+                if (!self.check[name] && mod.init)
+                    mod.init();
 
-                    if (self.checkRequired(value)) {
-                        self.modules[key].init();
-                        delete self.recheck[name];
-                    }
-                })
+                self.recheck();
             })
         })
 
         $.each(self.names.scripts, (index, name) => {
-            $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`)
+            $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
+                const script = self.scripts[name]
+
+                //if we have some default functionality/or the way the script is built
+                //start it
+                //some scripts like showDrinks or  by default show things
+                if (script.init)
+                    script.init();
+            })
         })
-    },
-    test: (event) => {
-        console.log("Should print something")
-        console.log(event);
     },
     init: () => {
         self.load();
@@ -196,9 +203,12 @@ const self = {
             self.settings.show();
         })
 
-        self.patch(window, 'closePoll', (data) => {
+        socket.on('clearPoll', (data) => {
             console.log(data);
+            self.settings.set('polldata', data, true);
         })
+
+        console.log(self.getTime());
     },
 }
 

@@ -23,6 +23,12 @@ function load() {
         },
         modules: {},
         names: ['windows', 'infobox', 'toolbar', 'wraps', 'chat', 'playlist', 'video', 'bottom'],
+        waitForModules: (callback) => {
+            if (Object.keys(self.modules).length != self.names.length)
+                setTimeout(self.waitForModules(callback), 250);
+            else
+                callback();
+        },
         handleMaltweaks: (mutation) => {
             if (mutation.id !== 'headwrap')
                 return;
@@ -31,7 +37,7 @@ function load() {
                 self.settings.set('maltweaks', true, true);
 
             if (self.settings.get("active") && self.settings.get("maltweaks"))
-                self.enable();
+                self.waitForModules(self.enable);
         },
         handleBerryTweaks: () => {
             if ($("head > link").attr('href').indexOf("atte.fi") === -1)
@@ -63,11 +69,13 @@ function load() {
                 mod.disable();
             })
 
-            if (self.settings.get('maltweaks')) //patch, fixes wrong sized header when exiting from tweaks
+            if (self.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
         },
         init: () => {
             //load the listeners
+            console.log("Starting ")
+
             self.settings = SmidqeTweaks.settings;
 
             self.listeners.maltweaks.func = self.handleMaltweaks;

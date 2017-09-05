@@ -55,4 +55,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.modules.listeners = load();
+SmidqeTweaks.addModule('listeners', load(), 'main');

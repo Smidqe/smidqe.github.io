@@ -1,6 +1,5 @@
 function load() {
     const self = {
-        settings: null,
         bar: null,
         buttons: {
             tweaks: {
@@ -11,7 +10,7 @@ function load() {
                 alwaysVisible: true,
                 callbacks: {
                     click: () => {
-                        if (self.settings.get('active'))
+                        if (SmidqeTweaks.settings.get('active'))
                             SmidqeTweaks.modules.layout.disable();
                         else
                             SmidqeTweaks.modules.layout.enable();
@@ -28,6 +27,10 @@ function load() {
                 text: data.text,
             });
 
+            button.on('click', function() {
+                $(this).toggleClass('active');
+            })
+
             $.each(data.callbacks, (key, value) => {
                 button.on(key, value);
             })
@@ -41,29 +44,22 @@ function load() {
             self.bar.append(button)
         },
         enable: () => {
-            $.each(self.buttons, (key, value) => {
-                /*
-                if (!SmidqeTweaks.checkDeps(value.deps))
-                	return;
-				
-                */
-
-                $('#st-button-control-' + value.id).removeClass('hidden');
+            $.each(self.buttons, (key, button) => {
+                $('#st-button-control-' + button.id).removeClass('hidden');
             })
         },
         disable: () => {
-            $.each(self.buttons, (key, value) => {
+            $.each(self.buttons, (key, button) => {
 
-                if (!value.alwaysVisible)
-                    $('#st-button-control-' + value.id).addClass('hidden');
+                if (!button.alwaysVisible)
+                    $('#st-button-control-' + button.id).addClass('hidden');
             })
         },
         init: () => {
-            self.settings = SmidqeTweaks.settings;
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
 
-            $.each(self.buttons, (key, value) => {
-                self.create(value);
+            $.each(self.buttons, (key, button) => {
+                self.create(button);
             })
 
             $('#chatControls').append(self.bar);

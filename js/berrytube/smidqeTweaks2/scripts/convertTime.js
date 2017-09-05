@@ -4,15 +4,17 @@ function load() {
         settings: [{
             title: 'Show time in 12 hr format',
             type: 'checkbox',
-            key: 'showTime'
+            key: 'convertTime'
         }],
         disable: () => {
 
         },
         enable: () => {
-
+            SmidqeTweaks.patch(BerryTweaks, 'getServerTime', () => {
+                $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
+            })
         }
     }
     return self;
 }
-SmidqeTweaks.scripts['time'] = load();
+SmidqeTweaks.scripts['convertTime'] = load();

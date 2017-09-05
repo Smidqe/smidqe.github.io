@@ -5,7 +5,6 @@
 */
 function load() {
     const self = {
-        settings: null,
         modules: {
             rules: {
                 paths: ["#st-wrap-motd", "#motdwrap"],
@@ -43,7 +42,7 @@ function load() {
         getPath: (key) => {
             var index = 0;
 
-            if (self.modules[key].paths.length == 2 && self.settings.get('maltweaks'))
+            if (self.modules[key].paths.length == 2 && SmidqeTweaks.settings.get('maltweaks'))
                 index = 1;
 
             return self.modules[key].paths[index];
@@ -79,9 +78,7 @@ function load() {
             })
         },
 
-        init: () => {
-            self.settings = SmidqeTweaks.settings;
-        }
+        init: () => {}
     }
 
     return self;

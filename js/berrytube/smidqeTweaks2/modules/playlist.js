@@ -39,7 +39,7 @@ function load() {
         },
 
         getLink: (title) => {
-
+            //find the title in the window.PLAYLIST linked list
         },
     }
 

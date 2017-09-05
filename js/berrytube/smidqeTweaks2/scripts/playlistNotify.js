@@ -1,3 +1,29 @@
+/*
+TODO:
+    - Handle multiple livestreams
+        - Problem: They all have the same title
+        - Possible solution:
+            - If it was added add an playlist object (window.PLAYLIST) into it
+            - It should have an addedon
+                - (What if not?)
+            - 
+
+    - Rework the object structure
+        - Object:
+        {
+            title,
+            livestream,
+            duration,
+            timestamp,
+            state: {
+                action,
+                active,
+                volatile,
+            }
+        }
+
+*/
+
 function load() {
     const self = {
         group: 'playlist',
@@ -43,9 +69,6 @@ function load() {
                 return;
 
             $.each(data, (key) => {
-                if (key === 'start')
-                    return;
-
                 if ($.isPlainObject(change[key])) //little bit of recursion
                     self.modify(change[key], data[key], true);
                 else
@@ -76,6 +99,9 @@ function load() {
             delete this.changes[title];
         },
         add: function(node, action) {
+            if (self.changes[node.find(".title").text])
+                return self.changes[node.find(".title").text];
+
             const change = {};
             const self = this;
 
@@ -92,6 +118,7 @@ function load() {
             }
 
             self.changes[change.title] = change;
+            return change;
         },
         message: (change) => {
             var msg = change.title;
@@ -147,6 +174,47 @@ function load() {
             if (!mutation)
                 return;
 
+
+            /*
+            $.each(mutation.addedNodes, (index, value) => {
+                const node = $(value);
+
+                if (!self.isItem(node))
+                    return;
+
+                const change = self.add(node, 'added');
+                const position = playlist.pos(change.title);
+
+                if (change.state.action === 'removed') {
+                    clearTimeout(change.timeout);
+
+                    if (playlist.pos(change.title) != -1)
+                        self.modify(change, { position: playlist.pos(change.title), state: { action: 'moved' } }, false, true)
+                }
+
+                if (change.state.action === 'added')
+                    self.message(change);
+
+
+            })
+            
+            $.each(mutation.removedNodes, (index, value) => {
+                if (!self.isItem($(mutation.removedNodes[index])))
+                    return;
+
+                const change = self.add(node, 'removed');
+
+                if (change.state.action !== 'removed')
+                    self.modify(change, { state: { action: 'removed' } }, false, false)
+
+                if (change.state.active)
+                    self.remove(change.title, true);
+                else
+                    change.timeout = setTimeout(() => { self.remove(change.title, true) }, 1000); //for possible move
+            })
+
+            */
+
             $.each(mutation.addedNodes, (index) => {
                 if (!self.isItem($(mutation.addedNodes[index])))
                     return;
@@ -195,7 +263,7 @@ function load() {
                 if (change.state.active || change.livestream)
                     self.remove(change.title, true);
                 else
-                    change.timeout = setTimeout(() => { tweaks.playlist.notify.remove(change.title, true) }, 1000); //for possible change
+                    change.timeout = setTimeout(() => { self.remove(change.title, true) }, 1000); //for possible change
             });
 
             const node = $(mutation.target);

@@ -1,3 +1,15 @@
+/*
+    TODO:
+    - Remove the grid part and move the necessary data into infobox
+        - All the data will be there
+        - 
+    - Remove the drink handling from here and move those into scripts
+        - showDrinks.js
+    
+    - Rename this into bottombar, and move it to the /modules/
+        -
+*/
+
 function load() {
     const self = {
         bar: {},
@@ -17,7 +29,6 @@ function load() {
                 ids: ['drinks', 'dpm'],
                 titles: ['Drinks', 'DPM'],
             },
-
         },
         buttons: {
             about: {
@@ -104,7 +115,6 @@ function load() {
 
             self.bar.buttons.append(button)
         },
-
         createGridBlock: (key, data) => {
             const group = $('<div>', { id: 'st-info-group-' + key });
 
@@ -126,6 +136,16 @@ function load() {
         disable: () => {
             $(self.bar.container).addClass('st-window-default');
         },
+        updateDrinks: () => {
+            var count = $("#drinkCounter").text();
+            const elem = $("#st-info-drinks > span");
+
+            //if NaN then just show many, because the default message is too long and breaks the layout
+            if (isNaN(count))
+                elem.text("Many")
+            else
+                elem.text(count);
+        },
         init: () => {
             self.bar.buttons = $('<div>', { class: "st-buttons-container" });
             self.bar.container = $("<div>", { id: "st-controls-container", class: "st-controls-wrap st-window-default" });
@@ -143,6 +163,24 @@ function load() {
             })
 
             $('body').append(self.bar.container);
+
+            //handle time updates
+            SmidqeTweaks.patch(BerryTweaks, 'getServerTime', () => {
+                $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
+            })
+
+            SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
+                $("#st-info-users > span").text(data.num);
+            })
+
+            //handle the drink calls
+            socket.on('drinkCount', (data) => {
+                self.updateDrinks(data.drinks);
+            });
+
+            setInterval(() => {
+                $("#st-info-dpm > span").text($(".dpmCounter").text().substring(5));
+            }, 1000);
         },
     }
 
