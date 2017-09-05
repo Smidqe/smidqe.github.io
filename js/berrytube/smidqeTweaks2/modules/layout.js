@@ -33,7 +33,7 @@ function load() {
                 return;
 
             if (mutation.id === 'headwrap' && !SmidqeTweaks.settings.get('maltweaks'))
-                self.settings.set('maltweaks', true, true);
+                SmidqeTweaks.settings.set('maltweaks', true, true);
 
             if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks"))
                 self.waitForModules(self.enable);
