@@ -51,7 +51,7 @@ function load() {
             });
 
             const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
-            const location = self.settings.get('maltweaks') ? $('body') : $('head');
+            const location = SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head');
 
             SmidqeTweaks.settings.set("active", true, true)
 
@@ -62,7 +62,7 @@ function load() {
             })
         },
         disable: () => {
-            self.settings.set("active", false, true)
+            SmidqeTweaks.settings.set("active", false, true)
 
             $.each(self.modules, (key, mod) => {
                 mod.disable();
