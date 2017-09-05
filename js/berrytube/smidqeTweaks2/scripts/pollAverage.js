@@ -1,12 +1,13 @@
 function load() {
     const self = {
-        group: 'poll',
+        group: 'polls',
         settings: [{
             title: "Calculate episode poll average",
             type: "checkbox",
             key: "pollAverage",
-            tweak: 'pollAverage',
+            tweak: true,
         }],
+        enabled: false,
         calculate: function(data) {
             if (data.votes.length != 11)
                 return;
@@ -26,14 +27,19 @@ function load() {
         },
 
         enable: () => {
+            self.enabled = true;
+        },
+        disable: () => {
+            self.enabled = false;
+        },
+        init: () => {
             socket.on('clearPoll', (data) => {
-                if (!SmidqeTweaks.settings.get('pollAverage'))
+                if (!self.enabled)
                     return;
 
                 self.calculate(data);
             })
         },
-        disable: () => {}
     }
     return self;
 }

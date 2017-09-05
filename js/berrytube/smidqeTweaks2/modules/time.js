@@ -7,24 +7,17 @@ function load() {
             key: '12hour'
         }],
 
-        get: (half) => {
+        get: () => {
             const time = new Date();
 
-            const s = time.getSeconds();
-            const m = time.getMinutes();
-            var h = time.getHours();
+            var hours = time.getUTCHours();
+            const detail = hours < 12 ? "AM" : "PM";
 
-            if (h > 12 && half)
-                h -= 12;
+            if (hours >= 12 && SmidqeTweaks.settings.get('12hour'))
+                hours -= 12;
 
-            var text = h + ":" + m + ":" + s;
-
-            if (half)
-                text += text + " " + (time.getHours() < 12 ? "AM" : "PM");
-
-            return text;
+            return hours + ":" + time.getUTCMinutes() + " " + detail;
         },
-
     }
 
     return self;

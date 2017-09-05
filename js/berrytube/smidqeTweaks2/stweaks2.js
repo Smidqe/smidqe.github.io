@@ -17,7 +17,7 @@ const self = {
     scripts: {}, //
     check: {},
     names: {
-        modules: ['layout', 'listeners', 'chat', 'playlist'],
+        modules: ['layout', 'listeners', 'chat', 'playlist', 'time'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titlewrap'],
     },
     settings: {
@@ -66,11 +66,9 @@ const self = {
 
             return wrap.append(element);
         },
-        append: (mod) => {
+        append: (cont, mod) => {
             if (!mod.settings)
                 return;
-
-            console.log(mod.settings);
 
             $.each(mod.settings, (key, val) => {
                 const setting = self.settings.create(val);
@@ -97,16 +95,12 @@ const self = {
                 })));
             })
 
-            //add to those groups
-            console.log(self.modules);
-            console.log(self.scripts);
-
             $.each(self.modules, (key, mod) => {
-                self.settings.append(mod);
+                self.settings.append(cont, mod);
             })
 
             $.each(self.scripts, (key, mod) => {
-                self.settings.append(mod);
+                self.settings.append(cont, mod);
             })
 
             $("#settingsGui > ul").append($('<li>').append(cont));
@@ -219,7 +213,7 @@ const self = {
             self.settings.set('polldata', data, true);
         })
 
-
+        console.log(self.modules['time'].getTime());
     },
 }
 
