@@ -28,7 +28,7 @@ function load() {
     const self = {
         group: 'playlist',
         playlist: null,
-        listener: null,
+        listeners: null,
         prevTimestamp: null,
         needModules: ['listeners', 'playlist'],
         defaultTimeout: 1000,
