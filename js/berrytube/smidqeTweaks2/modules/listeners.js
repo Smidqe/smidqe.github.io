@@ -5,13 +5,13 @@ function load() {
             return new MutationObserver(function(mutations) {
                 mutations.forEach((mutation) => {
                     if (obs.monitor === "added")
-                        mutation.addedNodes.forEach(mut => obs.func(mut));
+                        mutation.addedNodes.forEach(mut => obs.callback(mut));
 
                     if (obs.monitor === "removed")
-                        mutation.removedNodes.forEach(mut => obs.func(mut));
+                        mutation.removedNodes.forEach(mut => obs.callback(mut));
 
                     if (obs.monitor === "all")
-                        obs.func(mutation); //call the callback on every mutation regardless of type
+                        obs.callback(mutation); //call the callback on every mutation regardless of type
                 });
             });
         },
