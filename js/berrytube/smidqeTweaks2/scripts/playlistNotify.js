@@ -259,6 +259,9 @@ function load() {
         enable: () => {
             self.playlist = SmidqeTweaks.getModule('playlist', 'main');
             self.listeners = SmidqeTweaks.getModule('listeners', 'main');
+
+            console.log(self.listeners);
+
             self.observer = {
                 monitor: 'all',
                 config: { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true },
@@ -268,8 +271,8 @@ function load() {
                 }
             }
 
-            self.listeners.load(obs);
-            self.listeners.start(obs);
+            self.listeners.load(self.observer);
+            self.listeners.start(self.observer);
         },
         disable: () => {
             self.listener.disconnect();
