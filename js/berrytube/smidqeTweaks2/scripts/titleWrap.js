@@ -17,12 +17,14 @@ function load() {
             $(".st-window-users").removeClass("wrap");
         },
         enable: () => {
-            if ($("#berrytweaks-video_title")[0])
-                self.wrap;
-            else
-                SmidqeTweaks.patch(BerryTweaks.modules.videoTitle, 'enable', () => {
-                    self.wrap();
-                })
+            if ($("#berrytweaks-video_title")[0]) {
+                self.wrap();
+                return;
+            }
+
+            SmidqeTweaks.patch(BerryTweaks.modules.videoTitle, 'enable', () => {
+                self.wrap();
+            })
         }
     }
 
