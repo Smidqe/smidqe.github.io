@@ -29,7 +29,7 @@ function load() {
             id: 'drinktest',
             text: 'D',
             tooltip: 'Add a test drink message',
-            callback: {
+            callbacks: {
                 click: () => {
                     SmidqeTweaks.modules.chat.add('ST', 'DRINK TEST', 'drink');
                 }
