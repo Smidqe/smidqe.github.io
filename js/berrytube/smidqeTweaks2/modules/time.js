@@ -20,6 +20,8 @@ function load() {
 
             if (SmidqeTweaks.settings.get('12hour'))
                 msg += " " + detail;
+
+            return msg;
         },
     }
 

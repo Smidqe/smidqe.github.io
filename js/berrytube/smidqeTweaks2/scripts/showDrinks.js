@@ -10,14 +10,20 @@ function load() {
             title: 'Show drink count in chat',
             type: 'checkbox',
             key: 'showDrinks',
-        }, {
-            title: '',
-            type: 'checkbox'
         }],
 
         enabled: false,
         update: () => {
+            const last = $(".drink:last tr")
 
+            if (last.find('.st-chat-drinkcount')[0])
+                return;
+
+            const wrap = $("<td>", { class: 'st-chat-drinkcount' })
+            const text = $("<span>", { text: 'x' + $('#drinkCounter').text() })
+
+            wrap.append(text);
+            last.prepend(wrap);
         },
         disable: () => {
             self.enabled = true;
@@ -27,20 +33,11 @@ function load() {
         },
         init: () => {
             SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
-                console.log('DRINK MESSAGE: ' + data);
                 if (data.msg.emote !== 'drink')
                     return;
 
-                const last = $(".drink:last tr")
-
-                if (last.find('.st-chat-drinkcount')[0])
-                    return;
-
-                const wrap = $("<td>", { class: 'st-chat-drinkcount' })
-                const text = $("<span>", { text: $('#drinkCounter').text() })
-
-                wrap.append(text);
-                last.prepend(wrap);
+                if (self.enabled)
+                    self.update();
             })
         },
     }
