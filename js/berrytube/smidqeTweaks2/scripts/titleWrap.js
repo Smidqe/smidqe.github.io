@@ -7,18 +7,22 @@ function load() {
             key: 'titleWrap',
             tweak: true,
         }],
-
+        wrap: () => {
+            $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
+            $("#st-videotitle-window").addClass("active");
+            $(".st-window-users").addClass("wrap");
+        },
         disable: () => {
             $("#berrytweaks-video_title").unwrap();
             $(".st-window-users").removeClass("wrap");
         },
         enable: () => {
-            console.log("Enabling BerryTweaks namewrap");
-
-            $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
-            $("#st-videotitle-window").addClass("active");
-
-            $(".st-window-users").addClass("wrap");
+            if ($("#berrytweaks-video_title")[0])
+                self.wrap;
+            else
+                SmidqeTweaks.patch(BerryTweaks.modules.videoTitle, 'enable', () => {
+                    self.wrap();
+                })
         }
     }
 
