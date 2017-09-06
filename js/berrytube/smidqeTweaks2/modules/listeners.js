@@ -5,10 +5,10 @@ function load() {
             return new MutationObserver(function(mutations) {
                 mutations.forEach((mutation) => {
                     if (obs.monitor === "added")
-                        mutation.addedNodes.forEach(mut => { obs.callback(mut) });
+                        mutation.addedNodes.forEach(mut => obs.callback);
 
                     if (obs.monitor === "removed")
-                        mutation.removedNodes.forEach(mut => { obs.callback(mut) });
+                        mutation.removedNodes.forEach(mut => obs.callback);
 
                     if (obs.monitor === "all")
                         obs.callback(mutation); //call the callback on every mutation regardless of type

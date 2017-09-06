@@ -30,6 +30,7 @@ function load() {
         playlist: null,
         listener: null,
         prevTimestamp: null,
+        needModules: ['listeners', 'playlist'],
         defaultTimeout: 1000,
         settings: [{
                 title: "Notify of playlist changes",
