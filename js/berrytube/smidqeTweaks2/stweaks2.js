@@ -161,13 +161,18 @@ const self = {
 
         return result;
     },
-    recheck: () => {
+    recheck: (_type) => {
         $.each(self.check, (key, value) => {
-            if (!self.checkRequired(value))
+            if (!self.checkRequired(value, _type))
                 return;
 
             delete self.check[key];
-            self.modules[key].init();
+
+            if (_type === 'module')
+                self.modules[key].init();
+
+            if (_type === 'script' && self.scripts[key].init)
+                self.scripts[key].init();
         })
     },
     load: () => {
@@ -177,13 +182,13 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
                 const mod = self.modules[name];
 
-                if (!self.checkRequired(mod))
+                if (!self.checkRequired(mod, 'module'))
                     self.check[name] = mod;
 
                 if (!self.check[name] && mod.init)
                     mod.init();
 
-                self.recheck();
+                self.recheck('module');
             })
         })
 
@@ -191,11 +196,13 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
                 const script = self.scripts[name]
 
-                if (script.init)
+                if (!self.checkRequired(script, 'script'))
+                    self.check[name] = script;
+
+                if (!self.check[name] && script.init)
                     script.init();
 
-                if (self.settings.get(name))
-                    script.enable();
+                self.recheck('script');
             })
         })
     },

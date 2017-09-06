@@ -75,15 +75,15 @@ function load() {
             //load the listeners
             console.log("Starting ")
 
-            self.listeners.maltweaks.func = self.handleMaltweaks;
-            self.listeners.berrytweaks.func = self.handleBerryTweaks;
+            self.listeners.maltweaks.callback = self.handleMaltweaks;
+            self.listeners.berrytweaks.callback = self.handleBerryTweaks;
 
             SmidqeTweaks.settings.set('maltweaks', false, true);
             SmidqeTweaks.settings.set('berrytweaks', false, true)
 
             $.each(self.listeners, (key, value) => {
-                self.listeners[key].observer = SmidqeTweaks.modules.listeners.create(value);
-                SmidqeTweaks.modules.listeners.start(self.listeners[key]);
+                SmidqeTweaks.modules.listeners.load(value);
+                SmidqeTweaks.modules.listeners.start(value);
             });
 
             //check if we have berrytweaks already in the m
@@ -97,8 +97,8 @@ function load() {
             });
 
             setTimeout(() => {
-                $.each(self.listeners, (key) => {
-                    self.listeners[key].observer.disconnect();
+                $.each(self.listeners, (key, value) => {
+                    SmidqeTweaks.modules.listeners.stop(value);
                 })
             }, 30000)
         },
