@@ -15,7 +15,7 @@
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
-    check: {},
+    check: {}, // each would have the script and _type {script: null, _type: ''}
     names: {
         modules: ['layout', 'listeners', 'chat', 'playlist', 'time'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titleWrap'],
@@ -163,16 +163,16 @@ const self = {
     },
     recheck: (_type) => {
         $.each(self.check, (key, value) => {
-            if (!self.checkRequired(value, _type))
+            if (!self.checkRequired(value.module))
                 return;
 
             delete self.check[key];
 
-            if (_type === 'module')
-                self.modules[key].init();
+            if (value.module.init)
+                value.module.init();
 
-            if (_type === 'script' && self.scripts[key].init)
-                self.scripts[key].init();
+            if (value._type === 'script' && self.settings.get(key) && value.module.enable)
+                value.module.enable();
         })
     },
     load: () => {
@@ -182,13 +182,13 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
                 const mod = self.modules[name];
 
-                if (!self.checkRequired(mod, 'module'))
-                    self.check[name] = mod;
+                if (!self.checkRequired(mod))
+                    self.check[name] = { module: mod, _type: 'module' };
 
                 if (!self.check[name] && mod.init)
                     mod.init();
 
-                self.recheck('module');
+                self.recheck();
             })
         })
 
@@ -196,13 +196,19 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
                 const script = self.scripts[name]
 
-                if (!self.checkRequired(script, 'script'))
-                    self.check[name] = script;
+                if (!self.checkRequired(script))
+                    self.check[name] = { module: script, _type: 'script' };
 
                 if (!self.check[name] && script.init)
                     script.init();
 
-                self.recheck('script');
+                console.log(name, self.settings.get(name));
+                console.log(self.check);
+
+                if (!self.check[name] && self.settings.get(name))
+                    script.enable();
+
+                self.recheck();
             })
         })
     },

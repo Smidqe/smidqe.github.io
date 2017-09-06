@@ -13,6 +13,8 @@ function load() {
             $(".st-window-users").removeClass("wrap");
         },
         enable: () => {
+            console.log("Enabling BerryTweaks namewrap");
+
             $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
             $("#st-videotitle-window").addClass("active");
 
