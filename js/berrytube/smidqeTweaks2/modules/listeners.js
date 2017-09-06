@@ -28,7 +28,7 @@ function load() {
                     return;
 
                 clearInterval(id);
-                listeners.start(obs);
+                self.start(obs);
             }
         },
 
