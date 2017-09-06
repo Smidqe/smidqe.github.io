@@ -27,6 +27,7 @@ function load() {
         },
         init: () => {
             SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
+                console.log('DRINK MESSAGE: ' + data);
                 if (data.msg.emote !== 'drink')
                     return;
 
