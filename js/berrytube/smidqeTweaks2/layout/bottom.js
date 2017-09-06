@@ -164,10 +164,11 @@ function load() {
             $('body').append(self.bar.container);
 
             //handle time updates
+            /*
             SmidqeTweaks.patch(BerryTweaks, 'getServerTime', () => {
                 $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
             })
-
+            */
             SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
                 $("#st-info-users > span").text(data.num);
             })

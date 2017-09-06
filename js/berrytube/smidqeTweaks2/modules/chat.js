@@ -1,13 +1,7 @@
 function load() {
     const self = {
         add: (nick, text, type) => {
-            var time = null;
-
-            //get the server time from berrytweaks if it is enabled
-            if (settings.get("berrytweaks"))
-                time = BerryTweaks.getServerTime();
-            else
-                time = new Date();
+            const time = new Date();
 
             addChatMsg({
                 msg: {
