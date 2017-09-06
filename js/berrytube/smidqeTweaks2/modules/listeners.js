@@ -1,3 +1,7 @@
+/*
+    Rewrite this if possible
+*/
+
 function load() {
     const self = {
         listeners: {},
@@ -5,10 +9,10 @@ function load() {
             return new MutationObserver(function(mutations) {
                 mutations.forEach((mutation) => {
                     if (obs.monitor === "added")
-                        mutation.addedNodes.forEach(mut => obs.callback);
+                        mutation.addedNodes.forEach(mut => obs.callback(mut));
 
                     if (obs.monitor === "removed")
-                        mutation.removedNodes.forEach(mut => obs.callback);
+                        mutation.removedNodes.forEach(mut => obs.callback(mut));
 
                     if (obs.monitor === "all")
                         obs.callback(mutation); //call the callback on every mutation regardless of type

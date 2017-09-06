@@ -30,7 +30,7 @@ function load() {
         playlist: null,
         listeners: null,
         prevTimestamp: null,
-        needModules: ['listeners', 'playlist'],
+        requires: ['listeners', 'playlist'],
         defaultTimeout: 1000,
         settings: [{
                 title: "Notify of playlist changes",
@@ -258,27 +258,25 @@ function load() {
         },
 
         enable: () => {
-            self.playlist = SmidqeTweaks.getModule('playlist', 'main');
-            self.listeners = SmidqeTweaks.getModule('listeners', 'main');
-
-            console.log(self.listeners);
-
             self.observer = {
                 monitor: 'all',
                 config: { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true },
                 path: "#plul",
-                callback: (mutation) => {
-                    self.run(mutation);
-                }
+                callback: self.run,
             }
 
             self.listeners.load(self.observer);
             self.listeners.start(self.observer);
         },
         disable: () => {
-            self.listener.disconnect();
+            self.listeners.stop(self.observer);
             self.changes = {};
-        }
+        },
+
+        init: () => {
+            self.playlist = SmidqeTweaks.getModule('playlist', 'main');
+            self.listeners = SmidqeTweaks.getModule('listeners', 'main');
+        },
     }
     return self;
 }
