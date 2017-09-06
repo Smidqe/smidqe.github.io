@@ -10,7 +10,10 @@ function load() {
         settings: [{
             title: 'Show drink count in chat',
             type: 'checkbox',
-            key: 'chatDrink'
+            key: 'showDrinks',
+        }, {
+            title: '',
+            type: 'checkbox'
         }],
 
         enabled: false,
@@ -24,7 +27,12 @@ function load() {
             self.enabled = true;
         },
         init: () => {
+            SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
+                if (data.msg.emote !== 'drink')
+                    return;
 
+
+            })
         },
     }
 

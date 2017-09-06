@@ -22,9 +22,7 @@ function load() {
         disable: () => {
 
         },
-        create: () => {
 
-        },
         init: () => {
 
         },

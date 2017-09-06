@@ -2,30 +2,39 @@ function load() {
     const self = {
         bar: null,
         buttons: [{
-                id: 'tweaks',
-                text: 'T',
-                tooltip: 'Toggle tweaks',
-                setting: 'active',
-                alwaysVisible: true,
-                callbacks: {
-                    click: () => {
-                        if (SmidqeTweaks.settings.get('active'))
-                            SmidqeTweaks.modules.layout.disable();
-                        else
-                            SmidqeTweaks.modules.layout.enable();
-                    },
+            id: 'tweaks',
+            text: 'T',
+            tooltip: 'Toggle tweaks',
+            setting: 'active',
+            alwaysVisible: true,
+            callbacks: {
+                click: () => {
+                    if (SmidqeTweaks.settings.get('active'))
+                        SmidqeTweaks.modules.layout.disable();
+                    else
+                        SmidqeTweaks.modules.layout.enable();
+                },
+            }
+        }, {
+            id: 'video',
+            text: 'V',
+            tooltip: 'Show/Hide the video',
+            callbacks: {
+                click: () => {
+
                 }
             },
-            {
-                id: 'video',
-                text: 'V',
-                tooltip: 'Show/Hide the video',
-                callbacks: {
-
-                },
-                deps: [],
+            deps: [],
+        }, {
+            id: 'drinktest',
+            text: 'D',
+            tooltip: 'Add a test drink message',
+            callback: {
+                click: () => {
+                    SmidqeTweaks.modules.chat.add('ST', 'DRINK TEST', 'drink');
+                }
             }
-        ],
+        }],
         create: (data) => {
             const button = $("<div>", {
                 class: "st-button-control",
