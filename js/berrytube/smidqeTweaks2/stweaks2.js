@@ -19,11 +19,11 @@ const self = {
     names: {
         modules: ['layout', 'listeners', 'chat', 'playlist', 'time'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titleWrap', 'showDrinks'],
+        groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],
     },
     settings: {
         container: null,
         storage: {},
-        groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],
         get: (key, fallback) => {
             return self.settings.storage[key] || fallback;
         },
@@ -45,7 +45,6 @@ const self = {
                     type: data.type,
                     checked: self.settings.get(data.key),
                     'data-key': data.key,
-                    'tweak': data.tweak,
                 })
                 .change(function() {
                     self.settings.set($(this).attr('data-key'), $(this).prop('checked'), true);
@@ -54,8 +53,6 @@ const self = {
 
                     if (!script)
                         return;
-
-                    console.log(script);
 
                     if ($(this).prop('checked'))
                         script.enable();
@@ -89,7 +86,7 @@ const self = {
             cont.append($('<legend>', { text: 'SmidqeTweaks' }));
 
             //create the groups
-            $.each(self.settings.groups, (key, val) => {
+            $.each(self.names.groups, (key, val) => {
                 cont.append($('<div>', {
                     class: 'st-settings-group ' + val,
                 }).append($('<label>', {
@@ -97,12 +94,12 @@ const self = {
                 })));
             })
 
-            $.each(self.modules, (key, mod) => {
-                self.settings.append(cont, mod);
+            $.each(self.names.modules, (key, mod) => {
+                self.settings.append(cont, self.modules[mod]);
             })
 
-            $.each(self.scripts, (key, mod) => {
-                self.settings.append(cont, mod);
+            $.each(self.names.scripts, (key, mod) => {
+                self.settings.append(cont, self.scripts[mod]);
             })
 
             $("#settingsGui > ul").append($('<li>').append(cont));

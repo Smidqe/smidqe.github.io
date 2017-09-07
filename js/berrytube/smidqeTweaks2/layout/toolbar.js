@@ -22,7 +22,7 @@ function load() {
             active: true,
             callbacks: {
                 click: () => {
-
+                    SmidqeTweaks.getModule('video', 'layout').toggle();
                 }
             },
             deps: [],
@@ -55,7 +55,7 @@ function load() {
                 button.attr('title', data.tooltip);
 
             if (SmidqeTweaks.settings.get(data.setting) || data.active)
-                button.addclass('active');
+                button.addClass('active');
 
             self.bar.append(button)
         },

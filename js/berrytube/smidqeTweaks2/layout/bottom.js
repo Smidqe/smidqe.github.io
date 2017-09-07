@@ -18,17 +18,17 @@ function load() {
             time: {
                 group: false,
                 ids: ['time'],
-                titles: ['Time'],
+                titles: ['Time: '],
             },
             users: {
                 group: false,
                 ids: ['users'],
-                titles: ['Users'],
+                titles: ['Users: '],
             },
             drinks: {
                 group: true,
                 ids: ['drinks', 'dpm'],
-                titles: ['Drinks', 'DPM'],
+                titles: ['Drinks: ', 'DPM: '],
             },
         },
         buttons: {
@@ -164,10 +164,8 @@ function load() {
 
             $('body').append(self.bar.container);
 
-            //handle time updates
-            /*
+            //initialize some of the blocks with 
 
-            */
             SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
                 $("#st-info-users > span").text(data.num);
             })
