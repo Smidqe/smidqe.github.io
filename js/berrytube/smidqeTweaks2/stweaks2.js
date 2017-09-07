@@ -192,6 +192,8 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
                 const mod = self.modules[name];
 
+                console.log(mod);
+
                 if (!self.checkRequired(mod))
                     self.check[name] = { module: mod, _type: 'module' };
 
