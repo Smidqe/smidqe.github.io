@@ -8,6 +8,8 @@ function load() {
         }],
         enabled: false,
         calculate: function(data) {
+            console.log(data.votes);
+
             if (data.votes.length != 11)
                 return;
 
@@ -22,9 +24,8 @@ function load() {
             const average = total / count;
             const msg = "average is " + average;
 
-            SmidqeTweaks.chat.add("Episode average", msg, 'rcv');
+            SmidqeTweaks.chat.add("Episode ", msg, 'rcv');
         },
-
         enable: () => {
             self.enabled = true;
         },
@@ -43,4 +44,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.scripts['pollAverage'] = load();
+SmidqeTweaks.addScript('pollAverage', load());

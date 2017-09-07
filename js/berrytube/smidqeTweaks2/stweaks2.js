@@ -23,9 +23,9 @@ const self = {
     scripts: {}, //
     check: {}, // each would have the script and _type {script: null, _type: ''}
     names: { //holds the names for different things
-        modules: ['layout', 'listeners', 'chat', 'playlist', 'time'],
-        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titleWrap', 'showDrinks'],
-        groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],
+        modules: ['layout', 'listeners', 'chat', 'playlist', 'time', 'toolbar'],
+        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
+        groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches', 'debug'],
     },
     settings: {
         container: null,
@@ -229,7 +229,6 @@ const self = {
         })
 
         socket.on('clearPoll', (data) => {
-            console.log(data);
             self.settings.set('polldata', data, true);
         })
     },

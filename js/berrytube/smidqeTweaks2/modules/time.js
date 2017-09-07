@@ -16,6 +16,11 @@ function load() {
             if (hours > 12 && SmidqeTweaks.settings.get('12hour'))
                 hours -= 12;
 
+            var minutes = time.getMinutes();
+
+            if (minutes < 10)
+                minutes = "0" + minutes;
+
             var msg = hours + ":" + time.getMinutes();
 
             if (SmidqeTweaks.settings.get('12hour'))

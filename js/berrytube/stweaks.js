@@ -131,14 +131,12 @@ var settings = {
     get: function(key) {
         return this.storage[key];
     },
-
     set: function(key, value, save) {
         this.storage[key] = value
 
         if (save)
             this.save();
     },
-
     createSetting: function(data, sub) {
         const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
         const element = $('<input>', {

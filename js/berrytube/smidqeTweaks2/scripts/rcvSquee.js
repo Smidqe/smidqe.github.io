@@ -32,4 +32,4 @@ function load() {
     }
     return self;
 }
-SmidqeTweaks.scripts['rcvSquee'] = load();
+SmidqeTweaks.addScript('rcvSquee', load());

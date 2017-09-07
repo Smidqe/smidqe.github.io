@@ -44,4 +44,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.scripts['showDrinks'] = load();
+SmidqeTweaks.addScript('showDrinks', load());

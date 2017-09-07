@@ -52,4 +52,4 @@ function load() {
 
     return self;
 }
-SmidqeTweaks.scripts.titleWrap = load();
+SmidqeTweaks.addScript('titleWrap', load());

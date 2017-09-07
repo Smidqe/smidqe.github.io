@@ -1,29 +1,3 @@
-/*
-TODO:
-    - Handle multiple livestreams
-        - Problem: They all have the same title
-        - Possible solution:
-            - If it was added add an playlist object (window.PLAYLIST) into it
-            - It should have an addedon
-                - (What if not?)
-            - 
-
-    - Rework the object structure
-        - Object:
-        {
-            title,
-            livestream,
-            duration,
-            timestamp,
-            state: {
-                action,
-                active,
-                volatile,
-            }
-        }
-
-*/
-
 function load() {
     const self = {
         group: 'playlist',
@@ -107,9 +81,9 @@ function load() {
             const change = {};
 
             change.title = title;
-            change.livestream = playlist.duration(change.title) === -1;
+            change.livestream = self.playlist.duration(change.title) === -1;
             change.timestamp = (new Date()).getTime();
-            change.position = playlist.pos(change.title);
+            change.position = self.playlist.pos(change.title);
 
             change.state = {
                 action: action,
@@ -204,7 +178,7 @@ function load() {
                     return;
 
                 const change = self.add(node, 'added');
-                const position = playlist.pos(change.title);
+                const position = self.playlist.pos(change.title);
 
                 if (change.state.action === 'removed') {
                     clearTimeout(change.timeout);
@@ -279,4 +253,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.scripts['playlistNotify'] = load();
+SmidqeTweaks.addScript('playlistNotify', load());
