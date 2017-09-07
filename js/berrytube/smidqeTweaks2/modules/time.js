@@ -10,13 +10,13 @@ function load() {
         get: () => {
             const time = new Date();
 
-            var hours = time.getUTCHours();
+            var hours = time.getHours();
             const detail = hours < 12 ? "AM" : "PM";
 
-            if (hours >= 12 && SmidqeTweaks.settings.get('12hour'))
+            if (hours > 12 && SmidqeTweaks.settings.get('12hour'))
                 hours -= 12;
 
-            var msg = hours + ":" + time.getUTCMinutes();
+            var msg = hours + ":" + time.getMinutes();
 
             if (SmidqeTweaks.settings.get('12hour'))
                 msg += " " + detail;

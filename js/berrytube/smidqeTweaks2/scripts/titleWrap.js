@@ -9,15 +9,19 @@ function load() {
         requires: ['listeners'],
         observer: null,
         wrapped: false,
-
         disable: () => {
             $("#berrytweaks-video_title").unwrap();
             $(".st-window-users").removeClass("wrap");
 
             self.wrapped = false;
         },
-        enable: () => {
+        enable: (node) => {
+            console.log(node);
+
             if (self.wrapped)
+                return;
+
+            if ($(node).attr('id') !== 'berrytweaks-video_title')
                 return;
 
             $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
