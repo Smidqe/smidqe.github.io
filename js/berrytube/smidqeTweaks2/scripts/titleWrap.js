@@ -10,6 +10,8 @@ function load() {
         observer: null,
         wrapped: false,
         wrap: (node) => {
+            console.log(node);
+
             if ($(node).attr('id') !== 'berrytweaks-video_title')
                 return;
 
