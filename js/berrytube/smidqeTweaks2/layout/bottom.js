@@ -13,6 +13,7 @@
 function load() {
     const self = {
         bar: {},
+        requires: ['time'],
         grids: {
             time: {
                 group: false,
@@ -165,9 +166,7 @@ function load() {
 
             //handle time updates
             /*
-            SmidqeTweaks.patch(BerryTweaks, 'getServerTime', () => {
-                $("#st-info-time > span").text($(".me > .berrytweaks-localtime").text());
-            })
+
             */
             SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
                 $("#st-info-users > span").text(data.num);
@@ -181,6 +180,10 @@ function load() {
             setInterval(() => {
                 $("#st-info-dpm > span").text($(".dpmCounter").text().substring(5));
             }, 1000);
+
+            setInterval(() => {
+                $("#st-info-time > span").text(SmidqeTweaks.modules.time.get());
+            }, 60 * 1000)
         },
     }
 

@@ -11,7 +11,6 @@ function load() {
             type: 'checkbox',
             key: 'showDrinks',
         }],
-
         enabled: false,
         update: () => {
             const last = $(".drink:last tr")
@@ -26,7 +25,7 @@ function load() {
             last.prepend(wrap);
         },
         disable: () => {
-            self.enabled = true;
+            self.enabled = false;
         },
         enable: () => {
             self.enabled = true;

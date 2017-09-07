@@ -2,18 +2,15 @@ function load() {
     const self = {
         group: 'tweaks',
         settings: [{
-                title: 'Squee on RCV messages',
-                type: 'checkbox',
-                key: 'rcvSquee',
-                tweak: true,
-            },
-            {
-                title: 'Highlight the message',
-                type: 'checkbox',
-                key: 'highlightRCV',
-                sub: true,
-            }
-        ],
+            title: 'Squee on RCV messages',
+            type: 'checkbox',
+            key: 'rcvSquee',
+        }, {
+            title: 'Highlight the message',
+            type: 'checkbox',
+            key: 'highlightRCV',
+            sub: true,
+        }],
         enabled: false,
         disable: () => {
             self.enabled = false;

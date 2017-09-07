@@ -5,7 +5,6 @@ function load() {
             title: "Calculate episode poll average",
             type: "checkbox",
             key: "pollAverage",
-            tweak: true,
         }],
         enabled: false,
         calculate: function(data) {

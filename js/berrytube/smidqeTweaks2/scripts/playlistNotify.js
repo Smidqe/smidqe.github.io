@@ -36,7 +36,6 @@ function load() {
                 title: "Notify of playlist changes",
                 type: "checkbox",
                 key: "playlistNotify",
-                tweak: true,
             },
             {
                 title: "Adding video",
@@ -64,7 +63,7 @@ function load() {
             },
         ],
         changes: {},
-        modify: function(change, data, sub, message) {
+        modify: (change, data, sub, message) => {
             if (!change)
                 return;
 
@@ -84,8 +83,8 @@ function load() {
             if (message)
                 self.message(change);
         },
-        remove: function(title, message) {
-            const change = this.changes[title];
+        remove: (title, message) => {
+            const change = self.changes[title];
 
             if (!change)
                 return;
@@ -94,11 +93,11 @@ function load() {
 
             //if we have added a non volatile video, don't announce it being removed
             if (message && !change.state.volatile)
-                this.message(change);
+                self.message(change);
 
-            delete this.changes[title];
+            delete self.changes[title];
         },
-        add: function(node, action) {
+        add: (node, action) => {
             const title = node.find(".title").text()
 
             //return the already existing value
@@ -106,7 +105,6 @@ function load() {
                 return self.changes[title];
 
             const change = {};
-            const self = this;
 
             change.title = title;
             change.livestream = playlist.duration(change.title) === -1;

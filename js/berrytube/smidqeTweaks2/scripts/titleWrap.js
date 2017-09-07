@@ -5,7 +5,6 @@ function load() {
             title: 'Wrap videotitle to separate line',
             type: 'checkbox',
             key: 'titleWrap',
-            tweak: true,
         }],
         requires: ['listeners'],
         observer: null,

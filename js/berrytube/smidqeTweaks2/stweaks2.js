@@ -18,7 +18,7 @@ const self = {
     check: {}, // each would have the script and _type {script: null, _type: ''}
     names: {
         modules: ['layout', 'listeners', 'chat', 'playlist', 'time'],
-        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titleWrap'],
+        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titleWrap', 'showDrinks'],
     },
     settings: {
         container: null,
@@ -50,10 +50,12 @@ const self = {
                 .change(function() {
                     self.settings.set($(this).attr('data-key'), $(this).prop('checked'), true);
 
-                    if (!$(this).attr('tweak'))
+                    const script = self.scripts[$(this).attr('data-key')]
+
+                    if (!script)
                         return;
 
-                    const script = self.scripts[$(this).attr('data-key')]
+                    console.log(script);
 
                     if ($(this).prop('checked'))
                         script.enable();

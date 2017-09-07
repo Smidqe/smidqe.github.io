@@ -19,6 +19,7 @@ function load() {
             id: 'video',
             text: 'V',
             tooltip: 'Show/Hide the video',
+            active: true,
             callbacks: {
                 click: () => {
 
@@ -53,7 +54,7 @@ function load() {
             if (data.tooltip)
                 button.attr('title', data.tooltip);
 
-            if (SmidqeTweaks.settings.get(button.setting))
+            if (SmidqeTweaks.settings.get(data.setting) || data.active)
                 button.addclass('active');
 
             self.bar.append(button)
@@ -65,7 +66,6 @@ function load() {
         },
         disable: () => {
             $.each(self.buttons, (key, button) => {
-
                 if (!button.alwaysVisible)
                     $('#st-button-control-' + button.id).addClass('hidden');
             })
