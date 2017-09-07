@@ -81,7 +81,7 @@ function load() {
             const change = {};
 
             change.title = title;
-            change.livestream = self.playlist.duration(change.title) === -1;
+            change.livestream = self.playlist.duration(node.find('.time').text()) === -1;
             change.timestamp = (new Date()).getTime();
             change.position = self.playlist.pos(change.title);
 
@@ -225,8 +225,10 @@ function load() {
             if (self.hasString(mutation.oldValue, 'volatile') != -1 && change.state.volatile && !node.hasClass('volatile'))
                 changed = true;
 
-            if (changed)
+            if (changed && (new Date().getTime() - self.prevChange > 1000)) {
                 self.modify(change, { state: { action: 'changed', changed: true, volatile: node.hasClass('volatile') } }, false, true);
+                self.prevChange = new Date().getTime();
+            }
         },
 
         enable: () => {
