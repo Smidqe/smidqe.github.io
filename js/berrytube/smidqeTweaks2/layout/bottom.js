@@ -164,7 +164,9 @@ function load() {
 
             $('body').append(self.bar.container);
 
-            //initialize some of the blocks with 
+            //initialize some of the blocks with the data
+            $("#st-info-time > span").text(SmidqeTweaks.modules.time.get());
+            $("#st-info-users > span").text($("#connectedCount").text());
 
             SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
                 $("#st-info-users > span").text(data.num);

@@ -1,6 +1,7 @@
 function load() {
     const self = {
-        hide: () => {
+        hidden: false,
+        toggle: () => {
 
         },
         enable: () => {

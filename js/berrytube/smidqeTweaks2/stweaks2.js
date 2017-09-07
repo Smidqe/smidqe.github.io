@@ -11,12 +11,18 @@
                     - This is because 
 
             - 
+
+        THINGS:
+            - Rework the module/layout logic
+                - Instead of layout having it's own modules, move those into self.layout
+                - module can stay where it is, since it's a bunch of functions
+                -
 */
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //
     check: {}, // each would have the script and _type {script: null, _type: ''}
-    names: {
+    names: { //holds the names for different things
         modules: ['layout', 'listeners', 'chat', 'playlist', 'time'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'showUsergroups', 'emoteCopy', 'emoteSquee', 'titleWrap', 'showDrinks'],
         groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],
@@ -94,6 +100,7 @@ const self = {
                 })));
             })
 
+            //use the names defined in self.names, to ensure same order everytime
             $.each(self.names.modules, (key, mod) => {
                 self.settings.append(cont, self.modules[mod]);
             })
@@ -176,7 +183,11 @@ const self = {
     },
     load: () => {
         self.settings.load();
-
+        /*
+            Todo:
+            - Combine the logic in the getScripts
+            - 
+        */
         $.each(self.names.modules, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
                 const mod = self.modules[name];
@@ -200,9 +211,6 @@ const self = {
 
                 if (!self.check[name] && script.init)
                     script.init();
-
-                console.log(name, self.settings.get(name));
-                console.log(self.check);
 
                 if (!self.check[name] && self.settings.get(name))
                     script.enable();

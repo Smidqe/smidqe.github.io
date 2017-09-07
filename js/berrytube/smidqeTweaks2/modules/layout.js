@@ -72,6 +72,9 @@ function load() {
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
         },
+        toggle: () => {
+
+        },
         init: () => {
             //load the listeners
             console.log("Starting ")
