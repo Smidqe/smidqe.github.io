@@ -28,8 +28,7 @@ function load() {
             const pair = $('<div>', { id: value.id }).append($('<span>').text(value.title));
             const val = $('<div>', { id: value.id }).append($('<span>').text(value.value))
 
-            block.append(pair);
-            block.append(val);
+            block.append(pair.append(val));
         },
 
         update: (key, value) => {
