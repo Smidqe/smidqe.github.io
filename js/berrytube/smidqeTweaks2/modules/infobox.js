@@ -20,10 +20,12 @@ function load() {
             $.each(data.values, (key, value) => {
                 self.addPair(block, value);
             })
+
+            self.container.append(block);
         },
 
         addPair: (block, value) => {
-            const pair = $('<div>', { id: value.id }).append($('<span>').text(value.id));
+            const pair = $('<div>', { id: value.id }).append($('<span>').text(value.title));
             const val = $('<div>', { id: value.id }).append($('<span>').text(value.value))
 
             block.append(pair);
@@ -43,6 +45,8 @@ function load() {
 
         init: () => {
             self.container = $('<div>', { id: 'st-infobox-container', class: '.st-window-default' })
+
+
 
             $("body").append(self.container);
         },

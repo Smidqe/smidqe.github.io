@@ -23,6 +23,7 @@ function load() {
                 value: 0,
             }]
         },
+        requires: ['infobox'],
         infobox: null,
         enabled: false,
         update: () => {
