@@ -6,7 +6,7 @@ Add more files to layout
 function load() {
     const self = {
         runnable: true,
-        requires: ['listeners', 'time'],
+        requires: ['listeners', 'time', 'toolbar'],
         enabled: false,
         listeners: {
             maltweaks: {

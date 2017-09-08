@@ -36,29 +36,6 @@ function load() {
                 }
             }
         }],
-        create: (data) => {
-            const button = $("<div>", {
-                class: "st-button-control",
-                id: "st-button-control-" + data.id,
-                text: data.text,
-            });
-
-            button.on('click', function() {
-                $(this).toggleClass('active');
-            })
-
-            $.each(data.callbacks, (key, value) => {
-                button.on(key, value);
-            })
-
-            if (data.tooltip)
-                button.attr('title', data.tooltip);
-
-            if (SmidqeTweaks.settings.get(data.setting) || data.active)
-                button.addClass('active');
-
-            self.bar.append(button)
-        },
         enable: () => {
             $.each(self.buttons, (key, button) => {
                 $('#st-button-control-' + button.id).removeClass('hidden');

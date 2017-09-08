@@ -44,7 +44,7 @@ function load() {
         init: () => {
             self.container = $('<div>', { id: 'st-infobox-container', class: '.st-window-default' })
 
-            $("#chatControls").append(self.container);
+            $("body").append(self.container);
         },
     }
 
