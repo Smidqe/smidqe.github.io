@@ -50,10 +50,11 @@ function load() {
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
 
+            /*
             $.each(self.buttons, (key, button) => {
                 self.create(button);
             })
-
+            */
             $('#chatControls').append(self.bar);
         },
     };
