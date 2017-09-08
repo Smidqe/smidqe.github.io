@@ -36,14 +36,14 @@ function load() {
         },
 
         show: () => {
-            $('#st-infobox-container').removeClass('.st-window-default');
+            $('#st-infobox-container').removeClass('st-window-default');
         },
         hide: () => {
-            $('#st-infobox-container').addClass('.st-window-default');
+            $('#st-infobox-container').addClass('st-window-default');
         },
 
         init: () => {
-            self.container = $('<div>', { id: 'st-infobox-container', class: '.st-window-default' })
+            self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default' })
 
 
 
