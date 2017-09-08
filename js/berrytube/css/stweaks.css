@@ -408,3 +408,19 @@ body #leftpane {
 }
 
 */
+
+.st-infobox-block {
+    display: grid;
+}
+
+.st-infobox-pair {
+    width: 100%;
+}
+
+.st-infobox-pair>span:first-child {
+    float: left;
+}
+
+.st-infobox-pair>span:last-child {
+    float: right;
+}

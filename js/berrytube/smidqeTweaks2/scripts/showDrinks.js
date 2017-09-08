@@ -12,7 +12,7 @@ function load() {
             key: 'showDrinks',
         }],
         data: {
-            block: 'Drinks',
+            block: 'drinks',
             values: [{
                 id: 'current',
                 title: 'Current drinks',
