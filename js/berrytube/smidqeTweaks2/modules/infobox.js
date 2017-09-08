@@ -13,7 +13,7 @@ function load() {
             if (self.blocks.indexOf(data.block) != -1)
                 block = $('#st-infobox-block-' + data.block);
             else {
-                block = $('<div>', { id: 'st-infobox-block-' + data.block })
+                block = $('<div>', { id: 'st-infobox-block-' + data.block, class: 'st-infobox-block' })
                 self.blocks.push(data.block);
             }
 
@@ -43,9 +43,7 @@ function load() {
         },
 
         init: () => {
-            self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default' })
-
-
+            self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default st-window-overlap' })
 
             $("body").append(self.container);
         },
