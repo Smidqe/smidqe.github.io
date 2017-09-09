@@ -26,9 +26,7 @@ function load() {
         requires: ['infobox'],
         infobox: null,
         enabled: false,
-        update: () => {
-            self.infobox.update('current', $('#drinkCounter').text());
-
+        show: () => {
             const last = $(".drink:last tr")
 
             if (last.find('.st-chat-drinkcount')[0])
@@ -54,8 +52,10 @@ function load() {
                 if (data.msg.emote !== 'drink')
                     return;
 
+                self.infobox.update('current', $('#drinkCounter').text());
+
                 if (self.enabled)
-                    self.update();
+                    self.show();
             })
 
             setInterval(() => {
