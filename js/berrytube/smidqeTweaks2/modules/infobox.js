@@ -25,7 +25,7 @@ function load() {
         },
 
         addPair: (block, value) => {
-            const pair = $('<div>', { id: 'st-infobox-pair - ' + value.id, class: 'st-infobox-pair' });
+            const pair = $('<div>', { id: 'st-infobox-pair-' + value.id, class: 'st-infobox-pair' });
             pair.append($('<span>').text(value.title));
             pair.append($('<span>').text(value.value));
 
