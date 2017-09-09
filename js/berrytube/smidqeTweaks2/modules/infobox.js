@@ -25,14 +25,15 @@ function load() {
         },
 
         addPair: (block, value) => {
-            const pair = $('<div>', { id: value.id, class: 'st-infobox-pair' }).append($('<span>').text(value.title));
-            pair.append($('<span>').text(value.value))
+            const pair = $('<div>', { id: 'st-infobox-pair - ' + value.id, class: 'st-infobox-pair' });
+            pair.append($('<span>').text(value.title));
+            pair.append($('<span>').text(value.value));
 
             block.append(pair);
         },
 
         update: (key, value) => {
-            $("#st-infobox-pair-" + key).find('.value').text(value);
+            $("#st-infobox-pair-" + key).find('span:last-child').text(value);
         },
 
         show: () => {

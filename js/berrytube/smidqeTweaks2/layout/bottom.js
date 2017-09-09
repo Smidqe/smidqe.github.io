@@ -177,6 +177,7 @@ function load() {
                 self.updateDrinks(data.drinks);
             });
 
+            //keep this until I've finished the infobox layout/thingies
             setInterval(() => {
                 $("#st-info-dpm > span").text($(".dpmCounter").text().substring(5));
             }, 1000);
