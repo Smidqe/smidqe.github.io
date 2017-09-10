@@ -8,8 +8,6 @@ function load() {
         }],
         enabled: false,
         calculate: function(data) {
-            console.log(data.votes);
-
             if (data.votes.length != 11)
                 return;
 

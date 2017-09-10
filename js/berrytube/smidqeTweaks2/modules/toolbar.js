@@ -18,6 +18,10 @@ function load() {
             if (SmidqeTweaks.settings.get(data.setting) || data.active)
                 button.addClass('active');
 
+            $.each(data.callbacks, (key, value) => {
+                self.addCallback(data.id, value);
+            })
+
             self.bar.append(button)
         },
 
@@ -33,8 +37,14 @@ function load() {
 
         },
 
+        hide: () => {
+
+        },
+
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
+
+            $("#chatControls").append(self.bar);
         },
     }
 

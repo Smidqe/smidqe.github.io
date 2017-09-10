@@ -37,9 +37,29 @@ function load() {
         amount: () => {
             return window.PLAYLIST.length;
         },
+        getObject: (title) => {
+            const first = window.PLAYLIST.first;
+            var obj = first;
+
+            for (var i = 0; i < self.amount(); i++) {
+                const elemTitle = obj.videotitle.split('%20').join(' ');
+
+                if (elemTitle === title)
+                    return obj;
+
+                obj = obj.next;
+            }
+        },
 
         getLink: (title) => {
-            //find the title in the window.PLAYLIST linked list
+            const object = self.getObject(title);
+            var url = null;
+            switch (object.videotype) {
+                case 'yt':
+                    return 'https://www.youtube.com/watch?v=' + object.videoid;
+                case 'vimeo':
+                    return ''
+            }
         },
     }
 
