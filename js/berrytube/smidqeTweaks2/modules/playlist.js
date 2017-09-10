@@ -17,20 +17,6 @@ function load() {
 
             return ms;
         },
-        pos: (title) => {
-            const elements = $("#plul > li > .title");
-            var position = -1;
-
-            $.each(elements, index => {
-                if (position != -1)
-                    return;
-
-                if ($(elements[index]).text() === title)
-                    position = index;
-            })
-
-            return position;
-        },
         exists: (title) => {
             return playlist.pos(title) != -1;
         },
@@ -42,13 +28,15 @@ function load() {
             var obj = first;
 
             for (var i = 0; i < self.amount(); i++) {
-                const elemTitle = obj.videotitle.split('%20').join(' ');
+                const elemTitle = decodeURI(obj.videotitle);
 
                 if (elemTitle === title)
-                    return obj;
+                    return { value: obj, pos: i };
 
                 obj = obj.next;
             }
+
+            return {};
         },
 
         getLink: (title) => {

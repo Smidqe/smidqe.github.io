@@ -1,3 +1,12 @@
+/*
+    Rework this into using the playlist.getObject(),
+    since now we can use the PLAYLIST variable in window,
+    this allows much more accurate changes to the video we are playing
+
+    
+
+*/
+
 function load() {
     const self = {
         group: 'playlist',
@@ -79,6 +88,7 @@ function load() {
                 return self.changes[title];
 
             const change = {};
+            const obj = self.playlist.getObject(title);
 
             change.title = title;
             change.livestream = self.playlist.duration(node.find('.time').text()) === -1;
@@ -178,7 +188,7 @@ function load() {
                     return;
 
                 const change = self.add(node, 'added');
-                const position = self.playlist.pos(change.title);
+                const position = self.playlist.getObject(change.title).pos;
 
                 if (change.state.action === 'removed') {
                     clearTimeout(change.timeout);
@@ -219,15 +229,11 @@ function load() {
             if (!change)
                 return;
 
-            if (node.hasClass('volatile') && !change.state.volatile)
-                changed = true;
-
-            if (self.hasString(mutation.oldValue, 'volatile') != -1 && change.state.volatile && !node.hasClass('volatile'))
+            if (self.playlist.getObject(change.title).volat != change.state.volatile)
                 changed = true;
 
             if (changed && (new Date().getTime() - self.prevChange > 1000)) {
                 self.modify(change, { state: { action: 'changed', changed: true, volatile: node.hasClass('volatile') } }, false, true);
-                self.prevChange = new Date().getTime();
             }
         },
 
