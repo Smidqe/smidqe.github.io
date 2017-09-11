@@ -45,7 +45,7 @@ function load() {
             self.enabled = true;
         },
         init: () => {
-            self.stats = SmidqeTweaks.modules.infobox;
+            self.stats = SmidqeTweaks.modules.stats;
             self.stats.addBlock(self.data);
 
             SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
