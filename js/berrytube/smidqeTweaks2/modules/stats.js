@@ -56,4 +56,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('infobox', load(), 'main');
+SmidqeTweaks.addModule('stats', load(), 'main');
