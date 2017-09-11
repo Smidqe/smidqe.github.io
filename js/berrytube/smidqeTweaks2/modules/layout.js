@@ -76,9 +76,6 @@ function load() {
 
         },
         init: () => {
-            //load the listeners
-            console.log("Starting ")
-
             self.listeners.maltweaks.callback = self.handleMaltweaks;
             self.listeners.berrytweaks.callback = self.handleBerryTweaks;
 
@@ -86,7 +83,6 @@ function load() {
             SmidqeTweaks.settings.set('berrytweaks', false, true)
 
             $.each(self.listeners, (key, value) => {
-                SmidqeTweaks.modules.listeners.load(value);
                 SmidqeTweaks.modules.listeners.start(value);
             });
 

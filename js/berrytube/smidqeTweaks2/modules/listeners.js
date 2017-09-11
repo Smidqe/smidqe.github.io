@@ -20,10 +20,6 @@ function load() {
             });
         },
 
-        load: function(obs) {
-            obs.observer = self.create(obs);
-        },
-
         wait: function(obs) {
             var id = setInterval(func, 500, obs);
 
@@ -38,7 +34,7 @@ function load() {
 
         start: function(obs) {
             if (!obs.observer)
-                return;
+                obs.observer = self.create(obs);
 
             const element = $(obs.path)[0];
 

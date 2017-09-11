@@ -23,7 +23,7 @@ const self = {
     scripts: {}, //
     check: {}, // each would have the script and _type {script: null, _type: ''}
     names: { //holds the names for different things
-        modules: ['layout', 'listeners', 'chat', 'playlist', 'time', 'toolbar', 'infobox'],
+        modules: ['layout', 'listeners', 'chat', 'playlist', 'time', 'toolbar', 'stats', 'menu'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
         groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches', 'debug'],
     },

@@ -1,6 +1,15 @@
 function load() {
     const self = {
-
+        buttons: {},
+        settings: [{
+            title: 'Hide original settings button',
+            type: 'checkbox',
+            key: 'hideSettings',
+        }, {
+            title: 'Hide original emotes button',
+            type: 'checkbox',
+            key: 'hideEmotes',
+        }],
         add: (data) => {
             const button = $("<div>", {
                 class: "st-button-control",
@@ -33,16 +42,36 @@ function load() {
             $("st-toolbar-button-" + key).on(data.key, data.callback);
         },
 
-        show: () => {
+        show: (key) => {
+            $.each(self.buttons, (sub, value) => {
+                if (key && key !== sub)
+                    return;
 
+                $("#st-toolbar-button-" + sub).removeClass('hidden');
+            })
         },
 
-        hide: () => {
+        hide: (key) => {
+            $.each(self.buttons, (sub, value) => {
+                if (key && key !== sub)
+                    return;
 
+                if (!self.buttons[sub].alwaysVisible)
+                    $("#st-toolbar-button-" + sub).addClass('hidden');
+            })
         },
 
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
+
+            //possibly callbacks to settings, for example the hide original settings
+            //and 
+            /*
+            $('div > .settings, div > .berrymotes_button').on('click', () => {
+
+            })
+            */
+
 
             $("#chatControls").append(self.bar);
         },

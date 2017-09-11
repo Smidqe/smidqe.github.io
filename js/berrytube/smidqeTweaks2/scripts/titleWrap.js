@@ -43,10 +43,8 @@ function load() {
 
             self.observer.callback = self.enable;
 
-            if (SmidqeTweaks.settings.get('titleWrap')) {
-                self.listeners.load(self.observer);
+            if (SmidqeTweaks.settings.get('titleWrap'))
                 self.listeners.start(self.observer);
-            }
         },
     }
 

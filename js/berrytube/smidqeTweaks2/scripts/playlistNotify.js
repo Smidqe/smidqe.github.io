@@ -16,35 +16,30 @@ function load() {
         requires: ['listeners', 'playlist'],
         defaultTimeout: 1000,
         settings: [{
-                title: "Notify of playlist changes",
-                type: "checkbox",
-                key: "playlistNotify",
-            },
-            {
-                title: "Adding video",
-                type: "checkbox",
-                key: "playlistAdd",
-                sub: true,
-            },
-            {
-                title: "Removing a video",
-                type: "checkbox",
-                key: "playlistRemove",
-                sub: true,
-            },
-            {
-                title: "Moving a video",
-                type: "checkbox",
-                key: "playlistMove",
-                sub: true,
-            },
-            {
-                title: "Volatile changes",
-                type: "checkbox",
-                key: "playlistVol",
-                sub: true,
-            },
-        ],
+            title: "Notify of playlist changes",
+            type: "checkbox",
+            key: "playlistNotify",
+        }, {
+            title: "Adding video",
+            type: "checkbox",
+            key: "playlistAdd",
+            sub: true,
+        }, {
+            title: "Removing a video",
+            type: "checkbox",
+            key: "playlistRemove",
+            sub: true,
+        }, {
+            title: "Moving a video",
+            type: "checkbox",
+            key: "playlistMove",
+            sub: true,
+        }, {
+            title: "Volatile changes",
+            type: "checkbox",
+            key: "playlistVol",
+            sub: true,
+        }, ],
         changes: {},
         modify: (change, data, sub, message) => {
             if (!change)
@@ -93,12 +88,12 @@ function load() {
             change.title = title;
             change.livestream = self.playlist.duration(node.find('.time').text()) === -1;
             change.timestamp = (new Date()).getTime();
-            change.position = self.playlist.pos(change.title);
+            change.position = obj.pos;
 
             change.state = {
                 action: action,
                 active: node.hasClass('active'),
-                volatile: node.hasClass('volatile'),
+                volatile: obj.value.volat,
                 changed: action === 'changed',
             }
 
@@ -156,12 +151,6 @@ function load() {
 
             SmidqeTweaks.modules.chat.add("Playlist modification", msg, 'act');
         },
-        hasString: (string, sub) => {
-            if (!string)
-                return false;
-
-            return string.indexOf(sub) != -1;
-        },
         isItem: (node) => {
             const title = node.find(".title").text();
             const tag = node.prop('tagName')
@@ -193,7 +182,7 @@ function load() {
                 if (change.state.action === 'removed') {
                     clearTimeout(change.timeout);
 
-                    if (position != -1)
+                    if (position != change.position)
                         self.modify(change, { position: position, state: { action: 'moved' } }, false, true)
                 }
 
@@ -229,12 +218,11 @@ function load() {
             if (!change)
                 return;
 
-            if (self.playlist.getObject(change.title).volat != change.state.volatile)
+            if (self.playlist.getObject(change.title).value.volat != change.state.volatile)
                 changed = true;
 
-            if (changed && (new Date().getTime() - self.prevChange > 1000)) {
+            if (changed)
                 self.modify(change, { state: { action: 'changed', changed: true, volatile: node.hasClass('volatile') } }, false, true);
-            }
         },
 
         enable: () => {
@@ -245,7 +233,6 @@ function load() {
                 callback: self.run,
             }
 
-            self.listeners.load(self.observer);
             self.listeners.start(self.observer);
         },
         disable: () => {

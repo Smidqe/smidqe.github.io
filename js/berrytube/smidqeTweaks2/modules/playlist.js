@@ -24,11 +24,10 @@ function load() {
             return window.PLAYLIST.length;
         },
         getObject: (title) => {
-            const first = window.PLAYLIST.first;
-            var obj = first;
+            var obj = window.PLAYLIST.first;
 
             for (var i = 0; i < self.amount(); i++) {
-                const elemTitle = decodeURI(obj.videotitle);
+                const elemTitle = decodeURIComponent(obj.videotitle);
 
                 if (elemTitle === title)
                     return { value: obj, pos: i };
