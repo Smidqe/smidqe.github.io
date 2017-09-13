@@ -40,8 +40,8 @@ function load() {
         remove: (key) => {
             delete self.bar[key];
         },
-        addCallback: (key, data) => {
-            $("st-toolbar-button-" + key).on(data.key, data.callback);
+        addCallback: (id, key, callback) => {
+            $("st-toolbar-button-" + id).on(key, callback);
         },
         show: (key) => {
             $.each(self.buttons, (sub, value) => {
