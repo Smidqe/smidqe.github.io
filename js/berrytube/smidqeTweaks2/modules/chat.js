@@ -1,5 +1,7 @@
 function load() {
     const self = {
+        requires: ['stats'],
+
         add: (nick, text, type) => {
             const time = new Date();
 
@@ -41,6 +43,14 @@ function load() {
                 query = $('#chatbuffer > .' + user + ' .berryemote');
 
             return query;
+        },
+
+        init: () => {
+            self.stats = SmidqeTweaks.modules.stats;
+
+            SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
+                self.stats.update('users', data.num);
+            })
         },
     }
     return self;

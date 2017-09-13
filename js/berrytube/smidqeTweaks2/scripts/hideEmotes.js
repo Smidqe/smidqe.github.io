@@ -1,5 +1,5 @@
 /*
-	Hides/shows the original settings button
+	Hides/shows the original emotes button
 */
 function load() {
     const self = {}

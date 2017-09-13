@@ -39,7 +39,7 @@ function load() {
             type: "checkbox",
             key: "playlistVol",
             sub: true,
-        }, ],
+        }],
         changes: {},
         modify: (change, data, sub, message) => {
             if (!change)

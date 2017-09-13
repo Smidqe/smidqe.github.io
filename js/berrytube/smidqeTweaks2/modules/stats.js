@@ -3,19 +3,27 @@ function load() {
         settings: [{
             title: 'Show on hover',
             type: 'checkbox',
-            key: 'ibOnHover',
+            key: 'statsOnHover',
         }],
+        requires: ['toolbar'],
+        button: {
+            id: 'stats',
+            text: 'S',
+            tooltip: 'Show stats window',
+            active: true,
+            callbacks: {},
+            deps: [],
+        },
         blocks: [],
         container: null,
+        visible: false,
         addBlock: (data) => {
             var block = null;
 
             if (self.blocks.indexOf(data.block) != -1)
                 block = $('#st-infobox-block-' + data.block);
-            else {
+            else
                 block = $('<div>', { id: 'st-infobox-block-' + data.block, class: 'st-infobox-block' })
-                self.blocks.push(data.block);
-            }
 
             block.append($('<div>', { class: 'st-infobox-block-title' }).append($('<span>').text(data.block[0].toUpperCase() + data.block.slice(1))))
 
@@ -23,7 +31,17 @@ function load() {
                 self.addPair(block, value);
             })
 
-            self.container.append(block);
+            if (self.blocks.indexOf(data.block) == -1) {
+                self.blocks.push(data.block);
+                self.container.append(block);
+            }
+        },
+
+        getBlock: (key) => {
+            if (self.blocks.indexOf(key) == -1)
+                return null;
+
+            return $('#st-infobox-block-' + key);
         },
 
         addPair: (block, value) => {
@@ -46,8 +64,27 @@ function load() {
             $('#st-infobox-container').addClass('st-window-default');
         },
 
+        toggle: () => {
+            if (self.visible)
+                self.hide();
+            else
+                self.show();
+        },
+
         init: () => {
+            self.toolbar = SmidqeTweaks.modules.toolbar;
             self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default st-window-overlap' })
+
+            //add just one block
+            self.addBlock({
+                block: 'general'
+            });
+
+            self.button.callbacks.click = self.toggle;
+
+            //add the button to open the window
+            self.toolbar.add(self.button)
+            self.toolbar.addCallback();
 
             $("body").append(self.container);
         },

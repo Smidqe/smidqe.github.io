@@ -1,18 +1,22 @@
 function load() {
     const self = {
-        add: () => {
+        show: (data) => {
+            var selector = data.selectors[0];
 
+            if (SmidqeTweaks.settings.get('maltweaks'))
+                selector = data.selectors[1];
+
+            const wrap = $('<div>', {
+                class: 'st-window-wrap'
+            }).append(
+                $('<div>', { class: 'st-window-exit' }));
+
+            $(selector).wrap(wrap);
         },
 
-        show: (node) => {
-            //wrap the element(s)
-            //add the close button
-
-        },
-
-        hide: (node) => {
-            //unwrap
-            //remove the button
+        hide: (data) => {
+            $('.st-window-wrap').contents().unwrap();
+            $('.st-window-exit').remove();
         },
 
         init: () => {

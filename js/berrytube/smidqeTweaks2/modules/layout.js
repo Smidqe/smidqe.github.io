@@ -8,6 +8,13 @@ function load() {
         runnable: true,
         requires: ['listeners', 'time', 'toolbar'],
         enabled: false,
+        button: {
+            id: 'Tweaks',
+            text: 'T',
+            tooltip: 'Enable/disable tweaks',
+            active: false,
+            callbacks: {},
+        },
         listeners: {
             maltweaks: {
                 path: "body",
@@ -61,6 +68,8 @@ function load() {
             $.each(self.modules, (key, mod) => {
                 mod.enable();
             })
+
+            self.enabled = true;
         },
         disable: () => {
             SmidqeTweaks.settings.set("active", false, true)
@@ -71,16 +80,27 @@ function load() {
 
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
+
+            self.enabled = false;
         },
         toggle: () => {
-
+            if (self.enabled)
+                self.disable();
+            else
+                self.enable();
         },
         init: () => {
+            self.button.callbacks.click = self.toggle;
+
+            self.toolbar = SmidqeTweaks.modules.toolbar;
+
             self.listeners.maltweaks.callback = self.handleMaltweaks;
             self.listeners.berrytweaks.callback = self.handleBerryTweaks;
 
             SmidqeTweaks.settings.set('maltweaks', false, true);
             SmidqeTweaks.settings.set('berrytweaks', false, true)
+
+            self.toolbar.add(self.button);
 
             $.each(self.listeners, (key, value) => {
                 SmidqeTweaks.modules.listeners.start(value);

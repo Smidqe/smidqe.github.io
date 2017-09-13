@@ -154,37 +154,8 @@ function load() {
             self.bar.container.append(self.bar.buttons);
             self.bar.container.append(self.bar.grid);
 
-            $.each(self.buttons, (key, value) => {
-                self.createButton(key, value);
-            })
 
-            $.each(self.grids, (key, value) => {
-                self.createGridBlock(key, value);
-            })
-
-            $('body').append(self.bar.container);
-
-            //initialize some of the blocks with the data
-            $("#st-info-time > span").text(SmidqeTweaks.modules.time.get());
-            $("#st-info-users > span").text($("#connectedCount").text());
-
-            SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
-                $("#st-info-users > span").text(data.num);
-            })
-
-            //handle the drink calls
-            socket.on('drinkCount', (data) => {
-                self.updateDrinks(data.drinks);
-            });
-
-            //keep this until I've finished the infobox layout/thingies
-            setInterval(() => {
-                $("#st-info-dpm > span").text($(".dpmCounter").text().substring(5));
-            }, 1000);
-
-            setInterval(() => {
-                $("#st-info-time > span").text(SmidqeTweaks.modules.time.get());
-            }, 60 * 1000)
+            //keep this until I've finished the stats layout/thingies
         },
     }
 

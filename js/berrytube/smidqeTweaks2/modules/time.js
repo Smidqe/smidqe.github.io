@@ -1,11 +1,14 @@
 function load() {
     const self = {
+        requires: ['stats'],
+        stats: null,
         group: 'time',
         settings: [{
             title: 'Show time in 12h format instead of 24',
             type: 'checkbox',
             key: '12hour'
         }],
+
 
         get: () => {
             const time = new Date();
@@ -27,6 +30,16 @@ function load() {
                 msg += " " + detail;
 
             return msg;
+        },
+
+        init: () => {
+            self.stats = SmidqeTweaks.modules.stats;
+            self.stats.addPair(self.stats.getBlock('general'))
+
+
+            setInterval(() => {
+                $("#st-info-time > span").text(self.get());
+            }, 60 * 1000)
         },
     }
 

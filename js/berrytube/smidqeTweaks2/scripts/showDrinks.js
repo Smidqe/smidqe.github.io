@@ -11,18 +11,15 @@ function load() {
             type: 'checkbox',
             key: 'showDrinks',
         }],
-        data: {
-            block: 'drinks',
-            values: [{
-                id: 'current',
-                title: 'Current drinks',
-                value: 0,
-            }, {
-                id: 'dpm',
-                title: 'Drinks per minute',
-                value: 0,
-            }]
-        },
+        pairs: [{
+            id: 'current',
+            title: 'Current drinks',
+            value: 0,
+        }, {
+            id: 'dpm',
+            title: 'Drinks per minute',
+            value: 0,
+        }],
         requires: ['stats'],
         stats: null,
         enabled: false,
@@ -46,7 +43,10 @@ function load() {
         },
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
-            self.stats.addBlock(self.data);
+
+            $.each(self.pairs, (key, value) => {
+                self.stats.addPair(self.stats.getBlock('general'), value);
+            })
 
             SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
                 if (data.msg.emote !== 'drink')

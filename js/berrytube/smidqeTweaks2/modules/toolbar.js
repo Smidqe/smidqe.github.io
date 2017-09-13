@@ -33,15 +33,12 @@ function load() {
 
             self.bar.append(button)
         },
-
         remove: (key) => {
             delete self.bar[key];
         },
-
         addCallback: (key, data) => {
             $("st-toolbar-button-" + key).on(data.key, data.callback);
         },
-
         show: (key) => {
             $.each(self.buttons, (sub, value) => {
                 if (key && key !== sub)
@@ -63,16 +60,6 @@ function load() {
 
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
-
-            //possibly callbacks to settings, for example the hide original settings
-            //and 
-            /*
-            $('div > .settings, div > .berrymotes_button').on('click', () => {
-
-            })
-            */
-
-
             $("#chatControls").append(self.bar);
         },
     }
