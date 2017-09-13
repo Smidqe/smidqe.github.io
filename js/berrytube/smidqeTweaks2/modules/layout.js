@@ -90,7 +90,9 @@ function load() {
                 self.enable();
         },
         init: () => {
-            self.button.callbacks.click = self.toggle;
+            self.button.callbacks = {
+                click: self.toggle
+            };
 
             self.toolbar = SmidqeTweaks.modules.toolbar;
 

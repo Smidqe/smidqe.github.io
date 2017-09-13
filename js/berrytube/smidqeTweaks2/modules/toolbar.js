@@ -31,7 +31,7 @@ function load() {
 
             $.each(data.callbacks, (key, value) => {
                 console.log("Value: ", value);
-                self.addCallback(data.id, value);
+                self.addCallback(data.id, key, value);
             })
 
 

@@ -40,7 +40,7 @@ function load() {
             self.stats.addPair(self.stats.getBlock('general'), self.pair)
 
             setInterval(() => {
-                $("#st-info-time > span").text(self.get());
+                self.stats.update('time', self.get());
             }, 60 * 1000)
         },
     }
