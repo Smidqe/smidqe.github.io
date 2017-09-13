@@ -8,11 +8,11 @@ function load() {
             type: 'checkbox',
             key: '12hour'
         }],
-        pair: [{
+        pair: {
             id: 'time',
             title: 'Current time',
             value: 0,
-        }],
+        },
         get: () => {
             const time = new Date();
 

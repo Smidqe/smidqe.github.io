@@ -84,7 +84,6 @@ function load() {
 
             //add the button to open the window
             self.toolbar.add(self.button)
-            self.toolbar.addCallback();
 
             $("body").append(self.container);
         },
