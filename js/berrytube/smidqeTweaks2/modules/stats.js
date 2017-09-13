@@ -43,7 +43,11 @@ function load() {
             return $('#st-infobox-block-' + key);
         },
 
-        addPair: (block, value) => {
+        addPair: (key, value) => {
+            if (self.blocks.indexOf(key) == -1)
+                self.addBlock({ block: key, values: [] })
+
+            const block = self.getBlock(key);
             const pair = $('<div>', { id: 'st-infobox-pair-' + value.id, class: 'st-infobox-pair' });
 
             pair.append($('<span>').text(value.title));
@@ -73,12 +77,6 @@ function load() {
         init: () => {
             self.toolbar = SmidqeTweaks.modules.toolbar;
             self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default' })
-
-            //add just one block
-            self.addBlock({
-                block: 'general',
-                values: [],
-            });
 
             self.button.callbacks.click = self.toggle;
 
