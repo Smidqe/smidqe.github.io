@@ -19,7 +19,7 @@ function load() {
         requires: ['toolbar'],
         button: {
             id: 'menu',
-            text: 'V',
+            text: 'M',
             tooltip: 'Show/Hide the menu',
             active: true,
             callbacks: {},
@@ -36,25 +36,26 @@ function load() {
         },
 
         show: () => {
+            $('#st-menu').removeClass('st-window-default');
             self.shown = true;
         },
 
         hide: () => {
+            $('#st-menu').removeClass('st-window-default');
             self.shown = false;
         },
 
+        toggle: () => {
+            if (self.shown)
+                self.hide();
+            else
+                self.show();
+        },
         init: () => {
-            self.toolbar = SmidqeTweaks.modules.toolbar;
-
             self.container = $('<div>', { id: 'st-menu' });
-            self.button.callbacks.click = () => {
-                if (self.shown)
-                    self.hide();
-                else
-                    self.show();
-            }
+            self.button.callbacks.click = self.toggle;
 
-            self.toolbar.add(self.button);
+            SmidqeTweaks.modules.toolbar.add(self.button);
         },
     }
 

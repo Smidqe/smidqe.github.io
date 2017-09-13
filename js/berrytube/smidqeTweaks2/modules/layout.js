@@ -9,7 +9,7 @@ function load() {
         requires: ['listeners', 'time', 'toolbar'],
         enabled: false,
         button: {
-            id: 'Tweaks',
+            id: 'tweaks',
             text: 'T',
             tooltip: 'Enable/disable tweaks',
             active: false,
