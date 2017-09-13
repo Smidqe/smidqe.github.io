@@ -45,7 +45,7 @@ function load() {
             self.stats = SmidqeTweaks.modules.stats;
 
             $.each(self.pairs, (key, value) => {
-                self.stats.addPair(self.stats.getBlock('general'), value);
+                self.stats.addPair('general', value);
             })
 
             SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
