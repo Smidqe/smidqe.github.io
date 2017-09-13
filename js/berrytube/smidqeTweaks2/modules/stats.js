@@ -72,7 +72,7 @@ function load() {
 
         init: () => {
             self.toolbar = SmidqeTweaks.modules.toolbar;
-            self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default st-window-overlap' })
+            self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default' })
 
             //add just one block
             self.addBlock({

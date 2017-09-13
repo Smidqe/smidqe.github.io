@@ -27,11 +27,14 @@ function load() {
             if (SmidqeTweaks.settings.get(data.setting) || data.active)
                 button.addClass('active');
 
+            console.log("Callbacks: ", data.callbacks);
+
             $.each(data.callbacks, (key, value) => {
                 self.addCallback(data.id, value);
             })
 
-            self.bar.append(button)
+
+            self.bar.append(button);
         },
         remove: (key) => {
             delete self.bar[key];
