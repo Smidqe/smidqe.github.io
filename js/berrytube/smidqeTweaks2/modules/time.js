@@ -8,8 +8,11 @@ function load() {
             type: 'checkbox',
             key: '12hour'
         }],
-
-
+        pair: [{
+            id: 'time',
+            title: 'Current time',
+            value: 0,
+        }],
         get: () => {
             const time = new Date();
 
@@ -34,8 +37,7 @@ function load() {
 
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
-            self.stats.addPair(self.stats.getBlock('general'))
-
+            self.stats.addPair(self.stats.getBlock('general'), pair)
 
             setInterval(() => {
                 $("#st-info-time > span").text(self.get());
