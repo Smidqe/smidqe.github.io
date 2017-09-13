@@ -12,7 +12,6 @@ function load() {
             tooltip: 'Show stats window',
             active: true,
             callbacks: {},
-            deps: [],
         },
         blocks: [],
         container: null,
@@ -77,7 +76,8 @@ function load() {
 
             //add just one block
             self.addBlock({
-                block: 'general'
+                block: 'general',
+                values: [],
             });
 
             self.button.callbacks.click = self.toggle;
