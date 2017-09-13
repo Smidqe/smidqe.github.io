@@ -37,7 +37,7 @@ function load() {
 
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
-            self.stats.addPair(self.stats.getBlock('general'), pair)
+            self.stats.addPair(self.stats.getBlock('general'), self.pair)
 
             setInterval(() => {
                 $("#st-info-time > span").text(self.get());
