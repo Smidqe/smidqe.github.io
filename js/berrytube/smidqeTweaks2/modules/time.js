@@ -38,7 +38,9 @@ function load() {
 
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
+
             self.stats.addPair('general', self.pair)
+            self.stats.update('time', self.get);
 
             setInterval(() => {
                 self.stats.update('time', self.get());

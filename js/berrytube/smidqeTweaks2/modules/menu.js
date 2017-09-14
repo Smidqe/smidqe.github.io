@@ -18,6 +18,10 @@ function load() {
     const self = {
         started: false,
         requires: ['toolbar'],
+        names: {
+            categories: ['Berrytube', 'SmidqeTweaks'],
+            groups: ['layout', ''],
+        },
         button: {
             id: 'menu',
             text: 'M',
@@ -29,6 +33,9 @@ function load() {
         shown: false,
         addCategory: (data) => {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-category' })
+
+        },
+        addGroup: () => {
 
         },
         addElement: (data) => {

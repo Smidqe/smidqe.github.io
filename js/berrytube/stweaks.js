@@ -794,7 +794,7 @@ var tweaks = {
                 $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
             },
             enable: function(data) {
-                const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
+                const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaksold.css"/>')
                 const location = this.maltweaks ? $('body') : $('head');
 
                 settings.set("active", true, true)

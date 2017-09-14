@@ -16,8 +16,6 @@ function load() {
             self.wrapped = false;
         },
         enable: (node) => {
-            console.log(node);
-
             if (self.wrapped)
                 return;
 
