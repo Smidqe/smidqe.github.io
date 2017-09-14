@@ -48,14 +48,14 @@ function load() {
             delete self.bar[key];
         },
         addCallback: (id, key, callback) => {
-            $("#st-toolbar-button-" + id).on(key, callback);
+            $("#st-button-control-" + id).on(key, callback);
         },
         show: (key) => {
             $.each(self.buttons, (sub, value) => {
                 if (key && key !== sub)
                     return;
 
-                $("#st-toolbar-button-" + sub).removeClass('hidden');
+                $("#st-button-control-" + sub).removeClass('hidden');
             })
         },
 
@@ -65,7 +65,7 @@ function load() {
                     return;
 
                 if (!self.buttons[sub].alwaysVisible)
-                    $("#st-toolbar-button-" + sub).addClass('hidden');
+                    $("#st-button-control-" + sub).addClass('hidden');
             })
         },
 
