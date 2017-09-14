@@ -5,6 +5,7 @@
 function load() {
     const self = {
         listeners: {},
+        started: true,
         create: function(obs) {
             return new MutationObserver(function(mutations) {
                 mutations.forEach((mutation) => {

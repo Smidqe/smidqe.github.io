@@ -23,6 +23,7 @@ const self = {
     scripts: {}, //simplistic methods
     windows: {}, //possibly 
     check: {}, // each would have the script and _type {script: null, _type: ''}
+    doCheck: null,
     names: { //holds the names for different things
         modules: ['layout', 'listeners', 'chat', 'playlist', 'time', 'toolbar', 'stats', 'menu'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
@@ -183,7 +184,7 @@ const self = {
 
         return result;
     },
-    recheck: (_type) => {
+    recheck: () => {
         $.each(self.check, (key, value) => {
             if (!self.checkRequired(value.module))
                 return;
@@ -248,6 +249,23 @@ const self = {
         socket.on('clearPoll', (data) => {
             self.settings.set('polldata', data, true);
         })
+
+        self.doCheck = setInterval(() => {
+            var loaded = { modules: [] }
+
+            self.recheck();
+
+            $.each(self.modules, (key, value) => {
+                if (value.started)
+                    loaded.modules.push(key);
+            })
+
+            console.log
+
+            if (loaded.modules.length === self.names.modules.length)
+                clearInterval(self.check);
+
+        }, 500);
     },
 }
 
