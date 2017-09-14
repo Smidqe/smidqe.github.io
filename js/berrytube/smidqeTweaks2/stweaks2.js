@@ -20,7 +20,8 @@
 */
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
-    scripts: {}, //
+    scripts: {}, //simplistic methods
+    windows: {}, //possibly 
     check: {}, // each would have the script and _type {script: null, _type: ''}
     names: { //holds the names for different things
         modules: ['layout', 'listeners', 'chat', 'playlist', 'time', 'toolbar', 'stats', 'menu'],
@@ -138,6 +139,9 @@ const self = {
     },
     addScript: (title, script) => {
         self.scripts[title] = script;
+    },
+    addWindow: (name, win) => {
+        self.windows[name] = win;
     },
     patch: (container, func, callback) => {
         const original = container[func];

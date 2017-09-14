@@ -62,9 +62,11 @@ function load() {
 
         show: () => {
             $('#st-infobox-container').removeClass('st-window-default');
+            self.visible = true;
         },
         hide: () => {
             $('#st-infobox-container').addClass('st-window-default');
+            self.visible = false;
         },
 
         toggle: () => {

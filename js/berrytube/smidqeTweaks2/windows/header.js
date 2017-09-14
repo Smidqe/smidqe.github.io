@@ -4,9 +4,11 @@ function load() {
 
         button: {
             //something here
+
+
             window: {
                 selectors: ['', ''],
-
+                classes: [''],
             },
         },
         requires: ['menu'],

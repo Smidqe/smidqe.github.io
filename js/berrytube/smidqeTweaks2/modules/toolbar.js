@@ -1,3 +1,11 @@
+/*
+    This module might be removed in the future,
+
+    I think the toolbar will eventually just hold the menu button
+    and some simplistic debugging buttons, like adding a new message
+    poll, playlist and other creation/handling, all enabled from the menu
+    Debugging options should not save, atleast not for now
+*/
 function load() {
     const self = {
         buttons: {},
@@ -30,7 +38,6 @@ function load() {
             console.log("Callbacks: ", data.callbacks);
 
             $.each(data.callbacks, (key, value) => {
-                console.log("Value: ", value);
                 self.addCallback(data.id, key, value);
             })
 
@@ -41,7 +48,7 @@ function load() {
             delete self.bar[key];
         },
         addCallback: (id, key, callback) => {
-            $("st-toolbar-button-" + id).on(key, callback);
+            $("#st-toolbar-button-" + id).on(key, callback);
         },
         show: (key) => {
             $.each(self.buttons, (sub, value) => {

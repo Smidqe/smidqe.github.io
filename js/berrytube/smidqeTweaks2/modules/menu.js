@@ -28,23 +28,32 @@ function load() {
         addCategory: (data) => {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-category' })
 
+
+            self.container.append(wrap);
         },
         addElement: (data) => {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-element' });
 
-            //create the element
-        },
+            if (self.groups.indexOf(data.group) == -1)
+                self.addCategory({ id: data.group })
 
+            //create the element
+            switch (data.type) {
+                case 'button':
+                    break;
+
+                case 'changebox':
+                    break;
+            }
+        },
         show: () => {
             $('#st-menu').removeClass('st-window-default');
             self.shown = true;
         },
-
         hide: () => {
             $('#st-menu').removeClass('st-window-default');
             self.shown = false;
         },
-
         toggle: () => {
             if (self.shown)
                 self.hide();
