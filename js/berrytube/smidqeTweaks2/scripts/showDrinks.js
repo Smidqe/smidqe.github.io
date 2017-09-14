@@ -58,6 +58,10 @@ function load() {
                     self.show();
             })
 
+            socket.on('forceVideoChange', () => {
+                self.stats.update('current', 0);
+            })
+
             setInterval(() => {
                 self.stats.update('dpm', $(".dpmCounter").text().substring(5));
             }, 1000);
