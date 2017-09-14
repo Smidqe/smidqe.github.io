@@ -38,21 +38,18 @@ function load() {
 
             console.log("Callbacks: ", data.callbacks);
 
+            self.bar.append(button);
+
             $.each(data.callbacks, (key, value) => {
                 self.addCallback(data.id, key, value);
             })
 
-            self.bar.append(button);
         },
         remove: (key) => {
             delete self.bar[key];
         },
         addCallback: (id, key, callback) => {
-            const path = "#st-button-control-" + id;
-
-            console.log(path, $(path));
-
-            $(path).on(key, callback);
+            $("#st-button-control-" + id).on(key, callback);
         },
         show: (key) => {
             $.each(self.buttons, (sub, value) => {
