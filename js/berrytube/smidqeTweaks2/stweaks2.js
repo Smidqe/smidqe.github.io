@@ -260,8 +260,6 @@ const self = {
                     loaded.modules.push(key);
             })
 
-            console.log
-
             if (loaded.modules.length === self.names.modules.length)
                 clearInterval(self.check);
 
