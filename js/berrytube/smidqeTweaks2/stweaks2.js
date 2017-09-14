@@ -160,13 +160,25 @@ const self = {
         if (!mod.requires)
             return true;
 
-        var result = true;
+        let result = true;
 
         $.each(mod.requires, (index) => {
-            if (!result) //if it is false, doesn't matter if others are fine
+            if (!result)
                 return;
 
-            result = self.modules[mod.requires[index]] !== undefined;
+            const check = self.modules[mod.requires[index]]
+
+            //check if it's not even loaded
+            if (check === undefined) {
+                result = false;
+                return;
+            }
+
+            //check if the module has finished loading
+            if (!check.started) {
+                result = false;
+                return;
+            }
         })
 
         return result;
@@ -176,14 +188,12 @@ const self = {
             if (!self.checkRequired(value.module))
                 return;
 
-            console.log(key, value);
-
             delete self.check[key];
 
             if (value.module.init)
                 value.module.init();
 
-            if (value._type === 'script' && self.settings.get(key) && value.module.enable)
+            if (value._type === 'script' && self.settings.get(key))
                 value.module.enable();
         })
     },
@@ -198,12 +208,9 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
                 const mod = self.modules[name];
 
-                console.log(mod);
-
                 if (!self.checkRequired(mod))
                     self.check[name] = { module: mod, _type: 'module' };
-
-                if (!self.check[name] && mod.init)
+                else if (mod.init)
                     mod.init();
 
                 self.recheck();
@@ -214,13 +221,15 @@ const self = {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
                 const script = self.scripts[name]
 
-                if (!self.checkRequired(script))
+                if (!self.checkRequired(script)) {
                     self.check[name] = { module: script, _type: 'script' };
+                    return;
+                }
 
-                if (!self.check[name] && script.init)
+                if (script.init)
                     script.init();
 
-                if (!self.check[name] && self.settings.get(name))
+                if (self.settings.get(name))
                     script.enable();
 
                 self.recheck();

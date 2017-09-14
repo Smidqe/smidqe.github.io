@@ -1,5 +1,6 @@
 function load() {
     const self = {
+        started: false,
         settings: [{
             title: 'Show on hover',
             type: 'checkbox',
@@ -88,6 +89,7 @@ function load() {
             self.toolbar.add(self.button)
 
             $("body").append(self.container);
+            self.started = true;
         },
     }
 

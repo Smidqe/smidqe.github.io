@@ -6,6 +6,7 @@ Add more files to layout
 function load() {
     const self = {
         runnable: true,
+        started: false,
         requires: ['listeners', 'time', 'toolbar'],
         enabled: false,
         button: {
@@ -123,6 +124,8 @@ function load() {
                     SmidqeTweaks.modules.listeners.stop(value);
                 })
             }, 30000)
+
+            self.started = true;
         },
     }
 

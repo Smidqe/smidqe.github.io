@@ -1,5 +1,6 @@
 function load() {
     const self = {
+        started: false,
         requires: ['stats'],
 
         add: (nick, text, type) => {
@@ -51,6 +52,8 @@ function load() {
             SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
                 self.stats.update('users', data.num);
             })
+
+            self.started = true;
         },
     }
     return self;

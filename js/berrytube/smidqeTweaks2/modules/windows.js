@@ -1,5 +1,6 @@
 function load() {
     const self = {
+        started: false,
         show: (data) => {
             var selector = data.selectors[0];
 
@@ -20,7 +21,7 @@ function load() {
         },
 
         init: () => {
-
+            self.started = true;
         },
     }
 

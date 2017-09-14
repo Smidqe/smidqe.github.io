@@ -8,6 +8,7 @@
 */
 function load() {
     const self = {
+        started: false,
         buttons: {},
         settings: [{
             title: 'Hide original settings button',
@@ -72,6 +73,8 @@ function load() {
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
             $("#chatControls").append(self.bar);
+
+            self.started = true;
         },
     }
 

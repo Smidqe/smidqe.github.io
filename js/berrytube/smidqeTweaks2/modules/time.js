@@ -1,5 +1,6 @@
 function load() {
     const self = {
+        started: false,
         requires: ['stats'],
         stats: null,
         group: 'time',
@@ -42,6 +43,8 @@ function load() {
             setInterval(() => {
                 self.stats.update('time', self.get());
             }, 60 * 1000)
+
+            self.started = true;
         },
     }
 
