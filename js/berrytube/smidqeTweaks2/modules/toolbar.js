@@ -50,7 +50,7 @@ function load() {
         },
         addCallback: (id, key, callback) => {
 
-            console.log("#st-button-control-" + id, key, callback)
+            console.log("#st-button-control-" + id, key, callback, $("#st-button-control-" + id))
             $("#st-button-control-" + id).on(key, callback);
         },
         show: (key) => {
