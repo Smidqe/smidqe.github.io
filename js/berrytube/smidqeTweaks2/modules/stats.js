@@ -62,11 +62,11 @@ function load() {
         },
 
         show: () => {
-            $('#st-infobox-container').removeClass('st-window-default');
+            $('#st-infobox-container').removeClass('st-window-overlap');
             self.visible = true;
         },
         hide: () => {
-            $('#st-infobox-container').addClass('st-window-default');
+            $('#st-infobox-container').addClass('st-window-overlap');
             self.visible = false;
         },
 

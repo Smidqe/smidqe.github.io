@@ -37,12 +37,12 @@ function load() {
         },
 
         show: () => {
-            $('#st-menu').removeClass('st-window-default');
+            $('#st-menu').removeClass('st-window-overlap');
             self.shown = true;
         },
 
         hide: () => {
-            $('#st-menu').removeClass('st-window-default');
+            $('#st-menu').removeClass('st-window-overlap');
             self.shown = false;
         },
 
