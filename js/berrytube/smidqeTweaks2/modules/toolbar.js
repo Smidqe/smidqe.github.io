@@ -42,16 +42,17 @@ function load() {
                 self.addCallback(data.id, key, value);
             })
 
-
             self.bar.append(button);
         },
         remove: (key) => {
             delete self.bar[key];
         },
         addCallback: (id, key, callback) => {
+            const path = "#st-button-control-" + id;
 
-            console.log("#st-button-control-" + id, key, callback, $("#st-button-control-" + id))
-            $("#st-button-control-" + id).on(key, callback);
+            console.log(path, $(path));
+
+            $(path).on(key, callback);
         },
         show: (key) => {
             $.each(self.buttons, (sub, value) => {
