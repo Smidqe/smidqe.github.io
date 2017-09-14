@@ -83,7 +83,7 @@ function load() {
             self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
             let btn = $('<div>', { id: 'st-stats-exit' })
 
-            btn.append('<span>', { text: 'x' })
+            btn.append($('<span>', { text: 'x' }));
             btn.on('click', () => {
                 self.hide();
             })
