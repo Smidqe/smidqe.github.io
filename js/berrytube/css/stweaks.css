@@ -420,6 +420,7 @@ body #leftpane {
 
 .st-stats-block {
     display: grid;
+    width: 100%;
 }
 
 .st-stats-pair {
