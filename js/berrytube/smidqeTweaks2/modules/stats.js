@@ -78,13 +78,16 @@ function load() {
         },
 
         init: () => {
-            console.log("Starting stats");
-
             self.toolbar = SmidqeTweaks.modules.toolbar;
             self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
-            self.container.append($('<div>', { id: 'st-stats-exit' }).on('click', () => {
+            let btn = $('<div>', { id: 'st-stats-exit' })
+
+            btn.append('<span>', { text: 'x' })
+            btn.on('click', () => {
                 self.hide();
-            }))
+            })
+
+            self.container.append(btn);
             self.button.callbacks.click = self.toggle;
 
             //add the button to open the window

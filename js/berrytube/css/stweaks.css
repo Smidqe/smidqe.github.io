@@ -401,7 +401,6 @@ body #leftpane {
 }
 
 #st-stats-container {
-    display: block;
     background-color: #222222;
     border: 3px solid #474747;
     padding: 5px;
