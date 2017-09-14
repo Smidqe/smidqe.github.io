@@ -22,7 +22,7 @@ function load() {
             id: 'menu',
             text: 'M',
             tooltip: 'Show/Hide the menu',
-            active: true,
+            active: false,
             callbacks: {},
         },
         shown: false,

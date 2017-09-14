@@ -11,7 +11,7 @@ function load() {
             id: 'stats',
             text: 'S',
             tooltip: 'Show stats window',
-            active: true,
+            active: false,
             callbacks: {},
         },
         blocks: [],

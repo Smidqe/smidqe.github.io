@@ -95,6 +95,7 @@ function load() {
                 click: self.toggle
             };
 
+            self.button.active = SmidqeTweaks.settings.get('active');
             self.toolbar = SmidqeTweaks.modules.toolbar;
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
