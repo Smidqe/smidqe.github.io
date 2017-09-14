@@ -176,6 +176,8 @@ const self = {
             if (!self.checkRequired(value.module))
                 return;
 
+            console.log(key, value);
+
             delete self.check[key];
 
             if (value.module.init)

@@ -77,6 +77,8 @@ function load() {
         },
 
         init: () => {
+            console.log("Starting stats");
+
             self.toolbar = SmidqeTweaks.modules.toolbar;
             self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default' })
 
