@@ -26,17 +26,16 @@ function load() {
                 text: data.text,
             });
 
-            button.on('click', function() {
-                $(this).toggleClass('active');
-            })
+            if (data.isToggle)
+                button.on('click', function() {
+                    $(this).toggleClass('active');
+                })
 
             if (data.tooltip)
                 button.attr('title', data.tooltip);
 
             if (SmidqeTweaks.settings.get(data.setting) || data.active)
                 button.addClass('active');
-
-            console.log("Callbacks: ", data.callbacks);
 
             self.bar.append(button);
 

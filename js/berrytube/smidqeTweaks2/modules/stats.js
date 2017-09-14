@@ -12,6 +12,7 @@ function load() {
             text: 'S',
             tooltip: 'Show stats window',
             active: false,
+            isToggle: false,
             callbacks: {},
         },
         blocks: [],
@@ -62,11 +63,11 @@ function load() {
         },
 
         show: () => {
-            $('#st-stats-container').addClass('st-window-overlap');
+            $('#st-stats-container').addClass('st-window-overlap st-window-open');
             self.visible = true;
         },
         hide: () => {
-            $('#st-stats-container').removeClass('st-window-overlap');
+            $('#st-stats-container').removeClass('st-window-overlap st-window-open');
             self.visible = false;
         },
 

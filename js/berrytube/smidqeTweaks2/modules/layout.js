@@ -14,6 +14,7 @@ function load() {
             text: 'T',
             tooltip: 'Enable/disable tweaks',
             active: false,
+            isToggle: true,
             callbacks: {},
         },
         listeners: {

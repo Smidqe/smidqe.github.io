@@ -23,6 +23,7 @@ function load() {
             text: 'M',
             tooltip: 'Show/Hide the menu',
             active: false,
+            isToggle: false,
             callbacks: {},
         },
         shown: false,
