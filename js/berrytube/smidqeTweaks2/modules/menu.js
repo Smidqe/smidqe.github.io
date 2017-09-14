@@ -37,7 +37,7 @@ function load() {
         },
 
         show: () => {
-            $('#st-menu').removeClass('st-window-overlap');
+            $('#st-menu').addClass('st-window-overlap');
             self.shown = true;
         },
 

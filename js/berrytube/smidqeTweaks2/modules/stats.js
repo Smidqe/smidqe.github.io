@@ -21,11 +21,11 @@ function load() {
             var block = null;
 
             if (self.blocks.indexOf(data.block) != -1)
-                block = $('#st-infobox-block-' + data.block);
+                block = $('#st-stats-block-' + data.block);
             else
-                block = $('<div>', { id: 'st-infobox-block-' + data.block, class: 'st-infobox-block' })
+                block = $('<div>', { id: 'st-stats-block-' + data.block, class: 'st-stats-block' })
 
-            block.append($('<div>', { class: 'st-infobox-block-title' }).append($('<span>').text(data.block[0].toUpperCase() + data.block.slice(1))))
+            block.append($('<div>', { class: 'st-stats-block-title' }).append($('<span>').text(data.block[0].toUpperCase() + data.block.slice(1))))
 
             $.each(data.values, (key, value) => {
                 self.addPair(block, value);
@@ -41,7 +41,7 @@ function load() {
             if (self.blocks.indexOf(key) == -1)
                 return null;
 
-            return $('#st-infobox-block-' + key);
+            return $('#st-stats-block-' + key);
         },
 
         addPair: (key, value) => {
@@ -49,7 +49,7 @@ function load() {
                 self.addBlock({ block: key, values: [] })
 
             const block = self.getBlock(key);
-            const pair = $('<div>', { id: 'st-infobox-pair-' + value.id, class: 'st-infobox-pair' });
+            const pair = $('<div>', { id: 'st-stats-pair-' + value.id, class: 'st-stats-pair' });
 
             pair.append($('<span>').text(value.title));
             pair.append($('<span>').text(value.value));
@@ -58,15 +58,15 @@ function load() {
         },
 
         update: (key, value) => {
-            $("#st-infobox-pair-" + key).find('span:last-child').text(value);
+            $("#st-stats-pair-" + key).find('span:last-child').text(value);
         },
 
         show: () => {
-            $('#st-infobox-container').removeClass('st-window-overlap');
+            $('#st-stats-container').addClass('st-window-overlap');
             self.visible = true;
         },
         hide: () => {
-            $('#st-infobox-container').addClass('st-window-overlap');
+            $('#st-stats-container').removeClass('st-window-overlap');
             self.visible = false;
         },
 
@@ -81,8 +81,8 @@ function load() {
             console.log("Starting stats");
 
             self.toolbar = SmidqeTweaks.modules.toolbar;
-            self.container = $('<div>', { id: 'st-infobox-container', class: 'st-window-default' })
-
+            self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
+            self.container.append($('<div>', { id: 'st-stats-exit' }))
             self.button.callbacks.click = self.toggle;
 
             //add the button to open the window
