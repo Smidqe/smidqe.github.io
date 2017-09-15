@@ -1,5 +1,6 @@
 function load() {
     const self = {
+        name: 'windows',
         started: false,
         show: (data) => {
             var selector = data.selectors[0];

@@ -149,7 +149,7 @@ button.st-button:first-letter {
     position: fixed !important;
     top: 0px;
     left: 0px;
-    height: calc(100% - 75px) !important;
+    height: 100% !important;
 }
 
 #videowrap #ytapiplayer iframe {

@@ -9,6 +9,8 @@ function load() {
         started: false,
         requires: ['listeners', 'time', 'toolbar'],
         enabled: false,
+        stylesheet: null,
+        name: 'layout',
         button: {
             id: 'tweaks',
             text: 'T',
@@ -60,12 +62,11 @@ function load() {
                 value.observer.disconnect();
             });
 
-            const stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
             const location = SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head');
 
             SmidqeTweaks.settings.set("active", true, true)
 
-            location.append(stylesheet);
+            location.append(self.stylesheet);
 
             $.each(self.modules, (key, mod) => {
                 mod.enable();
@@ -80,6 +81,8 @@ function load() {
                 mod.disable();
             })
 
+            self.stylesheet.remove();
+
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
 
@@ -92,6 +95,7 @@ function load() {
                 self.enable();
         },
         init: () => {
+            self.stylesheet = stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
             self.button.callbacks = {
                 click: self.toggle
             };

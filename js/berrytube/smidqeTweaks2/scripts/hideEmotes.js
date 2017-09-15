@@ -2,7 +2,9 @@
 	Hides/shows the original emotes button
 */
 function load() {
-    const self = {}
+    const self = {
+        name: 'hideEmotes',
+    }
 
     return self;
 }

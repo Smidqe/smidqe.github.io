@@ -17,11 +17,13 @@
 function load() {
     const self = {
         started: false,
+        name: 'menu',
         requires: ['toolbar'],
         names: {
             categories: ['Berrytube', 'SmidqeTweaks'],
             groups: ['layout', ''],
         },
+        categories: {},
         button: {
             id: 'menu',
             text: 'M',

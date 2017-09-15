@@ -1,29 +1,19 @@
 /*
-    FUTURE:
-        - MODULES:
-            - infobox.js
-                * Will hold all logic regarding the infobox
-    
-        - SCRIPTS:
-            - showFullscreen.js
-                * Will enable fullscreen mode where the chat is hidden, only squees will show up
-                - Video will be almost fullscreen (minus the bottom)
-                    - This is because 
+    - Rewrite the module loading logic,
+    - Instead of waiting for them to load individually and using requires
+    use set interval, and once all modules have been loaded, init() them
+    at the order that is present in names.modules
+    - Scripts are different thing, but still applicable
 
-            - 
-
-        THINGS:
-            - Rework the module/layout logic
-                - Instead of layout having it's own modules, move those into self.layout
-                - module can stay where it is, since it's a bunch of functions
-                -
+    Replace the exit button with a small image
+    25px X 25px
 */
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //simplistic methods
-    windows: {}, //possibly 
-    check: {}, // each would have the script and _type {script: null, _type: ''}
-    doCheck: null,
+    windows: {}, //possibly, will probably remove this
+    check: null, // each would have the script and _type {script: null, _type: ''}
+    queue: {},
     names: { //holds the names for different things
         modules: ['layout', 'listeners', 'chat', 'playlist', 'time', 'toolbar', 'stats', 'menu'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
@@ -116,10 +106,10 @@ const self = {
     },
     addModule: (title, mod, _to) => {
         if (_to === 'layout')
-            self.modules.layout.modules[title] = mod
+            self.modules.layout.modules[mod.name] = mod
 
         if (_to === 'main')
-            self.modules[title] = mod;
+            self.modules[mod.name] = mod;
     },
     removeModule: (title, _from) => {
         if (_from === 'main')
@@ -184,56 +174,36 @@ const self = {
 
         return result;
     },
-    recheck: () => {
-        $.each(self.check, (key, value) => {
-            if (!self.checkRequired(value.module))
-                return;
 
-            delete self.check[key];
+    startModule: (mod) => {
+        if (!self.checkRequired(mod))
+            return;
 
-            if (value.module.init)
-                value.module.init();
+        if (mod.init)
+            mod.init();
 
-            if (value._type === 'script' && self.settings.get(key))
-                value.module.enable();
-        })
+        if (mod.script) {
+            if (self.settings.get(mod.name))
+                mod.enable();
+
+            //possibly more
+        }
+
+        delete self.queue[mod.name];
     },
+
     load: () => {
         self.settings.load();
-        /*
-            Todo:
-            - Combine the logic in the getScripts
-            - 
-        */
+
         $.each(self.names.modules, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
-                const mod = self.modules[name];
-
-                if (!self.checkRequired(mod))
-                    self.check[name] = { module: mod, _type: 'module' };
-                else if (mod.init)
-                    mod.init();
-
-                self.recheck();
+                self.queue[name] = self.modules[name];
             })
         })
 
         $.each(self.names.scripts, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
-                const script = self.scripts[name]
-
-                if (!self.checkRequired(script)) {
-                    self.check[name] = { module: script, _type: 'script' };
-                    return;
-                }
-
-                if (script.init)
-                    script.init();
-
-                if (self.settings.get(name))
-                    script.enable();
-
-                self.recheck();
+                self.queue[name] = self.scripts[name];
             })
         })
     },
@@ -250,20 +220,25 @@ const self = {
             self.settings.set('polldata', data, true);
         })
 
-        self.doCheck = setInterval(() => {
-            var loaded = { modules: [] }
+        //make this into a pausable thing
+        self.start = setInterval(() => {
+            if (Object.keys(self.queue).length == 0)
+                return;
 
-            self.recheck();
-
-            $.each(self.modules, (key, value) => {
-                if (value.started)
-                    loaded.modules.push(key);
+            $.each(self.names.modules, (key, mod) => {
+                self.startModule(mod);
             })
 
-            if (loaded.modules.length === self.names.modules.length)
-                clearInterval(self.check);
-
+            $.each(self.names.scripts, (key, script) => {
+                self.startModule(script);
+            })
         }, 500);
+
+        /*
+        self.doCheck = setInterval(() => {
+            self.doCheck();
+        }, 500);
+        */
     },
 }
 

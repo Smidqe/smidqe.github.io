@@ -9,6 +9,7 @@
 function load() {
     const self = {
         started: false,
+        name: 'toolbar',
         buttons: {},
         settings: [{
             title: 'Hide original settings button',

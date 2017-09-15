@@ -1,6 +1,7 @@
 function load() {
     const self = {
         started: true,
+        name: 'playlist',
         duration: (str) => {
             const values = str.split(":").reverse();
             var ms = 0;

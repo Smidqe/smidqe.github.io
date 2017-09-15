@@ -4,6 +4,7 @@ function load() {
         requires: ['stats'],
         stats: null,
         group: 'time',
+        name: 'time',
         settings: [{
             title: 'Show time in 12h format instead of 24',
             type: 'checkbox',

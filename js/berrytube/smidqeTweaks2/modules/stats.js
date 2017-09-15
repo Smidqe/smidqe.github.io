@@ -1,6 +1,7 @@
 function load() {
     const self = {
         started: false,
+        name: 'stats',
         settings: [{
             title: 'Show on hover',
             type: 'checkbox',

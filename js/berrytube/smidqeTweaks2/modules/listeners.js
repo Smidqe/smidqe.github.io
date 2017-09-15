@@ -4,6 +4,7 @@
 
 function load() {
     const self = {
+        name: 'listeners',
         listeners: {},
         started: true,
         create: function(obs) {

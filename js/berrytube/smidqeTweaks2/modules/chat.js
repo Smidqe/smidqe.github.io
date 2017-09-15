@@ -2,7 +2,7 @@ function load() {
     const self = {
         started: false,
         requires: ['stats'],
-
+        name: 'chat',
         add: (nick, text, type) => {
             const time = new Date();
 
