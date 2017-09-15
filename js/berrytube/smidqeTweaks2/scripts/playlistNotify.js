@@ -10,6 +10,7 @@
 function load() {
     const self = {
         group: 'playlist',
+        script: true,
         playlist: null,
         listeners: null,
         prevTimestamp: null,

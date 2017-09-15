@@ -2,7 +2,9 @@
 	Hides/shows the original settings button
 */
 function load() {
-    const self = {}
+    const self = {
+        name: 'hideSettings',
+    }
 
     return self;
 }

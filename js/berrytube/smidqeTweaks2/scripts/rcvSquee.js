@@ -1,6 +1,7 @@
 function load() {
     const self = {
         group: 'tweaks',
+        script: true,
         settings: [{
             title: 'Squee on RCV messages',
             type: 'checkbox',

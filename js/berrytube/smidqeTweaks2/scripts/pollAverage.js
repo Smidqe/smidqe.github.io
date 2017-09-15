@@ -1,6 +1,7 @@
 function load() {
     const self = {
         group: 'polls',
+        script: true,
         settings: [{
             title: "Calculate episode poll average",
             type: "checkbox",

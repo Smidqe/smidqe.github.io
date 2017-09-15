@@ -106,10 +106,10 @@ const self = {
     },
     addModule: (title, mod, _to) => {
         if (_to === 'layout')
-            self.modules.layout.modules[mod.name] = mod
+            self.modules.layout.modules[title] = mod
 
         if (_to === 'main')
-            self.modules[mod.name] = mod;
+            self.modules[title] = mod;
     },
     removeModule: (title, _from) => {
         if (_from === 'main')
@@ -221,18 +221,14 @@ const self = {
         })
 
         //make this into a pausable thing
-        self.start = setInterval(() => {
+        self.check = setInterval(() => {
             if (Object.keys(self.queue).length == 0)
                 return;
 
-            $.each(self.names.modules, (key, mod) => {
+            $.each(self.queue, (key, mod) => {
                 self.startModule(mod);
             })
-
-            $.each(self.names.scripts, (key, script) => {
-                self.startModule(script);
-            })
-        }, 500);
+        }, 1000);
 
         /*
         self.doCheck = setInterval(() => {
