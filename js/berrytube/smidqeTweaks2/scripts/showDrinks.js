@@ -7,6 +7,7 @@ function load() {
     const self = {
         group: 'tweaks',
         script: true,
+        name: 'showDrinks',
         settings: [{
             title: 'Show drink count in chat',
             type: 'checkbox',

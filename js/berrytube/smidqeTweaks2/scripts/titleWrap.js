@@ -1,6 +1,7 @@
 function load() {
     const self = {
         group: 'patches',
+        name: 'titleWrap',
         script: true,
         settings: [{
             title: 'Wrap videotitle to separate line',

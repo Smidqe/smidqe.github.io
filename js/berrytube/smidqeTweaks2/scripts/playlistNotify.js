@@ -10,6 +10,7 @@
 function load() {
     const self = {
         group: 'playlist',
+        name: 'playlistNotify',
         script: true,
         playlist: null,
         listeners: null,
