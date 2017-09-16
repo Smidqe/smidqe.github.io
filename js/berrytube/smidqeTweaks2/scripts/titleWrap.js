@@ -31,7 +31,7 @@ function load() {
                 console.log($('#berrytweaks-video_title')[0]);
 
                 if ($('#berrytweaks-video_title')[0])
-                    self.enable();
+                    self.wrap();
                 else
                     self.listeners.start(self.observer);
             }
