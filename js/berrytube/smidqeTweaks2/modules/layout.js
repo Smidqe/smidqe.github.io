@@ -43,7 +43,7 @@ function load() {
         handleMaltweaks: (mutations) => {
             console.log(mutations);
 
-            $.each(mutations, (mutation) => {
+            $.each(mutations, (key, mutation) => {
                 console.log(mutation);
 
                 if (!mutation.addedNodes)
