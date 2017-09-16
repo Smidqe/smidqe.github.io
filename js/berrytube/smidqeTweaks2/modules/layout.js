@@ -41,7 +41,11 @@ function load() {
             self.enable();
         },
         handleMaltweaks: (mutations) => {
+            console.log(mutations);
+
             $.each(mutations, (mutation) => {
+                console.log(mutation);
+
                 if (!mutation.addedNodes)
                     return;
 
