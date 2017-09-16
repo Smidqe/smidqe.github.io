@@ -32,13 +32,13 @@ function load() {
         },
         modules: {},
         check: null,
-        names: ['windows', 'infobox', 'toolbar', 'wraps', 'chat', 'playlist', 'video'],
+        names: ['windows', 'toolbar', 'wraps', 'chat', 'playlist', 'video'],
         waitForModules: () => {
             if (Object.keys(self.modules).length != self.names.length)
                 return;
 
-            clearInterval(self.check);
             self.enable();
+            clearInterval(self.check);
         },
         handleMaltweaks: (mutations) => {
             console.log(mutations);

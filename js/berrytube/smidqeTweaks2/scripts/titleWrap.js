@@ -57,8 +57,12 @@ function load() {
 
             self.observer.callback = self.callback;
 
-            if (SmidqeTweaks.settings.get('titleWrap'))
-                self.listeners.start(self.observer);
+            if (SmidqeTweaks.settings.get('titleWrap')) {
+                if ($('#berrytweaks-video_title')[0])
+                    self.enable();
+                else
+                    self.listeners.start(self.observer);
+            }
         },
     }
 
