@@ -49,7 +49,9 @@ function load() {
                 if (!mutation.addedNodes)
                     return;
 
-                $.each(mutation.addedNodes, (node) => {
+                $.each(mutation.addedNodes, (key, node) => {
+                    console.log(node);
+
                     if (node.id !== 'headwrap')
                         return;
 
