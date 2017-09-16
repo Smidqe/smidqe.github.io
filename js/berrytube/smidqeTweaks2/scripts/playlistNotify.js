@@ -4,7 +4,12 @@
     this allows much more accurate changes to the video we are playing
 
     
+    Solution to shuffles:
+        - There are actually multiple >400 changes at the same time,
+        - I keep missing it, due to way I initially built the listeners
+        - So the solution is to redo listeners and the scripts/modules that use them
 
+    There's also the amount
 */
 
 function load() {
@@ -16,7 +21,6 @@ function load() {
         listeners: null,
         prevTimestamp: null,
         requires: ['listeners', 'playlist'],
-        defaultTimeout: 1000,
         settings: [{
             title: "Notify of playlist changes",
             type: "checkbox",
@@ -157,13 +161,10 @@ function load() {
             const title = node.find(".title").text();
             const tag = node.prop('tagName')
 
-            if (!tag)
+            if (!tag || !title)
                 return false;
 
             if (!tag.toLowerCase() === "li")
-                return false;
-
-            if (!title)
                 return false;
 
             if (title.length === 0)
@@ -171,65 +172,70 @@ function load() {
 
             return true;
         },
-        run: (mutation) => {
-            $.each(mutation.addedNodes, (index, value) => {
-                const node = $(value);
+        run: (mutations) => {
+            console.log(mutations.length);
+
+            if (mutations.length > 50) {
+                SmidqeTweaks.modules.chat.add('Playlist', 'was shuffled', 'act');
+                return;
+            }
+
+            $.each(mutations, (key, mutation) => {
+                //added
+                $.each(mutation.addedNodes, (index, value) => {
+                    const node = $(value);
+
+                    if (!self.isItem(node))
+                        return;
+
+                    const change = self.add(node, 'added');
+                    const position = self.playlist.getObject(change.title).pos;
+
+                    if (change.state.action === 'removed') {
+                        clearTimeout(change.timeout);
+
+                        if (position != change.position)
+                            self.modify(change, { position: position, state: { action: 'moved' } }, false, true)
+                    }
+
+                    if (change.state.action === 'added')
+                        self.message(change);
+                })
+
+                $.each(mutation.removedNodes, (index, value) => {
+                    const node = $(value);
+
+                    if (!self.isItem(node))
+                        return;
+
+                    const change = self.add(node, 'removed');
+
+                    if (change.state.action !== 'removed')
+                        self.modify(change, { state: { action: 'removed' } }, false, false)
+
+                    if (change.state.active)
+                        self.remove(change.title, true);
+                    else
+                        change.timeout = setTimeout(() => { self.remove(change.title, true) }, 1000); //for possible move
+                })
+
+                const node = $(mutation.target);
 
                 if (!self.isItem(node))
                     return;
 
-                const change = self.add(node, 'added');
-                const position = self.playlist.getObject(change.title).pos;
+                const change = self.changes[node.find('.title').text()];
 
-                if (change.state.action === 'removed') {
-                    clearTimeout(change.timeout);
-
-                    if (position != change.position)
-                        self.modify(change, { position: position, state: { action: 'moved' } }, false, true)
-                }
-
-                if (change.state.action === 'added')
-                    self.message(change);
-            })
-
-            $.each(mutation.removedNodes, (index, value) => {
-                const node = $(value);
-
-                if (!self.isItem(node))
+                if (!change)
                     return;
 
-                const change = self.add(node, 'removed');
-
-                if (change.state.action !== 'removed')
-                    self.modify(change, { state: { action: 'removed' } }, false, false)
-
-                if (change.state.active)
-                    self.remove(change.title, true);
-                else
-                    change.timeout = setTimeout(() => { self.remove(change.title, true) }, 1000); //for possible move
+                if (self.playlist.getObject(change.title).value.volat != change.state.volatile)
+                    self.modify(change, { state: { action: 'changed', changed: true, volatile: !change.state.volatile } }, false, true);
             })
-
-            var changed = false;
-            const node = $(mutation.target);
-
-            if (!self.isItem(node))
-                return;
-
-            const change = self.changes[node.find('.title').text()];
-
-            if (!change)
-                return;
-
-            if (self.playlist.getObject(change.title).value.volat != change.state.volatile)
-                changed = true;
-
-            if (changed)
-                self.modify(change, { state: { action: 'changed', changed: true, volatile: node.hasClass('volatile') } }, false, true);
         },
 
         enable: () => {
             self.observer = {
-                monitor: 'all',
                 config: { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true },
                 path: "#plul",
                 callback: self.run,

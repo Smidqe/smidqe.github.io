@@ -37,13 +37,15 @@ function load() {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-category' })
 
         },
-        addGroup: () => {
-
+        addGroup: (data) => {
+            const wrap = $('<div>', { id: data.id, class: 'st-menu-group' })
         },
         addElement: (data) => {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-element' });
 
-            //create the element
+            switch (data.type) {
+                default: break;
+            }
         },
 
         show: () => {
@@ -55,7 +57,6 @@ function load() {
             $('#st-menu').removeClass('st-window-overlap');
             self.shown = false;
         },
-
         toggle: () => {
             if (self.shown)
                 self.hide();

@@ -160,7 +160,7 @@ const self = {
             const check = self.modules[mod.requires[index]]
 
             //check if it's not even loaded
-            if (check === undefined) {
+            if (!check) {
                 result = false;
                 return;
             }
@@ -179,9 +179,11 @@ const self = {
         if (!self.checkRequired(mod))
             return;
 
+        //if module/script has something that is can't be disabled/enabled
         if (mod.init)
             mod.init();
 
+        //enable script according to settings
         if (mod.script) {
             if (self.settings.get(mod.name))
                 mod.enable();
@@ -189,6 +191,7 @@ const self = {
             //possibly more
         }
 
+        //if it is started delete it from the queue
         delete self.queue[mod.name];
     },
 
@@ -229,12 +232,6 @@ const self = {
                 self.startModule(mod);
             })
         }, 1000);
-
-        /*
-        self.doCheck = setInterval(() => {
-            self.doCheck();
-        }, 500);
-        */
     },
 }
 

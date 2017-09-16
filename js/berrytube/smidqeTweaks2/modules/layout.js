@@ -23,32 +23,36 @@ function load() {
             maltweaks: {
                 path: "body",
                 config: { childList: true },
-                monitor: "added",
             },
 
             berrytweaks: { //if there will be more than one use for this, change the name
                 path: "head",
                 config: { childList: true },
-                monitor: "added",
             }
         },
         modules: {},
-        names: ['windows', 'infobox', 'toolbar', 'wraps', 'chat', 'playlist', 'video', 'bottom'],
-        waitForModules: (callback) => {
+        check: null,
+        names: ['windows', 'infobox', 'toolbar', 'wraps', 'chat', 'playlist', 'video'],
+        waitForModules: () => {
             if (Object.keys(self.modules).length != self.names.length)
-                setTimeout(self.waitForModules(callback), 250);
-            else
-                callback();
-        },
-        handleMaltweaks: (mutation) => {
-            if (mutation.id !== 'headwrap')
                 return;
 
-            if (mutation.id === 'headwrap' && !SmidqeTweaks.settings.get('maltweaks'))
-                SmidqeTweaks.settings.set('maltweaks', true, true);
+            clearInterval(self.check);
+            self.enable();
+        },
+        handleMaltweaks: (mutations) => {
+            $.each(mutations, (mutation) => {
+                $.each(mutation.addedNodes, (node) => {
+                    if (node.id !== 'headwrap')
+                        return;
 
-            if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks"))
-                self.waitForModules(self.enable);
+                    if (node.id === 'headwrap' && !SmidqeTweaks.settings.get('maltweaks'))
+                        SmidqeTweaks.settings.set('maltweaks', true, true);
+
+                    if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks"))
+                        self.check = setInterval(self.waitForModules, 500);
+                })
+            })
         },
         handleBerryTweaks: () => {
             if ($("head > link").attr('href').indexOf("atte.fi") === -1)

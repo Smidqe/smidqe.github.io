@@ -17,21 +17,28 @@ function load() {
 
             self.wrapped = false;
         },
-        enable: (node) => {
-            if (self.wrapped)
-                return;
-
-            if ($(node).attr('id') !== 'berrytweaks-video_title')
-                return;
-
+        enable: () => {
             $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
             $("#st-videotitle-window").addClass("active");
             $(".st-window-users").addClass("wrap");
 
-            if (self.observer.obs)
-                self.listeners.stop(self.observer);
-
             self.wrapped = true;
+        },
+        callback: (mutations) => {
+            $.each(mutations, mutation => {
+                $.each(mutation.addedNodes, (node) => {
+                    if (self.wrapped)
+                        return;
+
+                    if ($(node).attr('id') !== 'berrytweaks-video_title')
+                        return;
+
+                    self.enable();
+
+                    if (self.observer.obs)
+                        self.listeners.stop(self.observer);
+                })
+            })
         },
         init: () => {
             self.listeners = SmidqeTweaks.getModule('listeners', 'main');
@@ -41,7 +48,7 @@ function load() {
                 config: { childList: true }
             }
 
-            self.observer.callback = self.enable;
+            self.observer.callback = self.callback;
 
             if (SmidqeTweaks.settings.get('titleWrap'))
                 self.listeners.start(self.observer);

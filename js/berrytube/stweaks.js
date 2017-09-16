@@ -1339,6 +1339,9 @@ const listeners = {
 
     create: function(obs) {
         return new MutationObserver(function(mutations) {
+            if (mutations.length > 500)
+                return;
+
             mutations.forEach((mutation) => {
                 if (obs.monitor === "added")
                     mutation.addedNodes.forEach(mut => obs.callback(mut));

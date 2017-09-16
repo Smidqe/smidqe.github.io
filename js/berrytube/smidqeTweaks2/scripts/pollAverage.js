@@ -7,6 +7,10 @@ function load() {
             title: "Calculate episode poll average",
             type: "checkbox",
             key: "pollAverage",
+        }, {
+            title: 'Ignore 0-votes',
+            type: 'checkbox',
+            key: 'ignoreZero'
         }],
         enabled: false,
         calculate: function(data) {
@@ -17,6 +21,9 @@ function load() {
             var count = 0;
 
             $.each(data.votes, (index, value) => {
+                if (SmidqeTweaks.settings.get('ignoreZero') && index == 0)
+                    return;
+
                 total += value * index;
                 count += value;
             })

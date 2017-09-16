@@ -5,9 +5,6 @@
         - 
     - Remove the drink handling from here and move those into scripts
         - showDrinks.js
-    
-    - Rename this into bottombar, and move it to the /modules/
-        -
 */
 
 function load() {

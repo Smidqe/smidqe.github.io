@@ -51,17 +51,23 @@ function load() {
             })
 
             SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
+                if (!self.enabled)
+                    return;
+
                 if (data.msg.emote !== 'drink')
                     return;
 
-                self.stats.update('current', $('#drinkCounter').text());
-
-                if (self.enabled)
-                    self.show();
+                self.show();
             })
+
+            self.stats.update('current', $('#drinkCounter').text());
 
             socket.on('forceVideoChange', () => {
                 self.stats.update('current', 0);
+            })
+
+            socket.on('drinkCount', () => {
+                self.stats.update('current', $('#drinkCounter').text());
             })
 
             setInterval(() => {
