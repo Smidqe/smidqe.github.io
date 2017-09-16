@@ -34,6 +34,8 @@ function load() {
                     return;
 
                 $.each(mutation.addedNodes, (key, node) => {
+                    console.log("Wrapped: ", self.wrapped);
+
                     if (self.wrapped)
                         return;
 
@@ -62,7 +64,7 @@ function load() {
             self.observer.callback = self.callback;
 
             if (SmidqeTweaks.settings.get('titleWrap')) {
-                console.log('');
+                console.log($('#berrytweaks-video_title')[0]);
 
                 if ($('#berrytweaks-video_title')[0])
                     self.enable();
