@@ -17,12 +17,24 @@ function load() {
 
             self.wrapped = false;
         },
-        enable: () => {
+
+        wrap: () => {
             $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
             $("#st-videotitle-window").addClass("active");
             $(".st-window-users").addClass("wrap");
 
             self.wrapped = true;
+        },
+
+        enable: () => {
+            if (SmidqeTweaks.settings.get('titleWrap')) {
+                console.log($('#berrytweaks-video_title')[0]);
+
+                if ($('#berrytweaks-video_title')[0])
+                    self.enable();
+                else
+                    self.listeners.start(self.observer);
+            }
         },
         callback: (mutations) => {
             console.log(mutations);
@@ -46,7 +58,7 @@ function load() {
                     if ($(node).attr('id') !== 'berrytweaks-video_title')
                         return;
 
-                    setTimeout(self.enable, 1000);
+                    self.wrap();
 
                     if (self.observer.obs)
                         self.listeners.stop(self.observer);
@@ -62,15 +74,6 @@ function load() {
             }
 
             self.observer.callback = self.callback;
-
-            if (SmidqeTweaks.settings.get('titleWrap')) {
-                console.log($('#berrytweaks-video_title')[0]);
-
-                if ($('#berrytweaks-video_title')[0])
-                    self.enable();
-                else
-                    self.listeners.start(self.observer);
-            }
         },
     }
 
