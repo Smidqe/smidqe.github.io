@@ -42,6 +42,9 @@ function load() {
         },
         handleMaltweaks: (mutations) => {
             $.each(mutations, (mutation) => {
+                if (!mutation.addedNodes)
+                    return;
+
                 $.each(mutation.addedNodes, (node) => {
                     if (node.id !== 'headwrap')
                         return;

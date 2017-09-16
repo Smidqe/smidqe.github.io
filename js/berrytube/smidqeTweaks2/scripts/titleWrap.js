@@ -26,6 +26,9 @@ function load() {
         },
         callback: (mutations) => {
             $.each(mutations, mutation => {
+                if (!mutation.addedNodes)
+                    return;
+
                 $.each(mutation.addedNodes, (node) => {
                     if (self.wrapped)
                         return;
