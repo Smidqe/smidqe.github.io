@@ -37,10 +37,14 @@ function load() {
                     if (self.wrapped)
                         return;
 
+                    console.log($(node).attr('id'));
+
+
+
                     if ($(node).attr('id') !== 'berrytweaks-video_title')
                         return;
 
-                    self.enable();
+                    setTimeout(self.enable, 1000);
 
                     if (self.observer.obs)
                         self.listeners.stop(self.observer);
@@ -58,6 +62,8 @@ function load() {
             self.observer.callback = self.callback;
 
             if (SmidqeTweaks.settings.get('titleWrap')) {
+                console.log('');
+
                 if ($('#berrytweaks-video_title')[0])
                     self.enable();
                 else
