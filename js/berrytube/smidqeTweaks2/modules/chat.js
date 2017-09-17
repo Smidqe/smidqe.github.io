@@ -94,6 +94,10 @@ function load() {
                 stats.addPair('general', value);
             })
 
+            $.each(self.getUsers(), (key, value) => {
+                stats.update(key, value);
+            })
+
             SmidqeTweaks.patch(window, 'handleNumCount', () => {
                 $.each(self.getUsers(), (key, value) => {
                     stats.update(key, value);
