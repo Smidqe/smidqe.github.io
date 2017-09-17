@@ -49,6 +49,8 @@ function load() {
             const result = {};
             const groups = $('#connectedCountWrapper').attr('title').split('<br />');
 
+            console.log($('#connectedCountWrapper'), groups);
+
             $.each(groups, (index, value) => {
                 console.log(value);
 
