@@ -49,11 +49,10 @@ function load() {
             const result = {};
             const groups = $('#connectedCountWrapper').attr('title').split('<br />');
 
-            console.log($('#connectedCountWrapper'), groups);
+            if (groups.length != 6)
+                return result;
 
             $.each(groups, (index, value) => {
-                console.log(value);
-
                 if (value === "")
                     return;
 
