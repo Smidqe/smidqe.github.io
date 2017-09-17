@@ -117,7 +117,7 @@ function load() {
             self.listeners.berrytweaks.callback = self.handleBerryTweaks;
 
             SmidqeTweaks.settings.set('maltweaks', false, true);
-            SmidqeTweaks.settings.set('berrytweaks', false, true)
+            SmidqeTweaks.settings.set('berrytweaks', false, true);
 
             self.toolbar.add(self.button);
 

@@ -3,6 +3,31 @@ function load() {
         started: false,
         requires: ['stats'],
         name: 'chat',
+        pairs: [{
+            id: 'count',
+            title: 'Current usercount',
+            value: 0,
+        }, {
+            id: 'admins',
+            title: 'Moderators',
+            value: 0,
+        }, {
+            id: 'assistants',
+            title: 'Modmins',
+            value: 0,
+        }, {
+            id: 'users',
+            title: 'Normal users',
+            value: 0,
+        }, {
+            id: 'anons',
+            title: 'Anons',
+            value: 0,
+        }, {
+            id: 'lurkers',
+            title: 'Lurkers',
+            value: 0,
+        }],
         add: (nick, text, type) => {
             const time = new Date();
 
@@ -65,13 +90,11 @@ function load() {
         init: () => {
             let stats = SmidqeTweaks.modules.stats;
 
-            $.each(self.getUsers(), (key, value) => {
-                stats.addPair('general', { id: key, title: key[0].toUpperCase() + key.slice(1), value: value, })
+            $.each(self.pairs, (key, value) => {
+                stats.addPair('general', value);
             })
 
-            SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
-                stats.update('users', data.num);
-
+            SmidqeTweaks.patch(window, 'handleNumCount', () => {
                 $.each(self.getUsers(), (key, value) => {
                     stats.update(key, value);
                 })
