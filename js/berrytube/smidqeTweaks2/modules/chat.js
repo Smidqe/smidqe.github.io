@@ -50,6 +50,8 @@ function load() {
             const groups = $('#connectedCountWrapper').attr('title').split('<br />');
 
             $.each(groups, (index, value) => {
+                console.log(value);
+
                 if (value === "")
                     return;
 
