@@ -7,7 +7,7 @@ function load() {
     const self = {
         runnable: true,
         started: false,
-        requires: ['listeners', 'time', 'toolbar'],
+        requires: ['listeners', 'time', 'toolbar'], //soon menu aswell
         enabled: false,
         stylesheet: null,
         name: 'layout',
@@ -32,6 +32,7 @@ function load() {
         },
         modules: {},
         check: null,
+        timeout: null,
         names: ['windows', 'toolbar', 'wraps', 'chat', 'playlist', 'video'],
         waitForModules: () => {
             if (Object.keys(self.modules).length != self.names.length)
@@ -41,25 +42,21 @@ function load() {
             clearInterval(self.check);
         },
         handleMaltweaks: (mutations) => {
-            console.log(mutations);
-
             $.each(mutations, (key, mutation) => {
-                console.log(mutation);
-
                 if (!mutation.addedNodes)
                     return;
 
                 $.each(mutation.addedNodes, (key, node) => {
-                    console.log(node);
-
                     if (node.id !== 'headwrap')
                         return;
 
                     if (node.id === 'headwrap' && !SmidqeTweaks.settings.get('maltweaks'))
                         SmidqeTweaks.settings.set('maltweaks', true, true);
 
-                    if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks"))
+                    if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks")) {
+                        clearTimeout(self.timeout);
                         self.check = setInterval(self.waitForModules, 500);
+                    }
                 })
             })
         },
@@ -77,7 +74,7 @@ function load() {
 
             const location = SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head');
 
-            SmidqeTweaks.settings.set("active", true, true)
+            SmidqeTweaks.settings.set("active", true, true);
 
             location.append(self.stylesheet);
 
@@ -127,6 +124,10 @@ function load() {
             $.each(self.listeners, (key, value) => {
                 SmidqeTweaks.modules.listeners.start(value);
             });
+
+            //hacky, but necessary
+            if (SmidqeTweaks.settings.get('active'))
+                self.timeout = setTimeout(self.enable, 5000);
 
             //check if we have berrytweaks already in the m
             if (window.BerryTweaks)

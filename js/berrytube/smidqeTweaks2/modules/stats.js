@@ -1,3 +1,7 @@
+/*
+    Allow grouping
+*/
+
 function load() {
     const self = {
         started: false,
@@ -15,6 +19,9 @@ function load() {
             active: false,
             isToggle: false,
             callbacks: {},
+            category: 'SmidqeTweaks',
+            group: 'General',
+            type: 'button'
         },
         blocks: [],
         container: null,
@@ -81,6 +88,8 @@ function load() {
 
         init: () => {
             self.toolbar = SmidqeTweaks.modules.toolbar;
+            //self.menu = SmidqeTweaks.modules.menu;
+
             self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
             let btn = $('<div>', { id: 'st-stats-exit' })
 
@@ -93,7 +102,9 @@ function load() {
             self.button.callbacks.click = self.toggle;
 
             //add the button to open the window
-            self.toolbar.add(self.button)
+            self.toolbar.add(self.button);
+            //self.menu.addElement(self.button);
+
 
             $("body").append(self.container);
             self.started = true;

@@ -28,8 +28,6 @@ function load() {
 
         enable: () => {
             if (SmidqeTweaks.settings.get('titleWrap')) {
-                console.log($('#berrytweaks-video_title')[0]);
-
                 if ($('#berrytweaks-video_title')[0])
                     self.wrap();
                 else
@@ -37,31 +35,19 @@ function load() {
             }
         },
         callback: (mutations) => {
-            console.log(mutations);
-
             $.each(mutations, (key, mutation) => {
-                console.log(mutation);
-
                 if (!mutation.addedNodes)
                     return;
 
                 $.each(mutation.addedNodes, (key, node) => {
-                    console.log("Wrapped: ", self.wrapped);
-
                     if (self.wrapped)
                         return;
-
-                    console.log($(node).attr('id'));
-
-
 
                     if ($(node).attr('id') !== 'berrytweaks-video_title')
                         return;
 
                     self.wrap();
-
-                    if (self.observer.obs)
-                        self.listeners.stop(self.observer);
+                    self.listeners.stop(self.observer);
                 })
             })
         },
@@ -69,7 +55,6 @@ function load() {
             self.listeners = SmidqeTweaks.getModule('listeners', 'main');
             self.observer = {
                 path: '#chatControls',
-                monitor: 'added',
                 config: { childList: true }
             }
 

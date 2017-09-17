@@ -1,10 +1,3 @@
-/*
-    TODO:
-        - Add a functionality to hide chat
-            - Probably a small button on bottombar
-            - 
-*/
-
 function load() {
     const self = {
 

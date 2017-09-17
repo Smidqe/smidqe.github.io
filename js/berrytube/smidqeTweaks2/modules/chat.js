@@ -45,12 +45,33 @@ function load() {
 
             return query;
         },
+        getUsers: () => {
+            const result = {};
+            const groups = $('#connectedCountWrapper').attr('title').split('<br />');
 
+            $.each(groups, (index, value) => {
+                if (value === "")
+                    return;
+
+                result[value.split(':')[0].toLowerCase()] = value.split(':')[1].trim();
+            })
+
+            result.count = $('#connectedCount').text();
+            return result;
+        },
         init: () => {
-            self.stats = SmidqeTweaks.modules.stats;
+            let stats = SmidqeTweaks.modules.stats;
+
+            $.each(self.getUsers(), (key, value) => {
+                stats.addPair('general', { id: key, title: key[0].toUpperCase() + key.slice(1), value: value, })
+            })
 
             SmidqeTweaks.patch(window, 'handleNumCount', (data) => {
-                self.stats.update('users', data.num);
+                stats.update('users', data.num);
+
+                $.each(self.getUsers(), (key, value) => {
+                    stats.update(key, value);
+                })
             })
 
             self.started = true;

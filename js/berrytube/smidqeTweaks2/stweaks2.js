@@ -1,25 +1,24 @@
 /*
-    - Rewrite the module loading logic,
-    - Instead of waiting for them to load individually and using requires
-    use set interval, and once all modules have been loaded, init() them
-    at the order that is present in names.modules
-    - Scripts are different thing, but still applicable
-
     Replace the exit button with a small image
     25px X 25px
+
+    Once I've finished the necessary modules, clean all the modules
+
 */
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //simplistic methods
     windows: {}, //possibly, will probably remove this
-    check: null, // each would have the script and _type {script: null, _type: ''}
+    check: null,
     queue: {},
-    names: { //holds the names for different things
-        modules: ['layout', 'listeners', 'chat', 'playlist', 'time', 'toolbar', 'stats', 'menu'],
+    base: {},
+    start: null,
+    names: { //holds the names for modules, scripts and groups
+        modules: ['listeners', 'toolbar', 'playlist', 'stats', 'chat', 'time', 'menu', 'layout'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
-        groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches', 'debug'],
     },
     settings: {
+        groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches', 'debug'],
         container: null,
         storage: {},
         get: (key, fallback) => {
@@ -84,7 +83,7 @@ const self = {
             cont.append($('<legend>', { text: 'SmidqeTweaks' }));
 
             //create the groups
-            $.each(self.names.groups, (key, val) => {
+            $.each(self.settings.groups, (key, val) => {
                 cont.append($('<div>', {
                     class: 'st-settings-group ' + val,
                 }).append($('<label>', {
@@ -110,6 +109,9 @@ const self = {
 
         if (_to === 'main')
             self.modules[title] = mod;
+
+        //to start the module
+        //self.queue[title] = mod;
     },
     removeModule: (title, _from) => {
         if (_from === 'main')
@@ -175,10 +177,7 @@ const self = {
         return result;
     },
 
-    startModule: (mod) => {
-        if (!self.checkRequired(mod))
-            return;
-
+    startModule: (mod, src) => {
         //if module/script has something that is can't be disabled/enabled
         if (mod.init)
             mod.init();
@@ -192,7 +191,7 @@ const self = {
         }
 
         //if it is started delete it from the queue
-        delete self.queue[mod.name];
+        delete src[mod.name];
     },
 
     load: () => {
@@ -200,13 +199,13 @@ const self = {
 
         $.each(self.names.modules, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
-                self.queue[name] = self.modules[name];
+                self.base[name] = self.modules[name];
             })
         })
 
         $.each(self.names.scripts, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
-                self.queue[name] = self.scripts[name];
+                self.base[name] = self.scripts[name];
             })
         })
     },
@@ -223,13 +222,43 @@ const self = {
             self.settings.set('polldata', data, true);
         })
 
+        //will ensure that modules are loaded in right order
+        self.start = setInterval(() => {
+            var skip = false;
+
+            //ensure everything is loaded
+            $.each(self.names, (key, names) => {
+                $.each(names, (index, key) => {
+                    if (skip)
+                        return;
+
+                    if (!self.base[key])
+                        skip = true;
+                })
+            })
+
+            if (skip)
+                return;
+
+            $.each(self.names, (key, names) => {
+                $.each(names, (index, key) => {
+                    self.startModule(self.base[key], self.base);
+                })
+            })
+
+            clearInterval(self.start);
+        })
+
         //make this into a pausable thing
         self.check = setInterval(() => {
-            if (Object.keys(self.queue).length == 0)
+            if ($.isEmptyObject(self.queue))
                 return;
 
             $.each(self.queue, (key, mod) => {
-                self.startModule(mod);
+                if (!self.checkRequired(mod))
+                    return;
+
+                self.startModule(mod, self.queue);
             })
         }, 1000);
     },

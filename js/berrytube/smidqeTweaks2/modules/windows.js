@@ -2,6 +2,7 @@ function load() {
     const self = {
         name: 'windows',
         started: false,
+        names: ['header', 'footer', 'rules', 'polls', 'messages', 'login', 'playlist', 'users'],
         show: (data) => {
             var selector = data.selectors[0];
 
