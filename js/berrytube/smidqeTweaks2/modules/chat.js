@@ -91,7 +91,7 @@ function load() {
             let stats = SmidqeTweaks.modules.stats;
 
             $.each(self.pairs, (key, value) => {
-                stats.addPair('general', value);
+                stats.addPair('chat', value);
             })
 
             SmidqeTweaks.patch(window, 'handleNumCount', () => {
