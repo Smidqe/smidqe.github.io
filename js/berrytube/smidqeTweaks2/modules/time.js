@@ -59,7 +59,8 @@ function load() {
             return msg;
         },
         getTimerByName: (name) => {
-            var timers = $('form[name="kek"] .namecol');
+            //very hacky method, but due to cross frame script restrictions, it's necessary
+            var timers = $($('iframe')[0].contentWindow.document).find('.namecol');
             var result = undefined;
 
 
