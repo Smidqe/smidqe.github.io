@@ -80,6 +80,9 @@ function load() {
 
             setInterval(() => {
                 $.each(self.pairs, (key, value) => {
+                    if (value.id === 'time')
+                        return;
+
                     self.stats.update(value.id, self.getTimerByName(value.title).text());
                 })
             }, 1000)
