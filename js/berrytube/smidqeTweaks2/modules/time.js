@@ -83,7 +83,7 @@ function load() {
                     if (value.id === 'time')
                         return;
 
-                    self.stats.update(value.id, self.getTimerByName(value.title).text());
+                    self.stats.update(value.id, self.getTimerByName(value.title).find('.remaincol').text());
                 })
             }, 1000)
 
