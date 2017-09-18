@@ -1,10 +1,11 @@
 function load() {
     const self = {
         started: false,
-        requires: ['stats'],
+        requires: ['stats', 'listeners'],
         stats: null,
         group: 'time',
         name: 'time',
+        observer: null,
         timers: ['Euro Drinking Games', 'Signature Drinking Games', 'Bonus Drinking Games', 'New Horse', 'Horse Movie'],
         settings: [{
             title: 'Show time in 12h format instead of 24',
@@ -75,6 +76,11 @@ function load() {
 
             return result;
         },
+        updateTimers: (mutations) => {
+            $.each(mutations, (key, mutation) => {
+                console.log(mutation)
+            });
+        },
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
 
@@ -88,6 +94,7 @@ function load() {
                 self.stats.update('time', self.get());
             }, 60 * 1000)
 
+            /*
             setInterval(() => {
                 $.each(self.pairs, (key, value) => {
                     if (value.id === 'time')
@@ -96,6 +103,15 @@ function load() {
                     self.stats.update(value.id, self.getTimerByName(value.title).find('.remaincol').text());
                 })
             }, 1000)
+            */
+
+            self.observer = {
+                config: { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true },
+                path: "form[name='kek']",
+                callback: self.updateTimers,
+            }
+
+            SmidqeTweaks.modules.listeners.start(self.observer);
 
             self.started = true;
         },
