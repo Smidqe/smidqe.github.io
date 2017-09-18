@@ -116,9 +116,6 @@ function load() {
             self.listeners.maltweaks.callback = self.handleMaltweaks;
             self.listeners.berrytweaks.callback = self.handleBerryTweaks;
 
-            SmidqeTweaks.settings.set('maltweaks', false, true);
-            SmidqeTweaks.settings.set('berrytweaks', false, true);
-
             self.toolbar.add(self.button);
 
             $.each(self.listeners, (key, value) => {
@@ -126,8 +123,8 @@ function load() {
             });
 
             //hacky, but necessary
-            if (SmidqeTweaks.settings.get('active'))
-                self.timeout = setTimeout(self.enable, 5000);
+            if (SmidqeTweaks.settings.get('active') && (!SmidqeTweaks.settings.get('maltweaks')))
+                self.enable();
 
             //check if we have berrytweaks already in the m
             if (window.BerryTweaks)
