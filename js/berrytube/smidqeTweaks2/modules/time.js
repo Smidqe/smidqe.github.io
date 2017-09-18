@@ -5,16 +5,37 @@ function load() {
         stats: null,
         group: 'time',
         name: 'time',
+        timers: ['Euro Drinking Games', 'Signature Drinking Games', 'Bonus Drinking Games', 'New Horse', 'Horse Movie'],
         settings: [{
             title: 'Show time in 12h format instead of 24',
             type: 'checkbox',
             key: '12hour'
         }],
-        pair: {
+        pairs: [{
             id: 'time',
             title: 'Current time',
             value: 0,
-        },
+        }, {
+            id: 'euro',
+            title: 'Euro Drinking Games',
+            value: 0,
+        }, {
+            id: 'signature',
+            title: 'Signature Drinking Games',
+            value: 0,
+        }, {
+            id: 'bonus',
+            title: 'Bonus Drinking Games',
+            value: 0,
+        }, {
+            id: 'new',
+            title: 'New Horse',
+            value: 0,
+        }, {
+            id: 'movie',
+            title: 'Horse Movie',
+            value: 0,
+        }, ],
         get: () => {
             const time = new Date();
 
@@ -36,16 +57,32 @@ function load() {
 
             return msg;
         },
+        getTimerByName: (name) => {
+            let timers = $('.daterow > .namecol');
 
+            $.each(timers, (index, value) => {
+                if (value.text() === name)
+                    return $(value).parent();
+            })
+        },
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
 
-            self.stats.addPair('general', self.pair)
+            $.each(self.pairs, (key, value) => {
+                self.stats.addPair('time', value);
+            })
+
             self.stats.update('time', self.get);
 
             setInterval(() => {
                 self.stats.update('time', self.get());
             }, 60 * 1000)
+
+            setInterval(() => {
+                $.each(self.pairs, (key, value) => {
+                    self.stats.update(value.id, self.getTimerByName(value.title).text());
+                })
+            }, 1000)
 
             self.started = true;
         },
