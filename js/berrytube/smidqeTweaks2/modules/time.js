@@ -59,8 +59,9 @@ function load() {
             return msg;
         },
         getTimerByName: (name) => {
-            var timers = $('.namecol');
+            var timers = $('form[name="kek"] .namecol');
             var result = undefined;
+
 
             $.each(timers, (index, value) => {
                 console.log(result);
@@ -94,7 +95,6 @@ function load() {
                 self.stats.update('time', self.get());
             }, 60 * 1000)
 
-            /*
             setInterval(() => {
                 $.each(self.pairs, (key, value) => {
                     if (value.id === 'time')
@@ -103,15 +103,6 @@ function load() {
                     self.stats.update(value.id, self.getTimerByName(value.title).find('.remaincol').text());
                 })
             }, 1000)
-            */
-
-            self.observer = {
-                config: { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true },
-                path: "form[name='kek']",
-                callback: self.updateTimers,
-            }
-
-            SmidqeTweaks.modules.listeners.start(self.observer);
 
             self.started = true;
         },
