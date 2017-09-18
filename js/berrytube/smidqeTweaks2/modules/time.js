@@ -65,7 +65,7 @@ function load() {
                 if (result)
                     return;
 
-                if (value.text() === name)
+                if ($(value).text() === name)
                     result = $(value).parent();
             })
 
