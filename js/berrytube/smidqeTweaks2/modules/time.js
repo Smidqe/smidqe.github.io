@@ -65,23 +65,14 @@ function load() {
 
 
             $.each(timers, (index, value) => {
-                console.log(result);
-
                 if (result)
                     return;
-
-                console.log(name, $(value).text());
 
                 if ($(value).text() === name)
                     result = $(value).parent();
             })
 
             return result;
-        },
-        updateTimers: (mutations) => {
-            $.each(mutations, (key, mutation) => {
-                console.log(mutation)
-            });
         },
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
