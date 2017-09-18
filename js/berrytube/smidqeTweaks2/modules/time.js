@@ -58,7 +58,7 @@ function load() {
             return msg;
         },
         getTimerByName: (name) => {
-            var timers = $('.daterow > .namecol');
+            var timers = $('.namecol');
             var result = undefined;
 
             $.each(timers, (index, value) => {
