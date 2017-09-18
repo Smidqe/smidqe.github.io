@@ -6,7 +6,6 @@ function load() {
         group: 'time',
         name: 'time',
         observer: null,
-        timers: ['Euro Drinking Games', 'Signature Drinking Games', 'Bonus Drinking Games', 'New Horse', 'Horse Movie'],
         settings: [{
             title: 'Show time in 12h format instead of 24',
             type: 'checkbox',
@@ -60,9 +59,8 @@ function load() {
         },
         getTimerByName: (name) => {
             //very hacky method, but due to cross frame script restrictions, it's necessary
-            var timers = $($('iframe')[0].contentWindow.document).find('.namecol');
+            var timers = $($('iframe:not(#ytapiplayer)')[0].contentWindow.document).find('.namecol');
             var result = undefined;
-
 
             $.each(timers, (index, value) => {
                 if (result)
