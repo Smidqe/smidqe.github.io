@@ -59,11 +59,17 @@ function load() {
         },
         getTimerByName: (name) => {
             let timers = $('.daterow > .namecol');
+            let result = null;
 
             $.each(timers, (index, value) => {
+                if (result)
+                    return;
+
                 if (value.text() === name)
-                    return $(value).parent();
+                    result = $(value).parent();
             })
+
+            return result;
         },
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
