@@ -39,15 +39,24 @@ function load() {
             isToggle: false,
             callbacks: {},
         },
+        buttons: [{
+            title: 'Test',
+            category: 'BerryTweaks',
+            group: 'General',
+            type: 'button',
+            callbacks: {},
+        }, {
+
+        }],
         shown: false,
         addCategory: (data) => {
-            const wrap = $('<div>', { id: data.id, class: 'st-menu-category' })
+            const wrap = $('<div>', { id: 'st-menu-category-' + data.id, class: 'st-menu-category' })
 
         },
         addGroup: (data) => {
-            const wrap = $('<div>', { id: data.id, class: 'st-menu-group' })
+            const wrap = $('<div>', { id: 'st-menu-group-' + data.id, class: 'st-menu-group' })
 
-
+            $('#st-menu-category-')
         },
         addElement: (data) => {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-element' });
@@ -72,9 +81,6 @@ function load() {
                         element = $('<input>', { id: data.id, class: 'st-menu-button', type: data.specific });
                         break;
                     }
-
-                default:
-                    break;
             }
 
             $.each(data.callbacks, (key, callback) => {
@@ -83,14 +89,16 @@ function load() {
 
             self.getGroup(data.category, data.group).append(element);
         },
-
+        getGroup: (category, group) => {
+            return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
+        },
         show: () => {
-            $('#st-menu').addClass('st-window-overlap');
+            $('#st-menu').addClass('st-window-open st-window-overlap');
             self.shown = true;
         },
 
         hide: () => {
-            $('#st-menu').removeClass('st-window-overlap');
+            $('#st-menu').removeClass('st-window-open st-window-overlap');
             self.shown = false;
         },
         toggle: () => {

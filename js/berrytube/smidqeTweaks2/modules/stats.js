@@ -31,8 +31,9 @@ function load() {
         visible: false,
         addBlock: (data) => {
             var block = null;
+            let pos = self.blocks.indexOf(data.block);
 
-            if (self.blocks.indexOf(data.block) != -1)
+            if (pos != -1)
                 block = $('#st-stats-block-' + data.block);
             else
                 block = $('<div>', { id: 'st-stats-block-' + data.block, class: 'st-stats-block' })
@@ -43,19 +44,17 @@ function load() {
                 self.addPair(block, value);
             })
 
-            if (self.blocks.indexOf(data.block) == -1) {
+            if (pos == -1) {
                 self.blocks.push(data.block);
                 self.container.append(block);
             }
         },
-
         getBlock: (key) => {
             if (self.blocks.indexOf(key) == -1)
                 return null;
 
             return $('#st-stats-block-' + key);
         },
-
         addPair: (key, value) => {
             if (self.blocks.indexOf(key) == -1)
                 self.addBlock({ block: key, values: [] })
@@ -66,13 +65,14 @@ function load() {
             pair.append($('<span>').text(value.title));
             pair.append($('<span>').text(value.value));
 
+            if (value.sub)
+                pair.addClass('st-stats-pair-sub');
+
             block.append(pair);
         },
-
         update: (key, value) => {
             $("#st-stats-pair-" + key).find('span:last-child').text(value);
         },
-
         show: () => {
             $('#st-stats-container').addClass('st-window-overlap st-window-open');
             self.visible = true;
@@ -81,14 +81,12 @@ function load() {
             $('#st-stats-container').removeClass('st-window-overlap st-window-open');
             self.visible = false;
         },
-
         toggle: () => {
             if (self.visible)
                 self.hide();
             else
                 self.show();
         },
-
         init: () => {
             self.toolbar = SmidqeTweaks.modules.toolbar;
             //self.menu = SmidqeTweaks.modules.menu;
@@ -107,7 +105,6 @@ function load() {
             //add the button to open the window
             self.toolbar.add(self.button);
             //self.menu.addElement(self.button);
-
 
             $("body").append(self.container);
             self.started = true;

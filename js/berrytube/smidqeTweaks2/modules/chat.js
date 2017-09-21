@@ -11,22 +11,27 @@ function load() {
             id: 'admins',
             title: 'Moderators',
             value: 0,
+            sub: true,
         }, {
             id: 'assistants',
             title: 'Modmins',
             value: 0,
+            sub: true,
         }, {
             id: 'users',
             title: 'Normal users',
             value: 0,
+            sub: true,
         }, {
             id: 'anons',
             title: 'Anons',
             value: 0,
+            sub: true,
         }, {
             id: 'lurkers',
             title: 'Lurkers',
             value: 0,
+            sub: true,
         }],
         add: (nick, text, type) => {
             const time = new Date();
@@ -57,7 +62,6 @@ function load() {
                 return null;
 
             //
-
         },
         //could be expanded more
         getEmotes: (user) => {

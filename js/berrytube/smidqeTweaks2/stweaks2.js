@@ -21,8 +21,8 @@ const self = {
         groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches', 'debug'],
         container: null,
         storage: {},
-        get: (key, fallback) => {
-            return self.settings.storage[key] || fallback;
+        get: (key) => {
+            return self.settings.storage[key];
         },
         set: (key, value, save) => {
             self.settings.storage[key] = value;
