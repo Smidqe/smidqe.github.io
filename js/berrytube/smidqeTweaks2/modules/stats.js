@@ -74,11 +74,11 @@ function load() {
             $("#st-stats-pair-" + key).find('span:last-child').text(value);
         },
         show: () => {
-            $('#st-stats-container').addClass('st-window-overlap st-window-open');
+            $('#st-stats-container').addClass('st-window-overlap st-window-open st-menu-container');
             self.visible = true;
         },
         hide: () => {
-            $('#st-stats-container').removeClass('st-window-overlap st-window-open');
+            $('#st-stats-container').removeClass('st-window-overlap st-window-open st-menu-container');
             self.visible = false;
         },
         toggle: () => {

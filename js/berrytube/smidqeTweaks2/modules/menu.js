@@ -41,22 +41,25 @@ function load() {
         },
         buttons: [{
             title: 'Test',
+            id: 'test',
             category: 'BerryTweaks',
             group: 'General',
             type: 'button',
             callbacks: {},
-        }, {
-
         }],
         shown: false,
         addCategory: (data) => {
-            const wrap = $('<div>', { id: 'st-menu-category-' + data.id, class: 'st-menu-category' })
-
+            self.container.append($('<div>', { id: 'st-menu-category-' + data.id, class: 'st-menu-category' }));
         },
         addGroup: (data) => {
+            if (!$('#st-menu-category-' + data.category)[0])
+                self.addCategory({ id: data.category });
+
             const wrap = $('<div>', { id: 'st-menu-group-' + data.id, class: 'st-menu-group' })
 
-            $('#st-menu-category-')
+            wrap.append($('<div>', { id: 'st-menu-title' }))
+
+            $('#st-menu-category-' + data.group).append(wrap);
         },
         addElement: (data) => {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-element' });
@@ -87,18 +90,18 @@ function load() {
                 element.on(key, callback)
             })
 
-            self.getGroup(data.category, data.group).append(element);
+            self.getGroup(data.category, data.group).append(wrap.append(element));
         },
         getGroup: (category, group) => {
             return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
         },
         show: () => {
-            $('#st-menu').addClass('st-window-open st-window-overlap');
+            $('#st-menu').addClass('st-window-open st-window-overlap st-menu-container');
             self.shown = true;
         },
 
         hide: () => {
-            $('#st-menu').removeClass('st-window-open st-window-overlap');
+            $('#st-menu').removeClass('st-window-open st-window-overlap st-menu-container');
             self.shown = false;
         },
         toggle: () => {
@@ -107,12 +110,20 @@ function load() {
             else
                 self.show();
         },
+
+        test: () => {
+            self.addCategory({ id: 'berrytweaks' });
+            self.addGroup({ category: 'berrytweaks', id: 'general' })
+        },
+
         init: () => {
             self.container = $('<div>', { id: 'st-menu', class: 'st-window-default' });
             self.button.callbacks.click = self.toggle;
 
             SmidqeTweaks.modules.toolbar.add(self.button);
             self.started = true;
+
+            self.test();
 
             $('body').append(self.container);
         },

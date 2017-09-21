@@ -33,7 +33,7 @@ function load() {
         modules: {},
         check: null,
         timeout: null,
-        names: ['windows', 'toolbar', 'wraps', 'chat', 'playlist', 'video'],
+        names: ['wraps', 'windows', 'toolbar', 'chat', 'playlist', 'video'],
         waitForModules: () => {
             if (Object.keys(self.modules).length != self.names.length)
                 return;
@@ -78,6 +78,10 @@ function load() {
 
             if (!$('#st-stylesheet')[0])
                 location.append(self.stylesheet);
+
+            $.each(self.names, (key, name) => {
+                self.modules[name].enable();
+            })
 
             $.each(self.modules, (key, mod) => {
                 mod.enable();
@@ -127,7 +131,7 @@ function load() {
 
             //hacky, but necessary
             if (SmidqeTweaks.settings.get('active') && (!SmidqeTweaks.settings.get('maltweaks')))
-                self.enable();
+                self.waitForModules();
 
             //check if we have berrytweaks already in the m
             if (window.BerryTweaks)

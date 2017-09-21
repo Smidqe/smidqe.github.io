@@ -344,7 +344,7 @@ body #leftpane {
     opacity: 1.0;
 }
 
-#st-stats-container {
+.st-menu-container {
     background-color: rgb(34, 34, 34);
     align-content: flex-start;
     border-width: 3px;
