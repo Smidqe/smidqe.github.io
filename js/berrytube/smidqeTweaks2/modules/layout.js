@@ -83,10 +83,6 @@ function load() {
                 self.modules[name].enable();
             })
 
-            $.each(self.modules, (key, mod) => {
-                mod.enable();
-            })
-
             self.enabled = true;
         },
         disable: () => {
@@ -130,8 +126,6 @@ function load() {
             });
 
             //hacky, but necessary
-            if (SmidqeTweaks.settings.get('active') && (!SmidqeTweaks.settings.get('maltweaks')))
-                self.waitForModules();
 
             //check if we have berrytweaks already in the m
             if (window.BerryTweaks)
@@ -151,6 +145,9 @@ function load() {
                     SmidqeTweaks.modules.listeners.stop(value);
                 })
             }, 30000)
+
+            if (SmidqeTweaks.settings.get('active') && (!SmidqeTweaks.settings.get('maltweaks')))
+                self.check = setInterval(self.waitForModules, 500);
 
             self.started = true;
         },

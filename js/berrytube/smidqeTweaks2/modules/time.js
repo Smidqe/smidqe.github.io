@@ -73,6 +73,13 @@ function load() {
             return result;
         },
         init: () => {
+            try {
+                //Don't ask me. the domain is the same all the time, but without this there would be errors about invalid access
+                document.domain = "berrytube.tv"
+            } catch (error) {
+                console.log(error);
+            }
+
             self.stats = SmidqeTweaks.modules.stats;
 
             $.each(self.pairs, (key, value) => {
