@@ -127,6 +127,8 @@ function load() {
                 self.hide();
             })
 
+            self.container.append(btn);
+
             SmidqeTweaks.modules.toolbar.add(self.button);
             self.started = true;
 
