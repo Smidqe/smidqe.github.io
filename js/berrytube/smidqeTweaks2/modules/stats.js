@@ -92,7 +92,7 @@ function load() {
             //self.menu = SmidqeTweaks.modules.menu;
 
             self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
-            let btn = $('<div>', { id: 'st-stats-exit' })
+            let btn = $('<div>', { id: 'st-stats-exit', class: 'st-button-exit' })
 
             btn.append($('<span>', { text: 'x' }));
             btn.on('click', () => {

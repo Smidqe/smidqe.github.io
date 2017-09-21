@@ -120,6 +120,13 @@ function load() {
             self.container = $('<div>', { id: 'st-menu', class: 'st-window-default' });
             self.button.callbacks.click = self.toggle;
 
+            let btn = $('<div>', { id: 'st-menu-exit', class: 'st-button-exit' })
+
+            btn.append($('<span>', { text: 'x' }));
+            btn.on('click', () => {
+                self.hide();
+            })
+
             SmidqeTweaks.modules.toolbar.add(self.button);
             self.started = true;
 

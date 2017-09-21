@@ -380,7 +380,7 @@ body #leftpane {
     float: right;
 }
 
-#st-stats-exit {
+.st-button-exit {
     position: absolute;
     top: 5px;
     right: 5px;
