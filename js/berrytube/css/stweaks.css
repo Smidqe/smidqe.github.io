@@ -392,3 +392,14 @@ body #leftpane {
     display: table;
     cursor: pointer;
 }
+
+.st-menu-category {
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.st-menu-title-category {
+    float: left;
+    font-size: 40px;
+    border-bottom: 1px solid;
+}

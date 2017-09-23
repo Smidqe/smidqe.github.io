@@ -131,7 +131,7 @@ function load() {
             self.container.append(btn);
 
             $.each(self.names.categories, (index, value) => {
-                self.addCategory({ id: value });
+                self.addCategory({ id: value.toLowerCase(), title: value });
             })
 
             $.each(self.names.groups, (category, value) => {
@@ -142,8 +142,6 @@ function load() {
 
             SmidqeTweaks.modules.toolbar.add(self.button);
             self.started = true;
-
-            self.test();
 
             $('body').append(self.container);
         },
