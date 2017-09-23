@@ -61,6 +61,8 @@ function load() {
             if (!$('#st-menu-category-' + data.category)[0])
                 return;
 
+            console.log('Found the category', data.category);
+
             const wrap = $('<div>', { id: 'st-menu-group-' + data.id, class: 'st-menu-group' })
 
             wrap.append($('<div>', { class: 'st-menu-title-group' }).append($('<span>', { text: data.title })));
