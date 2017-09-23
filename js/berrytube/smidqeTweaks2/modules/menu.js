@@ -56,6 +56,8 @@ function load() {
             );
         },
         addGroup: (data) => {
+            console.log(data);
+
             if (!$('#st-menu-category-' + data.category)[0])
                 return;
 
