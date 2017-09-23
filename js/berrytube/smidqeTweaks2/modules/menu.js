@@ -63,7 +63,7 @@ function load() {
 
             wrap.append($('<div>', { class: 'st-menu-title-group' }).append($('<span>', { text: data.title })));
 
-            $('#st-menu-category-' + data.category).append(wrap);
+            $('#st-menu-category-' + data.category.toLowerCase()).append(wrap);
         },
         addElement: (data) => {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-element' });
@@ -136,7 +136,7 @@ function load() {
 
             $.each(self.names.groups, (category, value) => {
                 $.each(value, (index, name) => {
-                    self.addGroup({ category: category.toLowerCase(), id: name })
+                    self.addGroup({ category: value.toLowerCase(), id: name })
                 })
             })
 
