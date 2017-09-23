@@ -143,8 +143,8 @@ function load() {
             self.addElement({
                 text: 'Test',
                 id: 'test',
-                category: 'BerryTweaks',
-                group: 'General',
+                category: 'SmidqeTweaks',
+                group: 'Test',
                 type: 'button',
                 callbacks: {},
             })
