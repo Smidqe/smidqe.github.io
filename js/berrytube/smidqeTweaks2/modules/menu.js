@@ -58,7 +58,7 @@ function load() {
         addGroup: (data) => {
             console.log(data);
 
-            if (!$('#st-menu-category-' + data.category)[0])
+            if (!$('#st-menu-category-' + data.category.toLowerCase())[0])
                 return;
 
             console.log('Found the category', data.category);
@@ -125,6 +125,8 @@ function load() {
             self.container = $('<div>', { id: 'st-menu', class: 'st-window-default' });
             self.button.callbacks.click = self.toggle;
 
+            $('body').append(self.container);
+
             let btn = $('<div>', { id: 'st-menu-exit', class: 'st-button-exit' })
 
             btn.append($('<span>', { text: 'x' }));
@@ -155,8 +157,6 @@ function load() {
 
             SmidqeTweaks.modules.toolbar.add(self.button);
             self.started = true;
-
-            $('body').append(self.container);
         },
     }
 
