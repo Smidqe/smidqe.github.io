@@ -49,15 +49,19 @@ function load() {
         }],
         shown: false,
         addCategory: (data) => {
-            self.container.append($('<div>', { id: 'st-menu-category-' + data.id, class: 'st-menu-category' }));
+            self.container.append($('<div>', { id: 'st-menu-category-' + data.id, class: 'st-menu-category' })
+                .append($('<div>', { class: 'st-menu-title-category' })
+                    .append($('<span>', { text: data.title })))
+
+            );
         },
         addGroup: (data) => {
             if (!$('#st-menu-category-' + data.category)[0])
-                self.addCategory({ id: data.category });
+                return;
 
             const wrap = $('<div>', { id: 'st-menu-group-' + data.id, class: 'st-menu-group' })
 
-            wrap.append($('<div>', { id: 'st-menu-title' }))
+            wrap.append($('<div>', { class: 'st-menu-title-group' }).append($('<span>', { text: data.title })));
 
             $('#st-menu-category-' + data.group).append(wrap);
         },
@@ -99,7 +103,6 @@ function load() {
             $('#st-menu').addClass('st-window-open st-window-overlap st-menu-container');
             self.shown = true;
         },
-
         hide: () => {
             $('#st-menu').removeClass('st-window-open st-window-overlap st-menu-container');
             self.shown = false;
@@ -110,12 +113,10 @@ function load() {
             else
                 self.show();
         },
-
         test: () => {
             self.addCategory({ id: 'berrytweaks' });
             self.addGroup({ category: 'berrytweaks', id: 'general' })
         },
-
         init: () => {
             self.container = $('<div>', { id: 'st-menu', class: 'st-window-default' });
             self.button.callbacks.click = self.toggle;
@@ -128,6 +129,16 @@ function load() {
             })
 
             self.container.append(btn);
+
+            $.each(self.names.categories, (index, value) => {
+                self.addCategory({ id: value });
+            })
+
+            $.each(self.names.groups, (category, value) => {
+                $.each(value, (index, name) => {
+                    self.addGroup({ category: category.toLowerCase(), id: name })
+                })
+            })
 
             SmidqeTweaks.modules.toolbar.add(self.button);
             self.started = true;
