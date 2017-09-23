@@ -136,7 +136,7 @@ function load() {
 
             $.each(self.names.groups, (category, value) => {
                 $.each(value, (index, name) => {
-                    self.addGroup({ category: category.toLowerCase(), id: name })
+                    self.addGroup({ category: category.toLowerCase(), id: name.toLowerCase(), text: name })
                 })
             })
 
