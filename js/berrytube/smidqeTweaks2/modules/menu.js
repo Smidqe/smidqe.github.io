@@ -28,7 +28,7 @@ function load() {
             categories: ['Berrytube', 'SmidqeTweaks'],
             groups: {
                 'BerryTweaks': ['Windows', 'Other'],
-                'SmidqeTweaks': ['General'], //enable/disable layout, hide video, stats
+                'SmidqeTweaks': ['General', 'Test'], //enable/disable layout, hide video, stats
             },
         },
         categories: {},
@@ -40,7 +40,7 @@ function load() {
             callbacks: {},
         },
         buttons: [{
-            title: 'Test',
+            text: 'Test',
             id: 'test',
             category: 'BerryTweaks',
             group: 'General',
@@ -63,7 +63,7 @@ function load() {
 
             wrap.append($('<div>', { class: 'st-menu-title-group' }).append($('<span>', { text: data.title })));
 
-            $('#st-menu-category-' + data.group).append(wrap);
+            $('#st-menu-category-' + data.category).append(wrap);
         },
         addElement: (data) => {
             const wrap = $('<div>', { id: data.id, class: 'st-menu-element' });
@@ -80,7 +80,7 @@ function load() {
                 case 'button':
                     {
                         element = $('<div>', { id: data.id, class: 'st-menu-button' })
-                        .append($('<div>', { text: data.id[0].toUpperCase() + data.id.slice(1) }))
+                        .append($('<div>', { text: data.text[0].toUpperCase() + data.text.slice(1) }))
                         break;
                     }
                 case 'input':
@@ -138,6 +138,15 @@ function load() {
                 $.each(value, (index, name) => {
                     self.addGroup({ category: category.toLowerCase(), id: name })
                 })
+            })
+
+            self.addElement({
+                text: 'Test',
+                id: 'test',
+                category: 'BerryTweaks',
+                group: 'General',
+                type: 'button',
+                callbacks: {},
             })
 
             SmidqeTweaks.modules.toolbar.add(self.button);
