@@ -98,7 +98,7 @@ function load() {
                 element.on(key, callback)
             })
 
-            self.getGroup(data.category, data.group).append(wrap.append(element));
+            self.getGroup(data.category.toLowerCase(), data.group.toLowerCase()).append(wrap.append(element));
         },
         getGroup: (category, group) => {
             return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);

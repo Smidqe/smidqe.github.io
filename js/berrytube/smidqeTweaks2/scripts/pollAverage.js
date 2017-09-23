@@ -31,7 +31,7 @@ function load() {
             const average = total / count;
             const msg = "average is " + average;
 
-            SmidqeTweaks.chat.add("Episode ", msg, 'rcv');
+            SmidqeTweaks.modules.chat.add("Episode ", msg, 'rcv');
         },
         enable: () => {
             self.enabled = true;
