@@ -70,16 +70,8 @@ function load() {
             $('#st-menu-category-' + data.category.toLowerCase()).append(wrap);
         },
         addElement: (data) => {
-            const wrap = $('<div>', { id: data.id, class: 'st-menu-element' });
-
-
-            /*
-                Currently planned elements
-                    button
-                    changebox(?)        
-            */
-
             var element = null;
+
             switch (data.type) {
                 case 'button':
                     {
@@ -94,11 +86,13 @@ function load() {
                     }
             }
 
+            element.addClass('st-menu-element');
+
             $.each(data.callbacks, (key, callback) => {
                 element.on(key, callback)
             })
 
-            self.getGroup(data.category.toLowerCase(), data.group.toLowerCase()).append(wrap.append(element));
+            self.getGroup(data.category.toLowerCase(), data.group.toLowerCase()).append(element);
         },
         getGroup: (category, group) => {
             return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
