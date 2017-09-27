@@ -60,7 +60,7 @@ function load() {
                 return;
 
             let wrap = $('<div>', { id: 'st-menu-group-' + data.id, class: 'st-menu-group' })
-            let title = $('<div>', { class: 'st-menu-title-group' }).append($('span').text(data.title))
+            let title = $('<div>', { class: 'st-menu-title-group' }).append($('<span>').text(data.title))
             let elements = $('<div>', { class: 'st-menu-group-elements' });
 
             wrap.append(title, elements);
@@ -85,7 +85,6 @@ function load() {
             }
 
             element.addClass('st-menu-element');
-
 
             $.each(data.callbacks, (key, callback) => {
                 element.on(key, callback)
