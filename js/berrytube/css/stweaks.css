@@ -380,6 +380,10 @@ body #leftpane {
     float: right;
 }
 
+.st-stats-pair-sub>span:first-child {
+    margin-left: 15px;
+}
+
 .st-button-exit {
     position: absolute;
     top: 5px;
@@ -403,4 +407,26 @@ body #leftpane {
     font-size: 40px;
     width: 100%;
     border-bottom: 1px solid;
+}
+
+.st-menu-group-elements {
+    width: 100%;
+}
+
+.st-menu-group {
+    grid-row: auto;
+    grid-column: auto;
+}
+
+.st-menu-button {
+    border: 1px solid;
+    text-align: center;
+}
+
+.st-menu-button-normal {
+    width: 50px;
+}
+
+.st-menu-button-large {
+    width: 150px;
 }

@@ -56,16 +56,14 @@ function load() {
             );
         },
         addGroup: (data) => {
-            console.log(data);
-
             if (!$('#st-menu-category-' + data.category.toLowerCase())[0])
                 return;
 
-            console.log('Found the category', data.category);
+            let wrap = $('<div>', { id: 'st-menu-group-' + data.id, class: 'st-menu-group' })
+            let title = $('<div>', { class: 'st-menu-title-group' }).append($('span').text(data.title))
+            let elements = $('<div>', { class: 'st-menu-group-elements' });
 
-            const wrap = $('<div>', { id: 'st-menu-group-' + data.id, class: 'st-menu-group' })
-
-            wrap.append($('<div>', { class: 'st-menu-title-group' }).append($('<span>', { text: data.title })));
+            wrap.append(title, elements);
 
             $('#st-menu-category-' + data.category.toLowerCase()).append(wrap);
         },
@@ -87,6 +85,7 @@ function load() {
             }
 
             element.addClass('st-menu-element');
+
 
             $.each(data.callbacks, (key, callback) => {
                 element.on(key, callback)
