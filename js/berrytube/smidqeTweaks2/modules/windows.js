@@ -61,6 +61,8 @@ function load() {
             let data = self.get(key);
             var selector = data.selectors[0];
 
+            console.log(data, selector);
+
             if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
                 selector = data.selectors[1];
 
@@ -69,10 +71,12 @@ function load() {
             }).append(
                 $('<div>', { class: 'st-window-exit' }).text('x'));
 
-            $(selector).wrap(wrap);
+            console.log(wrap, selector);
+
+            $('' + selector).wrap(wrap);
         },
 
-        hide: (data) => {
+        hide: () => {
             $('.st-window-wrap > .st-window-exit').remove();
             $('.st-window-wrap').contents().unwrap();
         },
@@ -80,8 +84,8 @@ function load() {
         init: () => {
             let toolbar = SmidqeTweaks.modules.toolbar;
             let button = {
-                id: 'menu',
-                text: 'M',
+                id: 'window',
+                text: 'W',
                 tooltip: 'Show/Hide the test window',
                 isToggle: false,
                 callbacks: {},
