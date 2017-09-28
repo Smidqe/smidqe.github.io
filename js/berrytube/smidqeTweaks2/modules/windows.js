@@ -82,9 +82,13 @@ function load() {
             let button = {
                 id: 'menu',
                 text: 'M',
-                tooltip: 'Show/Hide the menu',
+                tooltip: 'Show/Hide the test window',
                 isToggle: false,
                 callbacks: {},
+            }
+
+            button.callbacks['on'] = () => {
+                SmidqeTweaks.modules.windows.show('rules');
             }
 
             toolbar.add(button);
@@ -109,10 +113,6 @@ function load() {
 
                 clearInterval(self.check);
             })
-
-            button.callbacks['on'] = () => {
-                SmidqeTweaks.modules.windows.show('rules');
-            }
 
             self.started = true;
         },
