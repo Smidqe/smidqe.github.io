@@ -1,14 +1,23 @@
 /*
-Add more files to layout
-    - video, chat, playlist \\hmmm
+    TODO:
+
+        - Remove the listeners from here and use settings to figure out what scripts we are using,
+        -
+
 */
 
 function load() {
     const self = {
         runnable: true,
         started: false,
-        requires: ['listeners', 'time', 'toolbar'], //soon menu aswell
+        requires: ['listeners', 'time', 'menu'], //soon menu aswell
+        group: 'layout',
         enabled: false,
+        settings: [{
+            title: 'Is maltweaks ',
+            type: 'checkbox',
+            key: 'maltweaks'
+        }],
         stylesheet: null,
         name: 'layout',
         button: {
@@ -33,7 +42,7 @@ function load() {
         modules: {},
         check: null,
         timeout: null,
-        names: ['wraps', 'windows', 'toolbar', 'chat', 'playlist', 'video'],
+        names: ['wraps', 'toolbar', 'chat', 'playlist', 'video'],
         waitForModules: () => {
             if (Object.keys(self.modules).length != self.names.length)
                 return;
@@ -104,8 +113,8 @@ function load() {
                 self.enable();
         },
         init: () => {
-            self.stylesheet = stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>')
-                //self.menu = SmidqeTweaks.modules.menu;
+            self.stylesheet = stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>');
+            self.menu = SmidqeTweaks.modules.menu;
 
             self.button.callbacks = {
                 click: self.toggle

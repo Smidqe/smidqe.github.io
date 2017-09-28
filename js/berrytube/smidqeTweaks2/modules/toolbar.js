@@ -43,7 +43,6 @@ function load() {
             $.each(data.callbacks, (key, value) => {
                 self.addCallback(data.id, key, value);
             })
-
         },
         remove: (key) => {
             delete self.bar[key];

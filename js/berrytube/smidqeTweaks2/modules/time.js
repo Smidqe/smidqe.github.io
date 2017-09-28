@@ -11,6 +11,8 @@ function load() {
             type: 'checkbox',
             key: '12hour'
         }],
+
+        //will fix this eventually to grab all timers instead of using manual labor
         pairs: [{
             id: 'time',
             title: 'Current time',
@@ -19,22 +21,27 @@ function load() {
             id: 'euro',
             title: 'Euro Drinking Games',
             value: 0,
+            sub: true,
         }, {
             id: 'signature',
             title: 'Signature Drinking Games',
             value: 0,
+            sub: true,
         }, {
             id: 'bonus',
             title: 'Bonus Drinking Games',
             value: 0,
+            sub: true,
         }, {
             id: 'new',
             title: 'New Horse',
             value: 0,
+            sub: true,
         }, {
             id: 'movie',
             title: 'Horse Movie',
             value: 0,
+            sub: true,
         }, ],
         get: () => {
             const time = new Date();
@@ -56,6 +63,9 @@ function load() {
                 msg += " " + detail;
 
             return msg;
+        },
+        getAllTimers: () => {
+            return $($('iframe:not(#ytapiplayer)')[0].contentWindow.document).find('.namecol').parent();
         },
         getTimerByName: (name) => {
             //very hacky method, but due to cross frame script restrictions, it's necessary

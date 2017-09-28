@@ -18,7 +18,7 @@ const self = {
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
     },
     settings: {
-        groups: ['tweaks', 'chat', 'time', 'polls', 'playlist', 'patches', 'debug'],
+        groups: ['dependencies', 'tweaks', 'chat', 'time', 'polls', 'playlist', 'patches', 'debug'],
         container: null,
         storage: {},
         get: (key) => {
@@ -186,11 +186,8 @@ const self = {
         if (mod.script) {
             if (self.settings.get(mod.name))
                 mod.enable();
-
-            //possibly more
         }
 
-        //if it is started delete it from the queue
         delete src[mod.name];
     },
 
@@ -249,7 +246,6 @@ const self = {
             clearInterval(self.start);
         })
 
-        //make this into a pausable thing
         self.check = setInterval(() => {
             if ($.isEmptyObject(self.queue))
                 return;
