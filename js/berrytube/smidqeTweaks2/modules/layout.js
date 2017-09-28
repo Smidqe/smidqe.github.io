@@ -42,7 +42,7 @@ function load() {
         modules: {},
         check: null,
         timeout: null,
-        names: ['wraps', 'toolbar', 'chat', 'playlist', 'video'],
+        names: ['wraps', 'chat', 'playlist', 'video'],
         waitForModules: () => {
             if (Object.keys(self.modules).length != self.names.length)
                 return;
