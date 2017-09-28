@@ -87,6 +87,8 @@ function load() {
                 callbacks: {},
             }
 
+            toolbar.add(button);
+
             self.check = setInterval(() => {
                 let layout = SmidqeTweaks.modules.layout;
 
@@ -97,10 +99,10 @@ function load() {
                     return;
 
                 $.each(self.windows, (key, value) => {
-                    var selector = data.selectors[0];
+                    var selector = value.selectors[0];
 
-                    if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
-                        selector = data.selectors[1];
+                    if (SmidqeTweaks.settings.get('maltweaks') && value.selectors.length > 1)
+                        selector = value.selectors[1];
 
                     $(selector).addClass("st-window-default");
                 })
