@@ -87,6 +87,27 @@ function load() {
                 callbacks: {},
             }
 
+            self.check = setInterval(() => {
+                let layout = SmidqeTweaks.modules.layout;
+
+                if (!layout)
+                    return;
+
+                if (!layout.enabled)
+                    return;
+
+                $.each(self.windows, (key, value) => {
+                    var selector = data.selectors[0];
+
+                    if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
+                        selector = data.selectors[1];
+
+                    $(selector).addClass("st-window-default");
+                })
+
+                clearInterval(self.check);
+            })
+
             button.callbacks['on'] = () => {
                 SmidqeTweaks.modules.windows.show('rules');
             }

@@ -11,10 +11,14 @@ function load() {
         runnable: true,
         started: false,
         requires: ['listeners', 'time', 'menu'], //soon menu aswell
-        group: 'layout',
+        group: 'dependencies',
         enabled: false,
         settings: [{
-            title: 'Is maltweaks ',
+            title: 'Using Maltweaks',
+            type: 'checkbox',
+            key: 'maltweaks'
+        }, {
+            title: 'Using BerryTweaks',
             type: 'checkbox',
             key: 'maltweaks'
         }],
@@ -34,10 +38,13 @@ function load() {
                 config: { childList: true },
             },
 
+            /*
+            //Not needed anymore
             berrytweaks: { //if there will be more than one use for this, change the name
                 path: "head",
                 config: { childList: true },
             }
+            */
         },
         modules: {},
         check: null,
@@ -68,13 +75,6 @@ function load() {
                     }
                 })
             })
-        },
-        handleBerryTweaks: () => {
-            if ($("head > link").attr('href').indexOf("atte.fi") === -1)
-                return;
-
-            SmidqeTweaks.settings.set("berrytweaks", true, true);
-            self.listeners['berrytweaks'].observer.disconnect();
         },
         enable: () => {
             $.each(self.listeners, (key, value) => {
@@ -123,25 +123,17 @@ function load() {
             self.button.active = SmidqeTweaks.settings.get('active');
             self.toolbar = SmidqeTweaks.modules.toolbar;
 
-            //self.menu.add
+            /*
+                Add menu items here
+            */
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
-            self.listeners.berrytweaks.callback = self.handleBerryTweaks;
 
             self.toolbar.add(self.button);
 
             $.each(self.listeners, (key, value) => {
                 SmidqeTweaks.modules.listeners.start(value);
             });
-
-            //hacky, but necessary
-
-            //check if we have berrytweaks already in the m
-            if (window.BerryTweaks)
-                SmidqeTweaks.settings.set('berrytweaks', true, true);
-
-            if (window.MT)
-                SmidqeTweaks.settings.set('maltweaks', true, true);
 
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
