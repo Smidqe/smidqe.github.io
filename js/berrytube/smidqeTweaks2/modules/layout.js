@@ -37,26 +37,10 @@ function load() {
                 path: "body",
                 config: { childList: true },
             },
-
-            /*
-            //Not needed anymore
-            berrytweaks: { //if there will be more than one use for this, change the name
-                path: "head",
-                config: { childList: true },
-            }
-            */
         },
         modules: {},
         check: null,
         timeout: null,
-        names: ['wraps', 'chat', 'playlist', 'video'],
-        waitForModules: () => {
-            if (Object.keys(self.modules).length != self.names.length)
-                return;
-
-            self.enable();
-            clearInterval(self.check);
-        },
         handleMaltweaks: (mutations) => {
             $.each(mutations, (key, mutation) => {
                 if (!mutation.addedNodes)
@@ -66,13 +50,8 @@ function load() {
                     if (node.id !== 'headwrap')
                         return;
 
-                    if (node.id === 'headwrap' && !SmidqeTweaks.settings.get('maltweaks'))
-                        SmidqeTweaks.settings.set('maltweaks', true, true);
-
-                    if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks")) {
-                        clearTimeout(self.timeout);
-                        self.check = setInterval(self.waitForModules, 500);
-                    }
+                    if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks"))
+                        self.enable();
                 })
             })
         },
@@ -100,6 +79,8 @@ function load() {
             $.each(self.modules, (key, mod) => {
                 mod.disable();
             })
+
+            $('#st-stylesheet').remove();
 
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
@@ -131,10 +112,6 @@ function load() {
 
             self.toolbar.add(self.button);
 
-            $.each(self.listeners, (key, value) => {
-                SmidqeTweaks.modules.listeners.start(value);
-            });
-
             $.each(self.names, (index, value) => {
                 $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
                     self.modules[value].init();
@@ -147,8 +124,15 @@ function load() {
                 })
             }, 30000)
 
-            if (SmidqeTweaks.settings.get('active') && (!SmidqeTweaks.settings.get('maltweaks')))
-                self.check = setInterval(self.waitForModules, 500);
+            $("#chatpane").addClass("st-chat");
+            $("#playlist").addClass("st-window-playlist");
+            $("#videowrap").addClass("st-video");
+
+            if (SmidqeTweaks.settings.get('active'))
+                if (!SmidqeTweaks.settings.get('maltweaks'))
+                    self.enable();
+                else
+                    SmidqeTweaks.modules.listeners.start(self.listeners.maltweaks);
 
             self.started = true;
         },

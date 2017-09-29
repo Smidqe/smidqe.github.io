@@ -66,37 +66,38 @@ function load() {
             if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
                 selector = data.selectors[1];
 
-            const wrap = $('<div>', {
-                class: 'st-window-wrap'
-            }).append(
-                $('<div>', { class: 'st-window-exit' }).text('x'));
+            const button = $('<div>', {
+                class: 'st-window-exit'
+            }).append($('<span>').text('x'));
 
             console.log(wrap, selector);
 
-            $('' + selector).wrap(wrap);
+            let window = $('' + selector)
+
+            window.append(button);
+
+            $.each(data.classes, (key, value) => {
+                window.addClass(value);
+            })
         },
 
-        hide: () => {
+        hide: (key) => {
+            let data = self.get(key);
+
             $('.st-window-wrap > .st-window-exit').remove();
-            $('.st-window-wrap').contents().unwrap();
+
+            $.each(data.classes, (key, value) => {
+                window.removeClass(value);
+            })
+        },
+
+        hideAll: () => {
+            $.each(self.windows, (key, value) => {
+                self.hide(key);
+            })
         },
 
         init: () => {
-            let toolbar = SmidqeTweaks.modules.toolbar;
-            let button = {
-                id: 'window',
-                text: 'W',
-                tooltip: 'Show/Hide the test window',
-                isToggle: false,
-                callbacks: {},
-            }
-
-            button.callbacks['on'] = () => {
-                SmidqeTweaks.modules.windows.show('rules');
-            }
-
-            toolbar.add(button);
-
             self.check = setInterval(() => {
                 let layout = SmidqeTweaks.modules.layout;
 
