@@ -77,18 +77,10 @@ function load() {
             if (!$('#st-stylesheet')[0])
                 location.append(self.stylesheet);
 
-            $.each(self.names, (key, name) => {
-                self.modules[name].enable();
-            })
-
             self.enabled = true;
         },
         disable: () => {
             SmidqeTweaks.settings.set("active", false, true)
-
-            $.each(self.modules, (key, mod) => {
-                mod.disable();
-            })
 
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.unwrap();
