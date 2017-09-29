@@ -38,9 +38,8 @@ function load() {
                 config: { childList: true },
             },
         },
-        modules: {},
-        check: null,
         timeout: null,
+        interval: null,
         handleMaltweaks: (mutations) => {
             $.each(mutations, (key, mutation) => {
                 if (!mutation.addedNodes)
@@ -123,8 +122,14 @@ function load() {
             */
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
-
             self.toolbar.add(self.button);
+            self.interval = setInterval(() => {
+                if (!$('#playlist')[0])
+                    return;
+
+                $("#playlist").addClass("st-window-playlist");
+                clearInterval(self.interval);
+            })
 
             setTimeout(() => {
                 $.each(self.listeners, (key, value) => {
@@ -133,7 +138,6 @@ function load() {
             }, 30000)
 
             $("#chatpane").addClass("st-chat");
-            $("#playlist").addClass("st-window-playlist");
             $("#videowrap").addClass("st-video");
 
             if (SmidqeTweaks.settings.get('active'))
