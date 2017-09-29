@@ -55,6 +55,14 @@ function load() {
                 })
             })
         },
+        wrap: () => {
+            $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
+            $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
+            $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
+        },
+        unwrap: () => {
+            $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
+        },
         enable: () => {
             $.each(self.listeners, (key, value) => {
                 value.observer.disconnect();
@@ -63,6 +71,9 @@ function load() {
             const location = SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head');
 
             SmidqeTweaks.settings.set("active", true, true);
+
+            if (!SmidqeTweaks.settings.get('maltweaks'))
+                self.wrap();
 
             if (!$('#st-stylesheet')[0])
                 location.append(self.stylesheet);
@@ -79,6 +90,9 @@ function load() {
             $.each(self.modules, (key, mod) => {
                 mod.disable();
             })
+
+            if (!SmidqeTweaks.settings.get('maltweaks'))
+                self.unwrap();
 
             $('#st-stylesheet').remove();
 
@@ -111,12 +125,6 @@ function load() {
             self.listeners.maltweaks.callback = self.handleMaltweaks;
 
             self.toolbar.add(self.button);
-
-            $.each(self.names, (index, value) => {
-                $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/layout/${value}.js`, () => {
-                    self.modules[value].init();
-                })
-            });
 
             setTimeout(() => {
                 $.each(self.listeners, (key, value) => {
