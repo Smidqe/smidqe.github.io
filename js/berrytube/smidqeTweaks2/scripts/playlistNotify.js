@@ -3,11 +3,11 @@
     since now we can use the PLAYLIST variable in window,
     this allows much more accurate changes to the video we are playing
 
-    
-    Solution to shuffles:
-        - There are actually multiple >400 changes at the same time,
-        - I keep missing it, due to way I initially built the listeners
-        - So the solution is to redo listeners and the scripts/modules that use them
+    TODO:
+        - Instead of listening playlist changes, tap into the linkedlist functionalities
+        - specially the addbefore/after
+        - that would help immensenly
+
 
     There's also the amount
 */
@@ -98,7 +98,6 @@ function load() {
 
             change.state = {
                 action: action,
-                active: node.hasClass('active'),
                 volatile: obj.value.volat,
                 changed: action === 'changed',
             }
@@ -110,9 +109,6 @@ function load() {
         },
         message: (change) => {
             var msg = change.title;
-
-            if (change.state.action === 'changed' && change.state.active)
-                return;
 
             if (change.state.volatile && !change.state.changed)
                 msg += ' (volatile)';
@@ -158,38 +154,30 @@ function load() {
             SmidqeTweaks.modules.chat.add("Playlist modification", msg, 'act');
         },
         isItem: (node) => {
-            const title = node.find(".title").text();
-            const tag = node.prop('tagName')
+            let title = node.find(".title").text();
+            let tag = node.prop('tagName')
 
             if (!tag || !title)
                 return false;
 
-            if (!tag.toLowerCase() === "li")
-                return false;
-
-            if (title.length === 0)
+            if (!tag.toLowerCase() === "li" || title.length == 0)
                 return false;
 
             return true;
         },
         run: (mutations) => {
-            console.log(mutations.length);
-
             if (mutations.length > 50) {
                 SmidqeTweaks.modules.chat.add('Playlist', 'was shuffled', 'act');
                 return;
             }
 
             $.each(mutations, (key, mutation) => {
-                //added
                 $.each(mutation.addedNodes, (index, value) => {
-                    const node = $(value);
-
-                    if (!self.isItem(node))
+                    if (!self.isItem($(value)))
                         return;
 
-                    const change = self.add(node, 'added');
-                    const position = self.playlist.getObject(change.title).pos;
+                    let change = self.add($(value), 'added');
+                    let position = self.playlist.getObject(change.title).pos;
 
                     if (change.state.action === 'removed') {
                         clearTimeout(change.timeout);
@@ -203,28 +191,21 @@ function load() {
                 })
 
                 $.each(mutation.removedNodes, (index, value) => {
-                    const node = $(value);
-
-                    if (!self.isItem(node))
+                    if (!self.isItem($(value)))
                         return;
 
-                    const change = self.add(node, 'removed');
+                    let change = self.add($(value), 'removed');
 
                     if (change.state.action !== 'removed')
                         self.modify(change, { state: { action: 'removed' } }, false, false)
 
-                    if (change.state.active)
-                        self.remove(change.title, true);
-                    else
-                        change.timeout = setTimeout(() => { self.remove(change.title, true) }, 1000); //for possible move
+                    change.timeout = setTimeout(() => { self.remove(change.title, true) }, 1000); //for possible move
                 })
 
-                const node = $(mutation.target);
-
-                if (!self.isItem(node))
+                if (!self.isItem($(mutation.target)))
                     return;
 
-                const change = self.changes[node.find('.title').text()];
+                let change = self.changes[$(mutation.target).find('.title').text()];
 
                 if (!change)
                     return;
@@ -233,7 +214,6 @@ function load() {
                     self.modify(change, { state: { action: 'changed', changed: true, volatile: !change.state.volatile } }, false, true);
             })
         },
-
         enable: () => {
             self.observer = {
                 config: { childList: true, attributes: true, characterData: true, subtree: true, attributeOldValue: true },
