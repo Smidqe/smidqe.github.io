@@ -1,15 +1,8 @@
 /*
-    Rework this into using the playlist.getObject(),
-    since now we can use the PLAYLIST variable in window,
-    this allows much more accurate changes to the video we are playing
-
     TODO:
-        - Instead of listening playlist changes, tap into the linkedlist functionalities
-        - specially the addbefore/after
-        - that would help immensenly
-
-
-    There's also the amount
+        Livestream separations
+            - These are a bitch since the videos share the name
+            * Could probably utilise the videoAdded metatag, to 
 */
 
 function load() {
