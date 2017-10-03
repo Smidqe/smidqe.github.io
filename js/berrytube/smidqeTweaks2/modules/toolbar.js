@@ -80,4 +80,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('toolbar', load(), 'main');
+SmidqeTweaks.addModule('toolbar', load());

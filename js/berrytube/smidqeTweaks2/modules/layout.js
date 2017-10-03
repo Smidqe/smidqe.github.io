@@ -145,4 +145,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('layout', load(), 'main');
+SmidqeTweaks.addModule('layout', load());

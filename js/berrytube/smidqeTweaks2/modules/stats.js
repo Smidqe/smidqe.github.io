@@ -114,4 +114,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('stats', load(), 'main');
+SmidqeTweaks.addModule('stats', load());

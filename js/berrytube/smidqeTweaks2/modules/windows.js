@@ -61,16 +61,16 @@ function load() {
             let data = self.get(key);
             var selector = data.selectors[0];
 
-            console.log(data, selector);
-
             if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
                 selector = data.selectors[1];
+
+			
 
             const button = $('<div>', {
                 class: 'st-window-exit'
             }).append($('<span>').text('x'));
 
-            console.log(wrap, selector);
+            //console.log(wrap, selector);
 
             let window = $('' + selector)
 
@@ -126,4 +126,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('windows', load(), 'main');
+SmidqeTweaks.addModule('windows', load());

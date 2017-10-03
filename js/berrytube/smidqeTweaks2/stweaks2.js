@@ -1,14 +1,10 @@
 /*
-    Replace the exit button with a small image
-    25px X 25px
-
-    Once I've finished the necessary modules, clean all the modules
-
+    Now that the layout folder is gone clean this file
+	mainly the get/addModule
 */
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //simplistic methods
-    windows: {}, //possibly, will probably remove this
     check: null,
     queue: {},
     base: {},
@@ -104,37 +100,22 @@ const self = {
         }
     },
     addModule: (title, mod, _to) => {
-        if (_to === 'layout')
-            self.modules.layout.modules[title] = mod
+        self.modules[title] = mod;
 
-        if (_to === 'main')
-            self.modules[title] = mod;
-
-        //to start the module
-        //self.queue[title] = mod;
+		if (mod.init)
+        	self.queue[title] = mod;
     },
     removeModule: (title, _from) => {
-        if (_from === 'main')
-            delete self.modules[title];
-
-        if (_from === 'layout')
-            delete self.modules.layout[title];
+        delete self.modules[title];
     },
     getModule: (title, _from) => {
-        if (_from === 'layout')
-            return self.modules.layout.modules[title];
-
-        if (_from === 'main')
-            return self.modules[title];
+        return self.modules[title];
     },
     getScript: (title) => {
         return self.scripts[title];
     },
     addScript: (title, script) => {
         self.scripts[title] = script;
-    },
-    addWindow: (name, win) => {
-        self.windows[name] = win;
     },
     patch: (container, func, callback) => {
         const original = container[func];

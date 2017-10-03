@@ -109,4 +109,4 @@ function load() {
     }
     return self;
 }
-SmidqeTweaks.addModule('chat', load(), 'main');
+SmidqeTweaks.addModule('chat', load());

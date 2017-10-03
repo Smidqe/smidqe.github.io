@@ -1,10 +1,17 @@
+/*
+	TODO:
+	- Add separate input to give the amount of buttons/values in the poll to trigger the
+	script. Since some mods have polls that start from 1 and not from zero.
+	
+*/
+
 function load() {
     const self = {
         group: 'polls',
         script: true,
         name: 'pollAverage',
         settings: [{
-            title: "Calculate episode poll average",
+            title: "Calculate episode average",
             type: "checkbox",
             key: "pollAverage",
         }, {
