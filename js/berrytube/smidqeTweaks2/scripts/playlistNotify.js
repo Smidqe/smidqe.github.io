@@ -68,8 +68,7 @@ function load() {
 
             change.state.action = 'removed';
 
-            //if we have added a non volatile video, don't announce it being removed
-            if (message && !change.state.volatile)
+            if (message)
                 self.message(change);
 
             delete self.changes[title];
