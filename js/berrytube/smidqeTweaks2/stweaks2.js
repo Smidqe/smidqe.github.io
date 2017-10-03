@@ -99,11 +99,11 @@ const self = {
             $("#settingsGui > ul").append($('<li>').append(cont));
         }
     },
-    addModule: (title, mod, _to) => {
+    addModule: (title, mod) => {
         self.modules[title] = mod;
 
-		if (mod.init)
-        	self.queue[title] = mod;
+        if (mod.init && (self.names.modules.indexOf(title) == -1))
+            self.queue[title] = mod;
     },
     removeModule: (title, _from) => {
         delete self.modules[title];

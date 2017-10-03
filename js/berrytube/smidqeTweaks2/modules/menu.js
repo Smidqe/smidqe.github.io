@@ -87,10 +87,10 @@ function load() {
             element.addClass('st-menu-element');
 
             $.each(data.callbacks, (key, callback) => {
-                element.on(key, callback)
+                element.on(key, callback);
             })
 
-            self.getGroup(data.category.toLowerCase(), data.group.toLowerCase()).append(element);
+            $('st-menu-group-' + data.group.toLowerCase() + '> .st-menu-group-elements').append(element);
         },
         getGroup: (category, group) => {
             return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);

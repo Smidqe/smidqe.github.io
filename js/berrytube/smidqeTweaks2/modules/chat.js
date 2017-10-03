@@ -57,12 +57,6 @@ function load() {
             delete CHATLIST[nick];
         },
 
-        getMessages: (user) => {
-            if (!user)
-                return null;
-
-            //
-        },
         //could be expanded more
         getEmotes: (user) => {
             var query = null;

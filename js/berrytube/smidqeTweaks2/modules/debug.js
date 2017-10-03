@@ -13,4 +13,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('debug', load(), 'main');
+SmidqeTweaks.addModule('debug', load());
