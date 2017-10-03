@@ -102,6 +102,7 @@ const self = {
     addModule: (title, mod) => {
         self.modules[title] = mod;
 
+        //don't init twice those that are core modules
         if (mod.init && (self.names.modules.indexOf(title) == -1))
             self.queue[title] = mod;
     },
