@@ -64,13 +64,9 @@ function load() {
             if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
                 selector = data.selectors[1];
 
-
-
             const button = $('<div>', {
                 class: 'st-window-exit'
             }).append($('<span>').text('x'));
-
-            //console.log(wrap, selector);
 
             let window = $('' + selector)
 

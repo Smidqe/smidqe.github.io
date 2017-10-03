@@ -426,4 +426,5 @@ body #leftpane {
     align-items: center;
     display: flex;
     word-break: break-word;
+    justify-content: center;
 }
