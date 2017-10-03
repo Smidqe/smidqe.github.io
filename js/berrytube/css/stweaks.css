@@ -410,23 +410,20 @@ body #leftpane {
 }
 
 .st-menu-group-elements {
-    width: 100%;
-}
-
-.st-menu-group {
-    grid-row: auto;
-    grid-column: auto;
+    grid-gap: 10px 10px;
+    margin: 20px 10px 20px 10px;
+    display: grid;
+    grid-auto-rows: 100px;
+    border: 1px solid;
+    padding: 5px 5px 5px 5px;
+    grid-auto-flow: row;
+    grid-template-columns: 100px 100px 100px 100px 100px;
 }
 
 .st-menu-button {
     border: 1px solid;
     text-align: center;
-}
-
-.st-menu-button-normal {
-    width: 50px;
-}
-
-.st-menu-button-large {
-    width: 150px;
+    align-items: center;
+    display: flex;
+    word-break: break-word;
 }

@@ -64,7 +64,7 @@ function load() {
             if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
                 selector = data.selectors[1];
 
-			
+
 
             const button = $('<div>', {
                 class: 'st-window-exit'
@@ -98,6 +98,8 @@ function load() {
         },
 
         init: () => {
+            let menu = SmidqeTweaks.modules.menu;
+
             self.check = setInterval(() => {
                 let layout = SmidqeTweaks.modules.layout;
 

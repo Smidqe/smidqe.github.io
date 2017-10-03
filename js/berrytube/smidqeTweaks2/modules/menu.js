@@ -144,6 +144,7 @@ function load() {
                 category: 'SmidqeTweaks',
                 group: 'Test',
                 type: 'button',
+                position: { x: 1, y: 1 },
                 callbacks: {},
             })
 
