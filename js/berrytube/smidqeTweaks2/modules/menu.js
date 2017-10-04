@@ -24,14 +24,7 @@ function load() {
         started: false,
         name: 'menu',
         requires: ['toolbar'],
-        names: {
-            categories: ['Berrytube', 'SmidqeTweaks'],
-            groups: {
-                'BerryTweaks': ['Windows', 'Other'],
-                'SmidqeTweaks': ['General', 'Test'], //enable/disable layout, hide video, stats
-            },
-        },
-        categories: {},
+        categories: ['Berrytube', 'SmidqeTweaks'],
         button: {
             id: 'menu',
             text: 'M',
@@ -90,6 +83,9 @@ function load() {
         getGroup: (category, group) => {
             return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
         },
+        removeElement: (data) => {
+            $('#st-menu-category-' + data.category + ' > #st-menu-group-' + group + ' > #st-menu-element-' + data.key).remove();
+        },
         show: () => {
             $('#st-menu').addClass('st-window-open st-window-overlap st-menu-container');
             self.shown = true;
@@ -131,15 +127,6 @@ function load() {
                 $.each(value, (index, name) => {
                     self.addGroup({ category: category.toLowerCase(), id: name.toLowerCase(), text: name })
                 })
-            })
-
-            self.addElement({
-                text: 'Test',
-                id: 'test',
-                category: 'SmidqeTweaks',
-                group: 'Test',
-                type: 'button',
-                callbacks: {},
             })
 
             SmidqeTweaks.modules.toolbar.add(self.button);

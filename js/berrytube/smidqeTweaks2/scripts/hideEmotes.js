@@ -4,6 +4,14 @@
 function load() {
     const self = {
         name: 'hideEmotes',
+
+
+        enable: () => {
+            //add menu button
+        },
+        disable: () => {
+
+        },
     }
 
     return self;

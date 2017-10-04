@@ -25,11 +25,13 @@ function load() {
         stylesheet: null,
         name: 'layout',
         button: {
+            text: "Enable/Disable tweaks",
             id: 'tweaks',
-            text: 'T',
-            tooltip: 'Enable/disable tweaks',
-            active: false,
-            isToggle: true,
+            category: 'SmidqeTweaks',
+            group: 'General',
+            type: 'button',
+            toggle: true,
+            'data-key': 'tweaks',
             callbacks: {},
         },
         listeners: {
@@ -109,9 +111,14 @@ function load() {
             self.button.active = SmidqeTweaks.settings.get('active');
             self.toolbar = SmidqeTweaks.modules.toolbar;
 
-            /*
-                Add menu items here
-            */
+
+            self.menu.addGroup({
+                category: 'SmidqeTweaks',
+                id: 'general',
+                title: 'General'
+            })
+
+            self.menu.addElement(self.button);
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
             self.toolbar.add(self.button);
