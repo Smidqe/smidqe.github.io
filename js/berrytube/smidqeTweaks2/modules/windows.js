@@ -59,6 +59,8 @@ function load() {
         },
 
         show: (key) => {
+            console.log('key')
+
             let data = self.get(key);
             var selector = data.selectors[0];
 
@@ -126,7 +128,7 @@ function load() {
                         type: 'button',
                         'data-key': key,
                         callbacks: {
-                            click: () => {
+                            click: function() {
                                 self.show($(this).attr('data-key'));
                             }
                         },
