@@ -65,12 +65,16 @@ function load() {
             switch (data.type) {
                 case 'button':
                     {
-                        element = $('<button>', { id: data.id, class: 'st-menu-button' }).text(data.text[0].toUpperCase() + data.text.slice(1));
+                        element = $('<button>', {
+                            id: 'st-button-' + data.id,
+                            class: 'st-menu-button',
+                            'data-key': data['data-key'],
+                        }).text(data.text[0].toUpperCase() + data.text.slice(1));
                         break;
                     }
                 case 'input':
                     {
-                        element = $('<input>', { id: data.id, class: 'st-menu-button', type: data.specific });
+                        element = $('<input>', { id: 'st-input-' + data.id, class: 'st-menu-button', type: data.specific });
                         break;
                     }
             }

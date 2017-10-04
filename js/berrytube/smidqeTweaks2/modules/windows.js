@@ -124,9 +124,10 @@ function load() {
                         category: 'SmidqeTweaks',
                         group: 'Windows',
                         type: 'button',
+                        'data-key': key,
                         callbacks: {
                             click: () => {
-                                self.show(key);
+                                self.show($(this).attr('data-key'));
                             }
                         },
                     })
