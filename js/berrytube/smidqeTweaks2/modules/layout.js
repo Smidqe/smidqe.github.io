@@ -112,7 +112,6 @@ function load() {
             self.button.active = SmidqeTweaks.settings.get('active');
             self.toolbar = SmidqeTweaks.modules.toolbar;
 
-
             self.menu.addGroup({
                 category: 'SmidqeTweaks',
                 id: 'general',
@@ -122,7 +121,6 @@ function load() {
             self.menu.addElement(self.button);
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
-            self.toolbar.add(self.button);
             self.interval = setInterval(() => {
                 if (!$('#playlist')[0])
                     return;
