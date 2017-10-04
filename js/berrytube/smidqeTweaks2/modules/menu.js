@@ -119,14 +119,8 @@ function load() {
 
             self.container.append(btn);
 
-            $.each(self.names.categories, (index, value) => {
+            $.each(self.categories, (index, value) => {
                 self.addCategory({ id: value.toLowerCase(), title: value });
-            })
-
-            $.each(self.names.groups, (category, value) => {
-                $.each(value, (index, name) => {
-                    self.addGroup({ category: category.toLowerCase(), id: name.toLowerCase(), text: name })
-                })
             })
 
             SmidqeTweaks.modules.toolbar.add(self.button);
