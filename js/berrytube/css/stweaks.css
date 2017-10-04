@@ -427,12 +427,23 @@ body #leftpane {
     display: flex;
     word-break: break-word;
     justify-content: center;
+    background-color: #474747;
+    border-color: #222222;
+    color: #BBBBBB;
 }
 
 .st-menu-button:hover {
-    display: block;
+    background-color: #696868;
+    color: #222222;
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
 .st-menu-button:active {
-    display: block;
+    border-style: inset;
+    border-width: medium;
+    outline: 0;
+}
+
+.st-menu-button:focus {
+    outline: 0;
 }

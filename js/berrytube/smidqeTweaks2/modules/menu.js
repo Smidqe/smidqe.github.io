@@ -39,14 +39,6 @@ function load() {
             isToggle: false,
             callbacks: {},
         },
-        buttons: [{
-            text: 'Test',
-            id: 'test',
-            category: 'BerryTweaks',
-            group: 'General',
-            type: 'button',
-            callbacks: {},
-        }],
         shown: false,
         addCategory: (data) => {
             self.container.append($('<div>', { id: 'st-menu-category-' + data.id, class: 'st-menu-category' })
@@ -143,7 +135,6 @@ function load() {
                 category: 'SmidqeTweaks',
                 group: 'Test',
                 type: 'button',
-                position: { x: 1, y: 1 },
                 callbacks: {},
             })
 

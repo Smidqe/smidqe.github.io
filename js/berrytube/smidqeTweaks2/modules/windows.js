@@ -6,13 +6,14 @@
 
     }
 
+    //append a button to click to close the window, (not sure how users )
 */
 
 function load() {
     const self = {
         name: 'windows',
         started: false,
-        requires: ['menu'],
+        requires: ['menu', 'layout'],
 
         windows: {
             rules: {
@@ -96,6 +97,12 @@ function load() {
         init: () => {
             let menu = SmidqeTweaks.modules.menu;
 
+            menu.addGroup({
+                category: 'SmidqeTweaks',
+                id: 'windows',
+                title: 'Windows'
+            })
+
             self.check = setInterval(() => {
                 let layout = SmidqeTweaks.modules.layout;
 
@@ -110,6 +117,20 @@ function load() {
 
                     if (SmidqeTweaks.settings.get('maltweaks') && value.selectors.length > 1)
                         selector = value.selectors[1];
+
+                    menu.addElement({
+                        text: 'Test',
+                        id: key,
+                        category: 'SmidqeTweaks',
+                        group: 'Windows',
+                        type: 'button',
+                        callbacks: {
+                            click: () => {
+                                self.show(key);
+                            }
+                        },
+                    })
+
 
                     $(selector).addClass("st-window-default");
                 })
