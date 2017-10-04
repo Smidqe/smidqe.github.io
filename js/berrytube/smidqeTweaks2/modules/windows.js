@@ -87,7 +87,7 @@ function load() {
         hide: (key) => {
             const data = self.get(key);
 
-            $('.st-window-wrap > .st-window-exit').remove();
+            $('.st-window-wrap > .st-button-exit').remove();
 
             var selector = data.selectors[0];
 

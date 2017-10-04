@@ -197,6 +197,13 @@ body #leftpane {
     height: inherit !important;
 }
 
+#leftpane>.st-button-exit {
+    z-index: 1;
+    float: right;
+    position: relative;
+    align-self: start;
+}
+
 #chatControls {
     width: 100%;
 }
