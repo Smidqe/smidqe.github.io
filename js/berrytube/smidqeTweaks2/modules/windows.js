@@ -18,35 +18,35 @@ function load() {
         windows: {
             rules: {
                 selectors: ["#st-wrap-motd", "#motdwrap"],
-                classes: [],
+                classes: ["st-window-open"],
             },
             header: {
                 selectors: ["#st-wrap-header", "#headwrap", ],
-                classes: [],
+                classes: ["st-window-open"],
             },
             footer: {
                 selectors: ["#st-wrap-footer", "#main #footwrap", ],
-                classes: [],
+                classes: ["st-window-open"],
             },
             polls: {
                 selectors: ["#pollpane"],
-                classes: ["st-window-overlap"],
+                classes: ["st-window-open st-window-overlap"],
             },
             messages: {
                 selectors: ["#mailboxDiv"],
-                classes: ["st-window-overlap"],
+                classes: ["st-window-open st-window-overlap"],
             },
             login: {
                 selectors: [".wrapper #headbar"],
-                classes: [],
+                classes: ["st-window-open"],
             },
             playlist: {
                 selectors: ["#main #leftpane"],
-                classes: ["st-window-playlist", "st-window-overlap"],
+                classes: ["st-window-open st-window-playlist", "st-window-overlap"],
             },
             users: {
                 selectors: ["#chatlist"],
-                classes: ["st-window-users"],
+                classes: ["st-window-open st-window-users"],
             },
         },
 
@@ -97,7 +97,7 @@ function load() {
         },
 
         init: () => {
-            let menu = SmidqeTweaks.modules.menu;
+            const menu = SmidqeTweaks.modules.menu;
 
             menu.addGroup({
                 category: 'SmidqeTweaks',
@@ -130,10 +130,10 @@ function load() {
                         callbacks: {
                             click: function() {
                                 self.show($(this).attr('data-key'));
+                                menu.hide();
                             }
                         },
                     })
-
 
                     $(selector).addClass("st-window-default");
                 })
