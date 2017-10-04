@@ -59,7 +59,7 @@ function load() {
         },
 
         show: (key) => {
-            console.log('key')
+            console.log('Key applied to windows.show(): ' + key)
 
             let data = self.get(key);
             var selector = data.selectors[0];
