@@ -80,12 +80,12 @@ function load() {
             })
 
             button.on('click', () => {
-                self.hide(window.attr('data-key'));
+                self.hide(key);
             })
         },
 
         hide: (key) => {
-            let data = self.get(key);
+            const data = self.get(key);
 
             $('.st-window-wrap > .st-window-exit').remove();
 
