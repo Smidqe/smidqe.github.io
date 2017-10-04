@@ -68,15 +68,19 @@ function load() {
                 selector = data.selectors[1];
 
             const button = $('<div>', {
-                class: 'st-window-exit'
+                class: 'st-button-exit'
             }).append($('<span>').text('x'));
 
-            const window = $('' + selector)
+            const window = $('' + selector);
 
             window.append(button);
 
             $.each(data.classes, (key, value) => {
                 window.addClass(value);
+            })
+
+            button.on('click', () => {
+                self.hide(window.attr('data-key'));
             })
         },
 
