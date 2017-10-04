@@ -71,7 +71,7 @@ function load() {
                 class: 'st-window-exit'
             }).append($('<span>').text('x'));
 
-            let window = $('' + selector)
+            const window = $('' + selector)
 
             window.append(button);
 
@@ -121,7 +121,7 @@ function load() {
                         selector = value.selectors[1];
 
                     menu.addElement({
-                        text: 'Test',
+                        text: key[0].toUpperCase() + key.slice(1),
                         id: key,
                         category: 'SmidqeTweaks',
                         group: 'Windows',
