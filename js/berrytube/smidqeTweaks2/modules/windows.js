@@ -18,35 +18,35 @@ function load() {
         windows: {
             rules: {
                 selectors: ["#st-wrap-motd", "#motdwrap"],
-                classes: ["st-window-open"],
+                classes: ["st-window-open", 'st-window-wrap'],
             },
             header: {
                 selectors: ["#st-wrap-header", "#headwrap", ],
-                classes: ["st-window-open"],
+                classes: ["st-window-open", 'st-window-wrap'],
             },
             footer: {
                 selectors: ["#st-wrap-footer", "#main #footwrap", ],
-                classes: ["st-window-open"],
+                classes: ["st-window-open", 'st-window-wrap'],
             },
             polls: {
                 selectors: ["#pollpane"],
-                classes: ["st-window-open st-window-overlap"],
+                classes: ["st-window-open st-window-overlap", 'st-window-wrap'],
             },
             messages: {
                 selectors: ["#mailboxDiv"],
-                classes: ["st-window-open st-window-overlap"],
+                classes: ["st-window-open st-window-overlap", 'st-window-wrap'],
             },
             login: {
                 selectors: [".wrapper #headbar"],
-                classes: ["st-window-open"],
+                classes: ["st-window-open", 'st-window-wrap'],
             },
             playlist: {
                 selectors: ["#main #leftpane"],
-                classes: ["st-window-open st-window-playlist", "st-window-overlap"],
+                classes: ["st-window-open st-window-playlist", "st-window-overlap", 'st-window-wrap'],
             },
             users: {
                 selectors: ["#chatlist"],
-                classes: ["st-window-open st-window-users"],
+                classes: ["st-window-open st-window-users", 'st-window-wrap'],
             },
         },
 
@@ -88,6 +88,13 @@ function load() {
             const data = self.get(key);
 
             $('.st-window-wrap > .st-window-exit').remove();
+
+            var selector = data.selectors[0];
+
+            if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
+                selector = data.selectors[1];
+
+            const window = $('' + selector);
 
             $.each(data.classes, (key, value) => {
                 window.removeClass(value);
