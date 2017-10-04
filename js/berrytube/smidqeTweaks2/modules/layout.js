@@ -42,6 +42,7 @@ function load() {
         },
         timeout: null,
         interval: null,
+        menu: null,
         handleMaltweaks: (mutations) => {
             $.each(mutations, (key, mutation) => {
                 if (!mutation.addedNodes)
