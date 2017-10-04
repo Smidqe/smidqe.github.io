@@ -428,3 +428,11 @@ body #leftpane {
     word-break: break-word;
     justify-content: center;
 }
+
+.st-menu-button:hover {
+    display: block;
+}
+
+.st-menu-button:active {
+    display: block;
+}

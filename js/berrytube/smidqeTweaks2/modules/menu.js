@@ -73,8 +73,7 @@ function load() {
             switch (data.type) {
                 case 'button':
                     {
-                        element = $('<div>', { id: data.id, class: 'st-menu-button' })
-                        .append($('<span>').text(data.text[0].toUpperCase() + data.text.slice(1)));
+                        element = $('<button>', { id: data.id, class: 'st-menu-button' }).text(data.text[0].toUpperCase() + data.text.slice(1));
                         break;
                     }
                 case 'input':
