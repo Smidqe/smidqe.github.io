@@ -67,10 +67,6 @@ function load() {
             $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
         },
         enable: () => {
-            $.each(self.listeners, (key, value) => {
-                value.observer.disconnect();
-            });
-
             const location = SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head');
 
             SmidqeTweaks.settings.set("active", true, true);
