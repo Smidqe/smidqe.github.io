@@ -14,13 +14,11 @@ function load() {
             type: 'checkbox',
             key: 'statsOnHover',
         }],
-        requires: ['toolbar'],
+        requires: ['toolbar', 'menu'],
         button: {
             id: 'stats',
-            text: 'S',
-            tooltip: 'Show stats window',
-            active: false,
-            isToggle: false,
+            text: 'Show stats/timers',
+            tooltip: 'Show stats/timers window',
             callbacks: {},
             category: 'SmidqeTweaks',
             group: 'General',
@@ -100,11 +98,13 @@ function load() {
             })
 
             self.container.append(btn);
-            self.button.callbacks.click = self.toggle;
+            self.button.callbacks.click = () => {
+                self.toggle;
+            };
 
             //add the button to open the window
-            self.toolbar.add(self.button);
-            //self.menu.addElement(self.button);
+            //self.toolbar.add(self.button);
+            self.menu.addElement(self.button);
 
             $("body").append(self.container);
             self.started = true;
