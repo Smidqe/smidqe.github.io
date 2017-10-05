@@ -1,27 +1,127 @@
 /* For the minimalistic css used before the main one is included */
 
-.st-settings-category>label {
-    font-weight: bold;
+.st-menu-container {
+    background-color: rgb(34, 34, 34);
+    align-content: flex-start;
+    border-width: 3px;
+    border-style: solid;
+    border-color: rgb(71, 71, 71);
+    border-image: initial;
+    padding: 5px;
+    flex-flow: wrap;
+    overflow: auto;
 }
 
-.st-button-control.hidden {
-    display: none;
+.st-stats-block-title {
+    border-bottom: 1px solid #474747;
+    margin-bottom: 5px;
+    font-size: 25px;
 }
 
-.st-button-control {
+.st-stats-block {
+    display: grid;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.st-stats-pair {
+    width: 100%;
+}
+
+.st-stats-pair>span:first-child {
     float: left;
+}
+
+.st-stats-pair>span:last-child {
+    float: right;
+}
+
+.st-stats-pair-sub>span:first-child {
+    margin-left: 15px;
+}
+
+.st-button-exit {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border: 1px solid;
     width: 20px;
+    height: 20px;
     text-align: center;
-    font-size: x-large;
+    font-size: 20px;
+    display: table;
     cursor: pointer;
-    margin: 0px 2px 0px 2px;
 }
 
-.st-button-control.active {
-    background-color: #BBBBBB;
+.st-menu-category {
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.st-menu-title-category {
+    float: left;
+    font-size: 40px;
+    width: 100%;
+    border-bottom: 1px solid;
+}
+
+.st-menu-group-elements {
+    grid-gap: 10px 10px;
+    margin: 20px 10px 20px 10px;
+    display: grid;
+    grid-auto-rows: 100px;
+    border: 1px solid;
+    padding: 5px 5px 5px 5px;
+    grid-auto-flow: row;
+    grid-template-columns: 100px 100px 100px 100px 100px;
+}
+
+.st-menu-button {
+    border: 1px solid;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    word-break: break-word;
+    justify-content: center;
+    background-color: #474747;
+    border-color: #222222;
+    color: #BBBBBB;
+}
+
+.st-menu-button:hover {
+    background-color: #696868;
     color: #222222;
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
-.st-controls-wrap {
-    display: none;
+.st-menu-button:active {
+    border-style: inset;
+    border-width: medium;
+    outline: 0;
+}
+
+.st-menu-button:focus {
+    outline: 0;
+}
+
+.st-window-open {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 70%;
+    height: calc(100% - 75px);
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    display: flex !important;
+    top: 0px;
+    left: 0px;
+    position: fixed;
+}
+
+.st-window-overlap {
+    right: 0px;
+    top: 0px;
+    left: auto;
+    position: fixed;
+    height: calc(100% - 2px) !important;
+    width: 30% !important;
 }

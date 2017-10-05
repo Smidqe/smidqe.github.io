@@ -70,9 +70,6 @@ function load() {
                 value.observer.disconnect();
             });
 
-            $("#chatpane").addClass("st-chat");
-            $("#videowrap").addClass("st-video");
-
             const location = SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head');
 
             SmidqeTweaks.settings.set("active", true, true);
@@ -88,16 +85,13 @@ function load() {
         disable: () => {
             SmidqeTweaks.settings.set("active", false, true)
 
-            $("#chatpane").removeClass("st-chat");
-            $("#videowrap").removeClass("st-video");
+            self.stylesheet.remove();
 
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.unwrap();
 
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
-
-            self.window
 
             self.enabled = false;
         },
@@ -108,7 +102,8 @@ function load() {
                 self.enable();
         },
         init: () => {
-            self.stylesheet = stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>');
+            self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>');
+            self.stylesheetmin = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>');
             self.menu = SmidqeTweaks.modules.menu;
 
             self.button.callbacks = {
@@ -140,6 +135,9 @@ function load() {
                     SmidqeTweaks.modules.listeners.stop(value);
                 })
             }, 30000)
+
+            $("#chatpane").addClass("st-chat");
+            $("#videowrap").addClass("st-video");
 
             if (SmidqeTweaks.settings.get('active'))
                 if (!SmidqeTweaks.settings.get('maltweaks'))
