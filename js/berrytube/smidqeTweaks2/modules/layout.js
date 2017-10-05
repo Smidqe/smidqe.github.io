@@ -70,6 +70,9 @@ function load() {
                 value.observer.disconnect();
             });
 
+            $("#chatpane").addClass("st-chat");
+            $("#videowrap").addClass("st-video");
+
             const location = SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head');
 
             SmidqeTweaks.settings.set("active", true, true);
@@ -85,11 +88,16 @@ function load() {
         disable: () => {
             SmidqeTweaks.settings.set("active", false, true)
 
+            $("#chatpane").removeClass("st-chat");
+            $("#videowrap").removeClass("st-video");
+
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.unwrap();
 
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
+
+            self.window
 
             self.enabled = false;
         },
@@ -132,9 +140,6 @@ function load() {
                     SmidqeTweaks.modules.listeners.stop(value);
                 })
             }, 30000)
-
-            $("#chatpane").addClass("st-chat");
-            $("#videowrap").addClass("st-video");
 
             if (SmidqeTweaks.settings.get('active'))
                 if (!SmidqeTweaks.settings.get('maltweaks'))

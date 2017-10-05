@@ -27,6 +27,7 @@ function load() {
         blocks: [],
         container: null,
         visible: false,
+        menu: null,
         addBlock: (data) => {
             var block = null;
             let pos = self.blocks.indexOf(data.block);
@@ -87,7 +88,7 @@ function load() {
         },
         init: () => {
             self.toolbar = SmidqeTweaks.modules.toolbar;
-            //self.menu = SmidqeTweaks.modules.menu;
+            self.menu = SmidqeTweaks.modules.menu;
 
             self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
             let btn = $('<div>', { id: 'st-stats-exit', class: 'st-button-exit' })
