@@ -125,3 +125,17 @@
     height: calc(100% - 2px) !important;
     width: 30% !important;
 }
+
+.st-button-control {
+    float: left;
+    width: 20px;
+    text-align: center;
+    font-size: x-large;
+    cursor: pointer;
+    margin: 0px 2px 0px 2px;
+}
+
+.st-button-control.active {
+    background-color: #BBBBBB;
+    color: #222222;
+}
