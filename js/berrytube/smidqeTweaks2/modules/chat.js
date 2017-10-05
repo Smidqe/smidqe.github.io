@@ -36,6 +36,9 @@ function load() {
         add: (nick, text, type) => {
             const time = new Date();
 
+            if (SmidqeTweaks.settings.get('berrytweaks'))
+                time = BerryTweaks.getServerTime();
+
             addChatMsg({
                 msg: {
                     nick,
