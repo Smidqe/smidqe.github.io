@@ -450,3 +450,7 @@ body #leftpane {
 .st-menu-button:focus {
     outline: 0;
 }
+
+.wrapper #dyn_header iframe {
+    height: 250px !important;
+}
