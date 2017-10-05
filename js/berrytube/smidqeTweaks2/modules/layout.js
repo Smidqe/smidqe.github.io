@@ -23,7 +23,6 @@ function load() {
             key: 'maltweaks'
         }],
         stylesheet: null,
-        stylesheetmin: null,
         name: 'layout',
         button: {
             text: "Enable/Disable tweaks",
@@ -100,10 +99,6 @@ function load() {
         },
         init: () => {
             self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>');
-            self.stylesheetmin = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>');
-
-            $('head').append(self.stylesheetmin)
-
             self.menu = SmidqeTweaks.modules.menu;
 
             self.button.callbacks = {
