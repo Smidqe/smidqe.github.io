@@ -34,7 +34,7 @@ function load() {
             sub: true,
         }],
         add: (nick, text, type) => {
-            const time = new Date();
+            var time = new Date();
 
             if (SmidqeTweaks.settings.get('berrytweaks'))
                 time = BerryTweaks.getServerTime();
