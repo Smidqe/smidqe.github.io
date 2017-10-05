@@ -86,8 +86,10 @@ function load() {
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.unwrap();
 
+            /*
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
+            */
 
             self.enabled = false;
         },
