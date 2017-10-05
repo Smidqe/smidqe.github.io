@@ -70,11 +70,17 @@ function load() {
 
             SmidqeTweaks.settings.set("active", true, true);
 
+
+
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.wrap();
 
             if (!$('#st-stylesheet')[0])
                 location.append(self.stylesheet);
+
+            //hacky way to fix wrong sized height
+            if (SmidqeTweaks.settings.get('maltweaks'))
+                $($(".wrapper #dyn_header iframe").css({ "height": "250px" }));
 
             self.enabled = true;
         },
