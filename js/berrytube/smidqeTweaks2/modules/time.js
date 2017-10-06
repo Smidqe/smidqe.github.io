@@ -56,7 +56,9 @@ function load() {
             })
         },
         addTimersToStats: () => {
-            $.each(self.getAllTimers(), (key, value) => {
+            const timers = self.getAllTimers();
+
+            $.each(timers, (key, value) => {
                 //create the 
                 const title = $(value).find('.namecol').text();
                 const id = title.split(" ")[0].toLowerCase();
@@ -69,9 +71,12 @@ function load() {
                 }
 
                 self.stats.addPair('time', struct);
-            })
+            });
 
-            self.addedValues = true;
+            console.log('Timers: ', timers);
+
+            if (timers !== undefined)
+                self.addedValues = true;
         },
         init: () => {
             try {

@@ -69,6 +69,9 @@ function load() {
 
             block.append(pair);
         },
+        pairExists: (key) => {
+            return ($("#st-stats-pair-" + key)[0] !== undefined);
+        },
         update: (key, value) => {
             $("#st-stats-pair-" + key).find('span:last-child').text(value);
         },
