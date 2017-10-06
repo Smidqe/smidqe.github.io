@@ -52,26 +52,17 @@ function load() {
         },
         updateTimers: () => {
             $.each(self.getAllTimers(), (key, value) => {
-                //create the 
-                const title = $(value).find('.namecol').text()
-
-                const struct = {
-                    id: title.split(" ")[0].toLowerCase(),
-                    title: title,
-                    value: 0,
-                    sub: true,
-                }
-
-                self.stats.update('time', struct);
+                self.stats.update($(value).find('.namecol').text().split(" ")[0], $(value).find('.remaincol').text());
             })
         },
         addTimersToStats: () => {
             $.each(self.getAllTimers(), (key, value) => {
                 //create the 
-                const title = $(value).find('.namecol').text()
+                const title = $(value).find('.namecol').text();
+                const id = title.split(" ")[0].toLowerCase();
 
                 const struct = {
-                    id: title.split(" ")[0].toLowerCase(),
+                    id: id,
                     title: title,
                     value: 0,
                     sub: true,
