@@ -52,7 +52,7 @@ function load() {
         },
         updateTimers: () => {
             $.each(self.getAllTimers(), (key, value) => {
-                self.stats.update($(value).find('.namecol').text().split(" ")[0], $(value).find('.remaincol').text());
+                self.stats.update($(value).find('.namecol').text().split(" ")[0].toLowerCase(), $(value).find('.remaincol').text());
             })
         },
         addTimersToStats: () => {
