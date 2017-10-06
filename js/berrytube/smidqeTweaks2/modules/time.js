@@ -5,40 +5,12 @@ function load() {
         stats: null,
         group: 'time',
         name: 'time',
-        observer: null,
         settings: [{
             title: 'Show time in 12h format instead of 24',
             type: 'checkbox',
             key: '12hour'
         }],
-
-        //will fix this eventually to grab all timers instead of using manual labor
-        pairs: [, {
-            id: 'euro',
-            title: 'Euro Drinking Games',
-            value: 0,
-            sub: true,
-        }, {
-            id: 'signature',
-            title: 'Signature Drinking Games',
-            value: 0,
-            sub: true,
-        }, {
-            id: 'bonus',
-            title: 'Bonus Drinking Games',
-            value: 0,
-            sub: true,
-        }, {
-            id: 'new',
-            title: 'New Horse',
-            value: 0,
-            sub: true,
-        }, {
-            id: 'movie',
-            title: 'Horse Movie',
-            value: 0,
-            sub: true,
-        }, ],
+        addedValues: false,
         get: () => {
             const time = new Date();
 
@@ -93,16 +65,7 @@ function load() {
                 self.stats.update('time', struct);
             })
         },
-        init: () => {
-            try {
-                //Don't ask me. the domain is the same all the time, but without this there would be errors about invalid access
-                document.domain = "berrytube.tv"
-            } catch (error) {
-                console.log(error);
-            }
-
-            self.stats = SmidqeTweaks.modules.stats;
-
+        addTimersToStats: () => {
             $.each(self.getAllTimers(), (key, value) => {
                 //create the 
                 const title = $(value).find('.namecol').text()
@@ -117,6 +80,18 @@ function load() {
                 self.stats.addPair('time', struct);
             })
 
+            self.addedValues = true;
+        },
+        init: () => {
+            try {
+                //Don't ask me. the domain is the same all the time, but without this there would be errors about invalid access
+                document.domain = "berrytube.tv"
+            } catch (error) {
+                console.log(error);
+            }
+
+            self.stats = SmidqeTweaks.modules.stats;
+
             self.stats.addPair('time', {
                 id: 'time',
                 title: 'Current time',
@@ -130,12 +105,10 @@ function load() {
             }, 60 * 1000)
 
             setInterval(() => {
-                $.each(self.pairs, (key, value) => {
-                    if (value.id === 'time')
-                        return;
+                if (!self.addedValues)
+                    self.addTimersToStats();
 
-                    self.stats.update(value.id, self.getTimerByName(value.title).find('.remaincol').text());
-                })
+                self.updateTimers();
             }, 1000)
 
             self.started = true;
