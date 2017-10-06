@@ -13,11 +13,7 @@ function load() {
         }],
 
         //will fix this eventually to grab all timers instead of using manual labor
-        pairs: [{
-            id: 'time',
-            title: 'Current time',
-            value: 0,
-        }, {
+        pairs: [, {
             id: 'euro',
             title: 'Euro Drinking Games',
             value: 0,
@@ -82,6 +78,21 @@ function load() {
 
             return result;
         },
+        updateTimers: () => {
+            $.each(self.getAllTimers(), (key, value) => {
+                //create the 
+                const title = $(value).find('.namecol').text()
+
+                const struct = {
+                    id: title.split(" ")[0].toLowerCase(),
+                    title: title,
+                    value: 0,
+                    sub: true,
+                }
+
+                self.stats.update('time', struct);
+            })
+        },
         init: () => {
             try {
                 //Don't ask me. the domain is the same all the time, but without this there would be errors about invalid access
@@ -92,9 +103,25 @@ function load() {
 
             self.stats = SmidqeTweaks.modules.stats;
 
-            $.each(self.pairs, (key, value) => {
-                self.stats.addPair('time', value);
+            $.each(self.getAllTimers(), (key, value) => {
+                //create the 
+                const title = $(value).find('.namecol').text()
+
+                const struct = {
+                    id: title.split(" ")[0].toLowerCase(),
+                    title: title,
+                    value: 0,
+                    sub: true,
+                }
+
+                self.stats.addPair('time', struct);
             })
+
+            self.stats.addPair('time', {
+                id: 'time',
+                title: 'Current time',
+                value: 0,
+            });
 
             self.stats.update('time', self.get);
 

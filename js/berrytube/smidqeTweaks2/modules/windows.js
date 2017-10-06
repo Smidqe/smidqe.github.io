@@ -1,11 +1,4 @@
 /*
-    Data structure:
-    {
-        selectors: [],
-        classes: [],
-
-    }
-
     //append a button to click to close the window, (not sure how users )
 */
 
@@ -43,6 +36,9 @@ function load() {
             playlist: {
                 selectors: ["#main #leftpane"],
                 classes: ["st-window-open st-window-playlist", "st-window-overlap", 'st-window-wrap'],
+                callback: () => {
+                    SmidqeTweaks.modules.playlist.refresh();
+                }
             },
             users: {
                 selectors: ["#chatlist"],
@@ -141,6 +137,10 @@ function load() {
                         callbacks: {
                             click: function() {
                                 self.show($(this).attr('data-key'));
+
+                                if (value.callback)
+                                    value.callback();
+
                                 menu.hide();
                             }
                         },

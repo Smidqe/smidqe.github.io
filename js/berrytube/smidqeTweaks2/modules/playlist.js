@@ -40,6 +40,12 @@ function load() {
             return {};
         },
 
+        refresh: () => {
+            smartRefreshScrollbar();
+            scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2), 0);
+            realignPosHelper();
+        },
+
         getLink: (title) => {
             const object = self.getObject(title);
             var url = null;
