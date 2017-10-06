@@ -75,7 +75,7 @@ function load() {
 
             console.log('Timers: ', timers);
 
-            if (timers !== undefined)
+            if (timers !== undefined && timers.length > 0)
                 self.addedValues = true;
         },
         init: () => {
