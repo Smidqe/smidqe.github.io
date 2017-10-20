@@ -25,6 +25,10 @@ function load() {
         name: 'menu',
         requires: ['toolbar'],
         categories: ['Berrytube', 'SmidqeTweaks'],
+        groups: {
+            'Berrytube': [''],
+            'SmidqeTweaks': ['General', 'Windows', 'Other'],
+        },
         button: {
             id: 'menu',
             text: 'M',
@@ -121,6 +125,13 @@ function load() {
 
             $.each(self.categories, (index, value) => {
                 self.addCategory({ id: value.toLowerCase(), title: value });
+            })
+
+            //add groups
+            $.each(self.groups, (key, value) => {
+                $.each(self.groups[key], (index, subval) => {
+                    self.addGroup({ category: key, id: subval.toLowerCase(), title: subval });
+                })
             })
 
             SmidqeTweaks.modules.toolbar.add(self.button);

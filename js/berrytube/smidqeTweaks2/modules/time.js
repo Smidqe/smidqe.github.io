@@ -1,3 +1,9 @@
+/*
+    TODO:
+        - Add time to toolbar
+
+*/
+
 function load() {
     const self = {
         started: false,
@@ -73,14 +79,12 @@ function load() {
                 self.stats.addPair('time', struct);
             });
 
-            console.log('Timers: ', timers);
-
             if (timers !== undefined && timers.length > 0)
                 self.addedValues = true;
         },
         init: () => {
+            //set the right domain to enable access to timers
             try {
-                //Don't ask me. the domain is the same all the time, but without this there would be errors about invalid access
                 document.domain = "berrytube.tv"
             } catch (error) {
                 console.log(error);
@@ -97,6 +101,7 @@ function load() {
             self.stats.update('time', self.get);
 
             setInterval(() => {
+                //$('#st-toolbar-time').text(self.get());
                 self.stats.update('time', self.get());
             }, 60 * 1000)
 

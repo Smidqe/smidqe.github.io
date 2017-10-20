@@ -66,17 +66,13 @@ function load() {
             $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
         },
         enable: () => {
-            const location = SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head');
-
             SmidqeTweaks.settings.set("active", true, true);
-
-
 
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.wrap();
 
             if (!$('#st-stylesheet')[0])
-                location.append(self.stylesheet);
+                (SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head')).append(self.stylesheet);
 
             self.enabled = true;
         },
@@ -110,15 +106,11 @@ function load() {
             self.button.active = SmidqeTweaks.settings.get('active');
             self.toolbar = SmidqeTweaks.modules.toolbar;
 
-            self.menu.addGroup({
-                category: 'SmidqeTweaks',
-                id: 'general',
-                title: 'General'
-            })
-
             self.menu.addElement(self.button);
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
+
+            //playlist is not available from the start
             self.interval = setInterval(() => {
                 if (!$('#playlist')[0])
                     return;

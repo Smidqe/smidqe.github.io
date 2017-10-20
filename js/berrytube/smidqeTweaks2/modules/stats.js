@@ -107,7 +107,6 @@ function load() {
             };
 
             //add the button to open the window
-            //self.toolbar.add(self.button);
             self.menu.addElement(self.button);
 
             $("body").append(self.container);
