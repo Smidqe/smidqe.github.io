@@ -129,32 +129,44 @@ function load() {
         init: () => {
             const menu = SmidqeTweaks.modules.menu;
 
-            $.each(self.windows, (key, value) => {
-                var selector = value.selectors[0];
+            self.check = setInterval(() => {
+                let layout = SmidqeTweaks.modules.layout;
 
-                if (SmidqeTweaks.settings.get('maltweaks') && value.selectors.length > 1)
-                    selector = value.selectors[1];
+                if (!layout)
+                    return;
 
-                menu.addElement({
-                    text: key[0].toUpperCase() + key.slice(1),
-                    id: key,
-                    category: 'SmidqeTweaks',
-                    group: 'Windows',
-                    type: 'button',
-                    'data-key': key,
-                    callbacks: {
-                        click: function() {
-                            self.show($(this).attr('data-key'));
+                if (!layout.enabled)
+                    return;
 
-                            if (value.callback)
-                                value.callback();
+                $.each(self.windows, (key, value) => {
+                    var selector = value.selectors[0];
 
-                            menu.hide();
-                        }
-                    },
+                    if (SmidqeTweaks.settings.get('maltweaks') && value.selectors.length > 1)
+                        selector = value.selectors[1];
+
+                    menu.addElement({
+                        text: key[0].toUpperCase() + key.slice(1),
+                        id: key,
+                        category: 'SmidqeTweaks',
+                        group: 'Windows',
+                        type: 'button',
+                        'data-key': key,
+                        callbacks: {
+                            click: function() {
+                                self.show($(this).attr('data-key'));
+
+                                if (value.callback)
+                                    value.callback();
+
+                                menu.hide();
+                            }
+                        },
+                    })
+
+                    $(selector).addClass("st-window-default");
                 })
 
-                $(selector).addClass("st-window-default");
+                clearInterval(self.check);
             })
 
             self.started = true;
