@@ -99,10 +99,12 @@ function load() {
             $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
         },
         hide: () => {
-
+            $('#chatControls > .settings').css('display', 'none');
+            $('#chatControls > .berrymotes_button').css('display', 'none');
         },
         unhide: () => {
-
+            $('#chatControls > .settings').css('display', 'block');
+            $('#chatControls > .berrymotes_button').css('display', 'block');
         },
         enable: () => {
             SmidqeTweaks.settings.set("active", true, true);
@@ -113,12 +115,15 @@ function load() {
             if (!$('#st-stylesheet')[0])
                 (SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head')).append(self.stylesheet);
 
+            self.hide();
             self.enabled = true;
         },
         disable: () => {
             SmidqeTweaks.settings.set("active", false, true)
 
             self.stylesheet.remove();
+
+            self.unhide();
 
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.unwrap();
@@ -143,14 +148,10 @@ function load() {
             };
 
             self.button.active = SmidqeTweaks.settings.get('active');
-            self.menu.addElement(self.button);
 
-            /*
             $.each(self.buttons, (index, value) => {
                 self.menu.addElement(value);
             })
-
-            */
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
 
