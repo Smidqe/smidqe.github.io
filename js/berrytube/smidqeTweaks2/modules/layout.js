@@ -34,6 +34,40 @@ function load() {
             'data-key': 'tweaks',
             callbacks: {},
         },
+
+        buttons: [{
+            text: "Enable/Disable tweaks",
+            id: 'tweaks',
+            category: 'SmidqeTweaks',
+            group: 'General',
+            type: 'button',
+            toggle: true,
+            'data-key': 'tweaks',
+            callbacks: {},
+        }, {
+            text: "Show emotes",
+            id: 'emotes',
+            category: 'Berrytube',
+            group: 'General',
+            type: 'button',
+            toggle: true,
+            'data-key': 'emotes',
+            callbacks: {
+                click: () => { Bem.showBerrymoteSearch(); }
+            },
+        }, {
+            text: "Show settings",
+            id: 'settings',
+            category: 'Berrytube',
+            group: 'General',
+            type: 'button',
+            toggle: true,
+            'data-key': 'settings',
+            callbacks: {
+                click: () => { showConfigMenu(); }
+            },
+        }],
+
         listeners: {
             maltweaks: {
                 path: "body",
@@ -63,6 +97,12 @@ function load() {
         },
         unwrap: () => {
             $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
+        },
+        hide: () => {
+
+        },
+        unhide: () => {
+
         },
         enable: () => {
             SmidqeTweaks.settings.set("active", true, true);
@@ -104,6 +144,13 @@ function load() {
 
             self.button.active = SmidqeTweaks.settings.get('active');
             self.menu.addElement(self.button);
+
+            /*
+            $.each(self.buttons, (index, value) => {
+                self.menu.addElement(value);
+            })
+
+            */
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
 

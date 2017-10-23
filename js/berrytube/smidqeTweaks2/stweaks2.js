@@ -14,7 +14,7 @@ const self = {
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
     },
     settings: {
-        groups: ['dependencies', 'tweaks', 'chat', 'time', 'polls', 'playlist', 'patches', 'debug'],
+        groups: ['dependencies', 'tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],
         container: null,
         storage: {},
         get: (key) => {

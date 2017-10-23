@@ -84,7 +84,7 @@ function load() {
                 element.on(key, callback);
             })
 
-            $('#st-menu-group-' + data.group.toLowerCase() + '> .st-menu-group-elements').append(element);
+            $('#st-menu-category-' + data.category.toLowerCase() + ' #st-menu-group-' + data.group.toLowerCase() + ' > .st-menu-group-elements').append(element);
         },
         getGroup: (category, group) => {
             return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
