@@ -89,6 +89,9 @@ function load() {
         getGroup: (category, group) => {
             return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
         },
+        hideGroup: (category, group, exceptions) => {
+            let sel = $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
+        },
         removeElement: (data) => {
             $('#st-menu-category-' + data.category + ' > #st-menu-group-' + group + ' > #st-menu-element-' + data.key).remove();
         },

@@ -15,15 +15,6 @@ function load() {
             key: 'statsOnHover',
         }],
         requires: ['windows'],
-        button: {
-            id: 'stats',
-            text: 'Stats/timers',
-            tooltip: 'Stats/timers',
-            callbacks: {},
-            category: 'SmidqeTweaks',
-            group: 'General',
-            type: 'button'
-        },
         blocks: [],
         container: null,
         visible: false,
