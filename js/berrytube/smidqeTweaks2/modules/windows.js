@@ -49,8 +49,16 @@ function load() {
             },
         },
 
-        add: (key, data) => {
+        refresh: () => {
+            //delete all buttons
+            //readd them
+        },
+
+        add: (key, data, refresh) => {
             self.windows[key] = data;
+
+            if (refresh)
+                self.refresh();
         },
 
         get: (key) => {

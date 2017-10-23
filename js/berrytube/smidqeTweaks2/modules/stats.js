@@ -14,11 +14,11 @@ function load() {
             type: 'checkbox',
             key: 'statsOnHover',
         }],
-        requires: ['toolbar', 'menu'],
+        requires: ['windows'],
         button: {
             id: 'stats',
-            text: 'Show stats/timers',
-            tooltip: 'Show stats/timers window',
+            text: 'Stats/timers',
+            tooltip: 'Stats/timers',
             callbacks: {},
             category: 'SmidqeTweaks',
             group: 'General',
@@ -27,7 +27,6 @@ function load() {
         blocks: [],
         container: null,
         visible: false,
-        menu: null,
         addBlock: (data) => {
             var block = null;
             let pos = self.blocks.indexOf(data.block);
@@ -79,26 +78,18 @@ function load() {
             $('#st-stats-container').addClass('st-window-overlap st-window-open st-menu-container');
         },
         init: () => {
-            self.toolbar = SmidqeTweaks.modules.toolbar;
-            self.menu = SmidqeTweaks.modules.menu;
-
             self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
-            let btn = $('<div>', { id: 'st-stats-exit', class: 'st-button-exit' })
 
-            btn.append($('<span>', { text: 'x' }));
-            btn.on('click', () => {
-                self.hide();
-            })
-
-            self.container.append(btn);
-            self.button.callbacks = {
-                click: self.show
-            }
-
-            //add the button to open the window
-            self.menu.addElement(self.button);
-
+            //append it
             $("body").append(self.container);
+
+            let windows = SmidqeTweaks.modules.windows;
+
+            windows.add('stats', {
+                selectors: ['#st-stats-container'],
+                classes: ['st-window-overlap st-window-open st-menu-container'],
+            }, true);
+
             self.started = true;
         },
     }

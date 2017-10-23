@@ -10,7 +10,7 @@ function load() {
     const self = {
         runnable: true,
         started: false,
-        requires: ['listeners', 'time', 'menu'], //soon menu aswell
+        requires: ['listeners', 'menu'], //soon menu aswell
         group: 'dependencies',
         enabled: false,
         settings: [{
@@ -40,7 +40,6 @@ function load() {
                 config: { childList: true },
             },
         },
-        timeout: null,
         interval: null,
         menu: null,
         handleMaltweaks: (mutations) => {
@@ -104,8 +103,6 @@ function load() {
             };
 
             self.button.active = SmidqeTweaks.settings.get('active');
-            self.toolbar = SmidqeTweaks.modules.toolbar;
-
             self.menu.addElement(self.button);
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
