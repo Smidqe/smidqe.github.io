@@ -49,16 +49,28 @@ function load() {
             },
         },
 
-        refresh: () => {
-            //delete all buttons
-            //readd them
-        },
 
-        add: (key, data, refresh) => {
+        add: (key, data) => {
             self.windows[key] = data;
 
-            if (refresh)
-                self.refresh();
+            SmidqeTweaks.modules.menu.addElement({
+                text: key[0].toUpperCase() + key.slice(1),
+                id: key,
+                category: 'SmidqeTweaks',
+                group: 'Windows',
+                type: 'button',
+                'data-key': key,
+                callbacks: {
+                    click: function() {
+                        self.show($(this).attr('data-key'));
+
+                        if (data.callback)
+                            data.callback();
+
+                        SmidqeTweaks.modules.menu.hide();
+                    }
+                },
+            })
         },
 
         get: (key) => {
