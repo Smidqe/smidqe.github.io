@@ -1,5 +1,8 @@
 /*
-    //append a button to click to close the window, (not sure how users )
+    For exit/close button placements we can have 3 different classes the tell us the location, similar to maltweaks
+        - left (top, middle)
+        - right (top, middle)
+        - normal
 */
 
 function load() {
@@ -55,7 +58,7 @@ function load() {
         },
 
         show: (key) => {
-            console.log('Key applied to windows.show(): ' + key)
+            console.log('Key applied to windows.show(): ' + key);
 
             let data = self.get(key);
             var selector = data.selectors[0];
@@ -105,12 +108,6 @@ function load() {
 
         init: () => {
             const menu = SmidqeTweaks.modules.menu;
-
-            menu.addGroup({
-                category: 'SmidqeTweaks',
-                id: 'windows',
-                title: 'Windows'
-            })
 
             self.check = setInterval(() => {
                 let layout = SmidqeTweaks.modules.layout;

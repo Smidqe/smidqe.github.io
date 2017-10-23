@@ -17,6 +17,7 @@ function load() {
             key: '12hour'
         }],
         addedValues: false,
+        //clean this function eventually
         get: () => {
             const time = new Date();
 
@@ -38,12 +39,26 @@ function load() {
 
             return msg;
         },
+        getTimerFrame: () => {
+            return $('iframe:not(#ytapiplayer)')[0];
+        },
         getAllTimers: () => {
-            return $($('iframe:not(#ytapiplayer)')[0].contentWindow.document).find('.namecol').parent();
+            var iframe = $('iframe:not(#ytapiplayer)')[0];
+
+            if (!iframe)
+                return undefined;
+
+            return $(iframe.contentWindow.document).find('.namecol').parent();
         },
         getTimerByName: (name) => {
             //very hacky method, but due to cross frame script restrictions, it's necessary
-            var timers = $($('iframe:not(#ytapiplayer)')[0].contentWindow.document).find('.namecol');
+
+            var iframe = $('iframe:not(#ytapiplayer)')[0];
+
+            if (!iframe)
+                return undefined;
+
+            var timers = $(iframe.contentWindow.document).find('.namecol');
             var result = undefined;
 
             $.each(timers, (index, value) => {
@@ -89,6 +104,10 @@ function load() {
             } catch (error) {
                 console.log(error);
             }
+
+            /*
+                Add div to toolbar (float right) 
+            */
 
             self.stats = SmidqeTweaks.modules.stats;
 

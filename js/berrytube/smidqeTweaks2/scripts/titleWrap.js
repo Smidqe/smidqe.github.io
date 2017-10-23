@@ -11,13 +11,6 @@ function load() {
         requires: ['listeners'],
         observer: null,
         wrapped: false,
-        disable: () => {
-            $("#berrytweaks-video_title").unwrap();
-            $(".st-window-users").removeClass("wrap");
-
-            self.wrapped = false;
-        },
-
         wrap: () => {
             $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
             $("#st-videotitle-window").addClass("active");
@@ -25,7 +18,11 @@ function load() {
 
             self.wrapped = true;
         },
-
+        unwrap: () => {
+            $("#berrytweaks-video_title").unwrap();
+            $(".st-window-users").removeClass("wrap");
+            self.wrapped = false;
+        },
         enable: () => {
             if (SmidqeTweaks.settings.get('titleWrap')) {
                 if ($('#berrytweaks-video_title')[0])
@@ -33,6 +30,9 @@ function load() {
                 else
                     self.listeners.start(self.observer);
             }
+        },
+        disable: () => {
+            self.unwrap();
         },
         callback: (mutations) => {
             $.each(mutations, (key, mutation) => {

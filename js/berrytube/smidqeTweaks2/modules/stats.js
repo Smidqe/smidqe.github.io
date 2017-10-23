@@ -77,17 +77,6 @@ function load() {
         },
         show: () => {
             $('#st-stats-container').addClass('st-window-overlap st-window-open st-menu-container');
-            self.visible = true;
-        },
-        hide: () => {
-            $('#st-stats-container').removeClass('st-window-overlap st-window-open st-menu-container');
-            self.visible = false;
-        },
-        toggle: () => {
-            if (self.visible)
-                self.hide();
-            else
-                self.show();
         },
         init: () => {
             self.toolbar = SmidqeTweaks.modules.toolbar;
@@ -102,9 +91,9 @@ function load() {
             })
 
             self.container.append(btn);
-            self.button.callbacks.click = () => {
-                self.toggle;
-            };
+            self.button.callbacks = {
+                click: self.show
+            }
 
             //add the button to open the window
             self.menu.addElement(self.button);

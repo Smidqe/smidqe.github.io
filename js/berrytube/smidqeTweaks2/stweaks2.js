@@ -10,7 +10,7 @@ const self = {
     base: {},
     start: null,
     names: { //holds the names for modules, scripts and groups
-        modules: ['listeners', 'toolbar', 'playlist', 'chat', 'time', 'menu', 'stats', 'windows', 'layout'],
+        modules: ['listeners', 'toolbar', 'playlist', 'menu', 'stats', 'time', 'chat', 'windows', 'layout'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
     },
     settings: {

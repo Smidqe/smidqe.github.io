@@ -26,7 +26,7 @@ function load() {
         requires: ['toolbar'],
         categories: ['Berrytube', 'SmidqeTweaks'],
         groups: {
-            'Berrytube': [''],
+            'Berrytube': ['General', 'Other'],
             'SmidqeTweaks': ['General', 'Windows', 'Other'],
         },
         button: {
@@ -58,6 +58,8 @@ function load() {
         },
         addElement: (data) => {
             var element = null;
+
+            console.log("menu: Adding a new button: ", data);
 
             switch (data.type) {
                 case 'button':
@@ -123,6 +125,7 @@ function load() {
 
             self.container.append(btn);
 
+            //add categories
             $.each(self.categories, (index, value) => {
                 self.addCategory({ id: value.toLowerCase(), title: value });
             })
