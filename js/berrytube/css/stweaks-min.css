@@ -1,5 +1,9 @@
 /* For the minimalistic css used before the main one is included */
 
+.st-window-default {
+    display: none;
+}
+
 .st-menu-container {
     background-color: rgb(34, 34, 34);
     align-content: flex-start;
