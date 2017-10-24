@@ -143,3 +143,12 @@
     background-color: #BBBBBB;
     color: #222222;
 }
+
+.st-settings-group>label {
+    font-weight: bold;
+}
+
+.st-setting-sub {
+    font-size: 14px;
+    margin-left: 2em;
+}
