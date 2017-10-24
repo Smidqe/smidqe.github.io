@@ -1,6 +1,6 @@
 function load() {
     const self = {
-        group: 'tweaks',
+        group: 'chat',
         script: true,
         name: 'rcvSquee',
         settings: [{

@@ -128,6 +128,12 @@ function load() {
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.unwrap();
 
+            $('.st-window-default').filter(function(index, element) {
+                let id = $(this).attr('id');
+
+                return id !== "st-menu" || id !== "st-stats-container";
+            }).removeClass('st-window-default');
+
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
 
