@@ -143,8 +143,9 @@ function load() {
             self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>');
             self.menu = SmidqeTweaks.modules.menu;
 
-            self.button.callbacks = {
-                click: self.toggle
+            //the tweaks button, can't do it when it is created because the function doesn't exist
+            self.buttons[0].callbacks = {
+                click: () => { self.toggle() }
             };
 
             self.button.active = SmidqeTweaks.settings.get('active');
