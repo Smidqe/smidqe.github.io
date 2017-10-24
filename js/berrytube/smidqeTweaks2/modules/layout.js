@@ -99,12 +99,10 @@ function load() {
             $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
         },
         hide: () => {
-            $('#chatControls > .settings').css('display', 'none');
-            $('#chatControls > .berrymotes_button').css('display', 'none');
+            $('#chatControls > .settings, #chatControls > .berrymotes_button').css('display', 'none');
         },
         unhide: () => {
-            $('#chatControls > .settings').css('display', 'block');
-            $('#chatControls > .berrymotes_button').css('display', 'block');
+            $('#chatControls > .settings, #chatControls > .berrymotes_button').css('display', 'block');
         },
         enable: () => {
             SmidqeTweaks.settings.set("active", true, true);
@@ -114,6 +112,14 @@ function load() {
 
             if (!$('#st-stylesheet')[0])
                 (SmidqeTweaks.settings.get('maltweaks') ? $('body') : $('head')).append(self.stylesheet);
+
+            self.interval = setInterval(() => {
+                if (!$('#playlist')[0])
+                    return;
+
+                $("#playlist").addClass("st-window-playlist");
+                clearInterval(self.interval);
+            })
 
             self.hide();
             self.enabled = true;
@@ -161,15 +167,6 @@ function load() {
             })
 
             self.listeners.maltweaks.callback = self.handleMaltweaks;
-
-            //playlist is not available from the start
-            self.interval = setInterval(() => {
-                if (!$('#playlist')[0])
-                    return;
-
-                $("#playlist").addClass("st-window-playlist");
-                clearInterval(self.interval);
-            })
 
             setTimeout(() => {
                 $.each(self.listeners, (key, value) => {
