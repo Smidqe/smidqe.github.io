@@ -157,7 +157,7 @@ function load() {
             self.addMenuButtons();
 
             $.each(self.windows, (key, value) => {
-                self.getSelector(value).addClass('st-window-default');
+                $(self.getSelector(value)).addClass('st-window-default');
             })
         },
 
