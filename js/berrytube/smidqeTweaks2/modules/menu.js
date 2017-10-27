@@ -87,13 +87,13 @@ function load() {
             $('#st-menu-category-' + data.category.toLowerCase() + ' #st-menu-group-' + data.group.toLowerCase() + ' > .st-menu-group-elements').append(element);
         },
         getGroup: (category, group) => {
-            return $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
+            return $('#st-menu-category-' + category.toLowerCase() + ' > #st-menu-group-' + group.toLowerCase());
         },
         hideGroup: (category, group, exceptions) => {
-            let sel = $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
+            let sel = $('#st-menu-category-' + category.toLowerCase() + ' > #st-menu-group-' + group.toLowerCase());
         },
         removeElement: (data) => {
-            $('#st-menu-category-' + data.category + ' > #st-menu-group-' + data.group + ' > #st-menu-element-' + data.key).remove();
+            $('#st-menu-category-' + data.category.toLowerCase() + ' > #st-menu-group-' + data.group.toLowerCase() + ' > #st-menu-element-' + data.key.toLowerCase()).remove();
         },
         show: () => {
             $('#st-menu').addClass('st-window-open st-window-overlap st-menu-container');
