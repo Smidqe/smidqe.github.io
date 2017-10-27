@@ -132,7 +132,7 @@ function load() {
                         if (value.callback)
                             value.callback();
 
-                        menu.hide();
+                        self.menu.hide();
                     }
                 }
 

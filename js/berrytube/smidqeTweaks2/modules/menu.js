@@ -93,14 +93,10 @@ function load() {
             let sel = $('#st-menu-category-' + category.toLowerCase() + ' > #st-menu-group-' + group.toLowerCase());
         },
         removeElement: (data) => {
-            console.log(data);
-
             var selector = '';
 
             selector += '#st-menu-category-' + data.category.toLowerCase() + ' > ';
             selector += '#st-menu-group-' + data.group.toLowerCase();
-
-            console.log(selector);
 
             $(selector).find('#st-button-' + data.key.toLowerCase()).remove();
         },

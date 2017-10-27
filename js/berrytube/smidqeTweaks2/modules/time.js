@@ -16,6 +16,14 @@ function load() {
             type: 'checkbox',
             key: '12hour'
         }],
+
+        toolbarElement: {
+            id: 'time',
+            text: '',
+            tooltip: 'Current time',
+            type: 'button',
+            callbacks: {},
+        },
         addedValues: false,
         //clean this function eventually
         get: () => {
@@ -108,6 +116,17 @@ function load() {
             /*
                 Add div to toolbar (float right) 
             */
+
+            let toolbar = SmidqeTweaks.modules.toolbar;
+
+            toolbar.add(self.toolbarElement);
+
+            setInterval(() => {
+                //$('#st-toolbar-time').text(self.get());
+                toolbar.updateText('time', self.get());
+            }, 60 * 1000)
+
+
             /*
             self.stats = SmidqeTweaks.modules.stats;
 
@@ -119,10 +138,6 @@ function load() {
             
             self.stats.update('time', self.get);
 
-            setInterval(() => {
-                //$('#st-toolbar-time').text(self.get());
-                self.stats.update('time', self.get());
-            }, 60 * 1000)
 
             
             Disabled for now, until I decide whether time should even be in the stats
