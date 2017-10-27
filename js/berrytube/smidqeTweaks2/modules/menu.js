@@ -93,6 +93,10 @@ function load() {
             let sel = $('#st-menu-category-' + category.toLowerCase() + ' > #st-menu-group-' + group.toLowerCase());
         },
         removeElement: (data) => {
+            console.log(data);
+            console.log('#st-menu-category-' + data.category.toLowerCase() + ' > #st-menu-group-' + data.group.toLowerCase() + ' > #st-menu-element-' + data.key.toLowerCase());
+            console.log($('#st-menu-category-' + data.category.toLowerCase() + ' > #st-menu-group-' + data.group.toLowerCase() + ' > #st-menu-element-' + data.key.toLowerCase()));
+
             $('#st-menu-category-' + data.category.toLowerCase() + ' > #st-menu-group-' + data.group.toLowerCase() + ' > #st-menu-element-' + data.key.toLowerCase()).remove();
         },
         show: () => {
