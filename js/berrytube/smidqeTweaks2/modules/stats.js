@@ -51,8 +51,10 @@ function load() {
             const block = self.getBlock(key);
             const pair = $('<div>', { id: 'st-stats-pair-' + value.id, class: 'st-stats-pair' });
 
-            pair.append($('<span>').text(value.title));
-            pair.append($('<span>').text(value.value));
+            var title = $('<span>').text(value.title).addClass('st-stats-pair-title');
+            var val = $('<span>').text(value.value).addClass('st-stats-pair-value');
+
+            pair.append(title, val);
 
             if (value.sub)
                 pair.addClass('st-stats-pair-sub');
@@ -62,12 +64,23 @@ function load() {
         pairExists: (key) => {
             return ($("#st-stats-pair-" + key)[0] !== undefined);
         },
+        getPair: (key) => {
+            return $("#st-stats-pair-" + key);
+        },
+        getPairByTitle: (data) => {
+            var pair = self.getPair(data.key);
+
+            if (data.title === pair.title)
+                return pair;
+        },
         update: (key, value) => {
+            //self.getPair(key).value.text(value);
             $("#st-stats-pair-" + key).find('span:last-child').text(value);
         },
         show: () => {
             $('#st-stats-container').addClass('st-window-overlap st-window-open st-menu-container');
         },
+
         init: () => {
             self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
 

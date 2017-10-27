@@ -50,27 +50,11 @@ function load() {
         },
 
 
-        add: (key, data) => {
+        add: (key, data, refresh) => {
             self.windows[key] = data;
 
-            SmidqeTweaks.modules.menu.addElement({
-                text: key[0].toUpperCase() + key.slice(1),
-                id: key,
-                category: 'SmidqeTweaks',
-                group: 'Windows',
-                type: 'button',
-                'data-key': key,
-                callbacks: {
-                    click: function() {
-                        self.show($(this).attr('data-key'));
-
-                        if (data.callback)
-                            data.callback();
-
-                        SmidqeTweaks.modules.menu.hide();
-                    }
-                },
-            })
+            if (refresh)
+                self.refresh();
         },
 
         get: (key) => {
@@ -126,6 +110,57 @@ function load() {
             })
         },
 
+        getSelector: (value) => {
+            return SmidqeTweaks.settings.get('maltweaks') && value.selectors.length > 1 ? value.selectors[1] : value.selectors[0];
+        },
+
+        addMenuButtons: () => {
+            $.each(self.windows, (key, value) => {
+                var obj = {
+                    text: key[0].toUpperCase() + key.slice(1),
+                    id: key,
+                    category: 'SmidqeTweaks',
+                    group: 'Windows',
+                    type: 'button',
+                    'data-key': key
+                }
+
+                obj.callbacks = {
+                    click: function() {
+                        self.show($(this).attr('data-key'));
+
+                        if (value.callback)
+                            value.callback();
+
+                        menu.hide();
+                    }
+                }
+
+                menu.addElement(obj);
+            })
+        },
+
+        removeMenuButtons: () => {
+            $.each(self.windows, (key, value) => {
+                var obj = {
+                    category: 'SmidqeTweaks',
+                    group: 'Windows',
+                    key: key,
+                }
+
+                SmidqeTweaks.modules.menu.removeElement(obj);
+            })
+        },
+
+        refresh: () => {
+            self.removeMenuButtons();
+            self.addMenuButtons();
+
+            $.each(self.windows, (key, value) => {
+                self.getSelector(value).addClass('st-window-default');
+            })
+        },
+
         init: () => {
             const menu = SmidqeTweaks.modules.menu;
 
@@ -138,33 +173,7 @@ function load() {
                 if (!layout.enabled)
                     return;
 
-                $.each(self.windows, (key, value) => {
-                    var selector = value.selectors[0];
-
-                    if (SmidqeTweaks.settings.get('maltweaks') && value.selectors.length > 1)
-                        selector = value.selectors[1];
-
-                    menu.addElement({
-                        text: key[0].toUpperCase() + key.slice(1),
-                        id: key,
-                        category: 'SmidqeTweaks',
-                        group: 'Windows',
-                        type: 'button',
-                        'data-key': key,
-                        callbacks: {
-                            click: function() {
-                                self.show($(this).attr('data-key'));
-
-                                if (value.callback)
-                                    value.callback();
-
-                                menu.hide();
-                            }
-                        },
-                    })
-
-                    $(selector).addClass("st-window-default");
-                })
+                self.refresh();
 
                 clearInterval(self.check);
             })

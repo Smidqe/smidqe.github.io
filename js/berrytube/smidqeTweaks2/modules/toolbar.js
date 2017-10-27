@@ -21,24 +21,24 @@ function load() {
             key: 'hideEmotes',
         }],
         add: (data) => {
-            const button = $("<div>", {
-                class: "st-button-control",
-                id: "st-button-control-" + data.id,
+            const element = $("<div>", {
+                class: "st-toolbar-element",
+                id: "st-toolbar-element-" + data.id,
                 text: data.text,
             });
 
             if (data.isToggle)
-                button.on('click', function() {
+                element.on('click', function() {
                     $(this).toggleClass('active');
                 })
 
             if (data.tooltip)
-                button.attr('title', data.tooltip);
+                element.attr('title', data.tooltip);
 
             if (SmidqeTweaks.settings.get(data.setting) || data.active)
-                button.addClass('active');
+                element.addClass('active');
 
-            self.bar.append(button);
+            self.bar.append(element);
 
             $.each(data.callbacks, (key, value) => {
                 self.addCallback(data.id, key, value);
@@ -48,24 +48,26 @@ function load() {
             delete self.bar[key];
         },
         addCallback: (id, key, callback) => {
-            $("#st-button-control-" + id).on(key, callback);
+            $("#st-toolbar-element-" + id).on(key, callback);
         },
         show: (key) => {
             $.each(self.buttons, (sub, value) => {
                 if (key && key !== sub)
                     return;
 
-                $("#st-button-control-" + sub).removeClass('hidden');
+                $("#st-toolbar-element-" + sub).removeClass('hidden');
             })
         },
-
+        updateText: (key, value) => {
+            $('#st-toolbar-element-' + key).text(value);
+        },
         hide: (key) => {
             $.each(self.buttons, (sub, value) => {
                 if (key && key !== sub)
                     return;
 
                 if (!self.buttons[sub].alwaysVisible)
-                    $("#st-button-control-" + sub).addClass('hidden');
+                    $("#st-toolbar-element-" + sub).addClass('hidden');
             })
         },
 

@@ -24,17 +24,6 @@ function load() {
         }],
         stylesheet: null,
         name: 'layout',
-        button: {
-            text: "Enable/Disable tweaks",
-            id: 'tweaks',
-            category: 'SmidqeTweaks',
-            group: 'General',
-            type: 'button',
-            toggle: true,
-            'data-key': 'tweaks',
-            callbacks: {},
-        },
-
         buttons: [{
             text: "Enable/Disable tweaks",
             id: 'tweaks',
@@ -142,6 +131,8 @@ function load() {
 
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
+
+            SmidqeTweaks.modules.windows.removeMenuButtons();
 
             self.enabled = false;
         },

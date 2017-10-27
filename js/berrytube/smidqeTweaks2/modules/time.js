@@ -108,7 +108,7 @@ function load() {
             /*
                 Add div to toolbar (float right) 
             */
-
+            /*
             self.stats = SmidqeTweaks.modules.stats;
 
             self.stats.addPair('time', {
@@ -116,7 +116,7 @@ function load() {
                 title: 'Current time',
                 value: 0,
             });
-
+            
             self.stats.update('time', self.get);
 
             setInterval(() => {
@@ -124,12 +124,16 @@ function load() {
                 self.stats.update('time', self.get());
             }, 60 * 1000)
 
+            
+            Disabled for now, until I decide whether time should even be in the stats
+
             setInterval(() => {
                 if (!self.addedValues)
                     self.addTimersToStats();
 
                 self.updateTimers();
             }, 1000)
+            */
 
             self.started = true;
         },
