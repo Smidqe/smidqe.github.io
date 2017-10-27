@@ -93,7 +93,7 @@ function load() {
             let sel = $('#st-menu-category-' + category + ' > #st-menu-group-' + group);
         },
         removeElement: (data) => {
-            $('#st-menu-category-' + data.category + ' > #st-menu-group-' + group + ' > #st-menu-element-' + data.key).remove();
+            $('#st-menu-category-' + data.category + ' > #st-menu-group-' + data.group + ' > #st-menu-element-' + data.key).remove();
         },
         show: () => {
             $('#st-menu').addClass('st-window-open st-window-overlap st-menu-container');
