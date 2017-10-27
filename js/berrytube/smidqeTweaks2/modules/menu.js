@@ -94,10 +94,15 @@ function load() {
         },
         removeElement: (data) => {
             console.log(data);
-            console.log('#st-menu-category-' + data.category.toLowerCase() + ' > #st-menu-group-' + data.group.toLowerCase() + ' > #st-menu-element-' + data.key.toLowerCase());
-            console.log($('#st-menu-category-' + data.category.toLowerCase() + ' > #st-menu-group-' + data.group.toLowerCase() + ' > #st-menu-element-' + data.key.toLowerCase()));
 
-            $('#st-menu-category-' + data.category.toLowerCase() + ' > #st-menu-group-' + data.group.toLowerCase() + ' > #st-menu-element-' + data.key.toLowerCase()).remove();
+            var selector = '';
+
+            selector += '#st-menu-category-' + data.category.toLowerCase() + ' > ';
+            selector += '#st-menu-group-' + data.group.toLowerCase();
+
+            console.log(selector);
+
+            $(selector).find('#st-button-' + data.key.toLowerCase()).remove();
         },
         show: () => {
             $('#st-menu').addClass('st-window-open st-window-overlap st-menu-container');
