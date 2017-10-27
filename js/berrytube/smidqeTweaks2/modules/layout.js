@@ -151,7 +151,7 @@ function load() {
                 click: () => { self.toggle() }
             };
 
-            self.button.active = SmidqeTweaks.settings.get('active');
+            self.buttons[0].active = SmidqeTweaks.settings.get('active');
 
             $.each(self.buttons, (index, value) => {
                 self.menu.addElement(value);
