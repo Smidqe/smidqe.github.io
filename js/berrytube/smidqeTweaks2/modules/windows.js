@@ -10,7 +10,7 @@ function load() {
         name: 'windows',
         started: false,
         requires: ['menu', 'layout'],
-
+        menu: null,
         windows: {
             rules: {
                 selectors: ["#st-wrap-motd", "#motdwrap"],
@@ -136,7 +136,7 @@ function load() {
                     }
                 }
 
-                menu.addElement(obj);
+                self.menu.addElement(obj);
             })
         },
 
@@ -148,7 +148,7 @@ function load() {
                     key: key,
                 }
 
-                SmidqeTweaks.modules.menu.removeElement(obj);
+                self.menu.removeElement(obj);
             })
         },
 
@@ -162,7 +162,7 @@ function load() {
         },
 
         init: () => {
-            const menu = SmidqeTweaks.modules.menu;
+            self.menu = SmidqeTweaks.modules.menu;
 
             self.check = setInterval(() => {
                 let layout = SmidqeTweaks.modules.layout;
