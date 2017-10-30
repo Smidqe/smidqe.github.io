@@ -4,7 +4,7 @@
 function load() {
     const self = {
         name: 'originals',
-
+        group: 'patches',
         settings: [{
             title: "Show original settings button",
             type: "checkbox",
