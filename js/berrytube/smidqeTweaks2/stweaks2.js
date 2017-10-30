@@ -11,7 +11,7 @@ const self = {
     start: null,
     names: { //holds the names for modules, scripts and groups
         modules: ['listeners', 'toolbar', 'playlist', 'menu', 'windows', 'stats', 'time', 'chat', 'layout'],
-        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks'],
+        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'originals'],
     },
     settings: {
         groups: ['dependencies', 'tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],

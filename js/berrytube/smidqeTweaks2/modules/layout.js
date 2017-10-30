@@ -62,6 +62,7 @@ function load() {
                 path: "body",
                 config: { childList: true },
             },
+
         },
         interval: null,
         menu: null,
@@ -87,12 +88,6 @@ function load() {
         unwrap: () => {
             $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
         },
-        hide: () => {
-            $('#chatControls > .settings, #chatControls > .berrymotes_button').css('display', 'none');
-        },
-        unhide: () => {
-            $('#chatControls > .settings, #chatControls > .berrymotes_button').css('display', 'block');
-        },
         enable: () => {
             SmidqeTweaks.settings.set("active", true, true);
 
@@ -110,15 +105,12 @@ function load() {
                 clearInterval(self.interval);
             })
 
-            self.hide();
             self.enabled = true;
         },
         disable: () => {
             SmidqeTweaks.settings.set("active", false, true)
 
             self.stylesheet.remove();
-
-            self.unhide();
 
             if (!SmidqeTweaks.settings.get('maltweaks'))
                 self.unwrap();
