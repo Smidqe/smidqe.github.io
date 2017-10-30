@@ -80,7 +80,6 @@ function load() {
         show: () => {
             $('#st-stats-container').addClass('st-window-overlap st-window-open st-menu-container');
         },
-
         init: () => {
             self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
 

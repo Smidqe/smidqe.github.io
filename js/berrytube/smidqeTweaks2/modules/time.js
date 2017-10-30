@@ -16,7 +16,6 @@ function load() {
             type: 'checkbox',
             key: '12hour'
         }],
-
         toolbarElement: {
             id: 'time',
             text: '',
@@ -106,49 +105,13 @@ function load() {
                 self.addedValues = true;
         },
         init: () => {
-            //set the right domain to enable access to timers
-            try {
-                document.domain = "berrytube.tv"
-            } catch (error) {
-                console.log(error);
-            }
+            self.toolbarElement.text = self.get();
 
-            /*
-                Add div to toolbar (float right) 
-            */
-
-            let toolbar = SmidqeTweaks.modules.toolbar;
-
-            toolbar.add(self.toolbarElement);
+            SmidqeTweaks.modules.toolbar.add(self.toolbarElement);
 
             setInterval(() => {
-                //$('#st-toolbar-time').text(self.get());
-                toolbar.updateText('time', self.get());
+                SmidqeTweaks.modules.toolbar.updateText('time', self.get());
             }, 60 * 1000)
-
-
-            /*
-            self.stats = SmidqeTweaks.modules.stats;
-
-            self.stats.addPair('time', {
-                id: 'time',
-                title: 'Current time',
-                value: 0,
-            });
-            
-            self.stats.update('time', self.get);
-
-
-            
-            Disabled for now, until I decide whether time should even be in the stats
-
-            setInterval(() => {
-                if (!self.addedValues)
-                    self.addTimersToStats();
-
-                self.updateTimers();
-            }, 1000)
-            */
 
             self.started = true;
         },

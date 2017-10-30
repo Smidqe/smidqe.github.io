@@ -451,6 +451,11 @@ body #leftpane {
     outline: 0;
 }
 
-.wrapper #dyn_header iframe {
-    height: 250px !important;
+#st-toolbar-element-menu {
+    float: left;
+}
+
+#st-toolbar-element-time {
+    float: right;
+    padding-right: 5px;
 }
