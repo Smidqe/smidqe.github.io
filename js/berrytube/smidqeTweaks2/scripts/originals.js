@@ -10,12 +10,12 @@ function load() {
             title: "Show original settings button",
             type: "checkbox",
             key: "showSettings",
-            callbacks: {},
+            callback: null,
         }, {
             title: 'Show original emotes button',
             type: 'checkbox',
             key: 'showEmotes',
-            callbacks: {},
+            callback: null,
         }],
         refresh: () => {
             const berrymotes = $('#chatControls > .berrymotes_button');
@@ -33,7 +33,7 @@ function load() {
         },
         init: () => {
             $.each(self.settings, (key, setting) => {
-                setting.callbacks['click'] = self.refresh;
+                setting.callback = self.refresh;
             })
         },
     }

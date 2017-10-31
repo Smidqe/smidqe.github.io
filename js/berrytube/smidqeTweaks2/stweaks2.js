@@ -45,18 +45,14 @@ const self = {
 
                     const script = self.scripts[key];
 
-                    if (!script)
-                        return;
+                    if (script) {
+                        if (checked)
+                            script.enable();
+                        else
+                            script.disable();
+                    }
 
-                    if (checked)
-                        script.enable();
-                    else
-                        script.disable();
-                })
-
-            if (data.callbacks)
-                $.each(data.callbacks, (key, value) => {
-                    element.on(key, value);
+                    data.callback();
                 })
 
             if (data.sub)
