@@ -9,7 +9,7 @@ const self = {
     todoFlusher: null,
     update() {
         const now = BerryTweaks.getServerTime();
-        $('#chatlist > ul > li').each(function(){
+        $('#chatlist > ul > li').each(function() {
             const el = $(this);
             const offset = el.data('berrytweaks-localtime_offset');
             if ( offset == null )
@@ -34,9 +34,7 @@ const self = {
             }
 
             el.data('berrytweaks-localtime_offset', (+offset)*1000);
-        }, () => {
-            self.update();
-        });
+        }, self.update);
         self.todoFlusher = null;
     },
     handleUser(nick) {
@@ -45,16 +43,16 @@ const self = {
 
         self.todo.push(nick);
         if ( !self.todoFlusher ){
-            self.todoFlusher = setTimeout(() => {
-                self.flushTodo();
-            }, 1000);
+            self.todoFlusher = BerryTweaks.setTimeout(self.flushTodo, 1000);
         }
     },
     enable() {
-        $('#chatlist > ul > li').each(function(){
-            self.handleUser($(this).data('nick'));
+        BerryTweaks.whenExists('#chatlist > ul > li', users => {
+            users.each(function() {
+                self.handleUser($(this).data('nick'));
+            });
         });
-        self.clockUpdateInterval = setInterval(self.update, 1000*60);
+        self.clockUpdateInterval = BerryTweaks.setInterval(self.update, 1000*60);
     },
     disable() {
         if ( self.clockUpdateInterval ){
@@ -63,15 +61,15 @@ const self = {
         }
 
         $('#chatlist > ul > li .berrytweaks-localtime').remove();
+    },
+    bind: {
+        patchAfter: {
+            addUser(data) {
+                self.handleUser(data && data.nick);
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'addUser', data => {
-    if ( !self.enabled )
-        return;
-
-    self.handleUser(data && data.nick);
-});
 
 return self;
 

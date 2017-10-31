@@ -31,18 +31,17 @@ const self = {
     },
     disable() {
         $('.berrytweaks-usermap').remove();
+    },
+    bind: {
+        patchAfter: {
+            showUserActions() {
+                BerryTweaks.setTimeout(() => {
+                    self.addMap();
+                }, 200 + 100); // dialog fade-in
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'showUserActions', () => {
-    if ( !self.enabled )
-        return;
-
-    setTimeout(() => {
-        self.addMap();
-    }, 200 + 100); // dialog fade-in
-});
-
 
 return self;
 

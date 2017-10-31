@@ -11,7 +11,7 @@ const self = {
         }
 
         self.patchDone = true;
-        whenExists('#wutColorStyles', () => {
+        BerryTweaks.whenExists('#wutColorStyles', () => {
             BerryTweaks.patch(window, 'wutProcessUsername', nick => {
                 if ( !self.enabled )
                     return;
@@ -34,15 +34,15 @@ const self = {
             previousContainer.append(container.children());
             container.remove();
         }
+    },
+    bind: {
+        patchAfter: {
+            addChatMsg(data, _to) {
+                self.concatContinuous(_to);
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'addChatMsg', (data, _to) => {
-    if ( !self.enabled )
-        return;
-
-    self.concatContinuous(_to);
-});
 
 return self;
 

@@ -21,7 +21,7 @@ function load() {
         }],
         enabled: false,
         calculate: function(data) {
-            if (data.votes.length != 11)
+            if (data.votes.length > 9)
                 return;
 
             var total = 0;

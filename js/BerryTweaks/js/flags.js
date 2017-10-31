@@ -26,28 +26,30 @@ const self = {
 
         self.todo.push(nick);
         if ( !self.todoFlusher ){
-            self.todoFlusher = setTimeout(() => {
+            self.todoFlusher = BerryTweaks.setTimeout(() => {
                 self.todoFlusher = null;
                 self.flushTodo();
             }, 1000);
         }
     },
     enable() {
-        $('#chatlist > ul > li').each(function(){
-            self.handleUser($(this).data('nick'));
+        BerryTweaks.whenExists('#chatlist > ul > li', users => {
+            users.each(function() {
+                self.handleUser($(this).data('nick'));
+            });
         });
     },
     disable() {
         $('#chatlist > ul > li .berrytweaks-flag').remove();
+    },
+    bind: {
+        patchAfter: {
+            addUser(data) {
+                self.handleUser(data && data.nick);
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'addUser', data => {
-    if ( !self.enabled )
-        return;
-
-    self.handleUser(data && data.nick);
-});
 
 return self;
 

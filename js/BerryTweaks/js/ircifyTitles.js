@@ -38,9 +38,6 @@ const self = {
             ghost: false
         }, '#chatbuffer');
 
-        //remove the nick from chatlist, to prevent tabcompletion
-        delete window.CHATLIST['Now Playing'];
-
         // add URL afterwards, or addChatMsg will shitty drunken regex it
         if ( video.link )
             $('#chatbuffer .berrytweaks-ircify-title > a').last().attr('href', video.link);

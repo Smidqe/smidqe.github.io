@@ -20,7 +20,7 @@ const self = {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'link';
 
-        let after = self.posCache.find(el => el.y > event.pageY);
+        const after = self.posCache.find(el => el.y > event.pageY);
         if ( !after )
             return;
 
@@ -50,10 +50,10 @@ const self = {
         console.log('drop', url);
     },
     enable() {
-        whenExists('#plul', plul => {
-            plul.on('dragover.berrytweaks-queueDrop', self.onDragOver);
-            plul.on('dragenter.berrytweaks-queueDrop', self.onDragEnter);
-            plul.on('drop.berrytweaks-queueDrop', self.onDrop);
+        BerryTweaks.whenExists('#plul', plul => {
+            plul.on('dragover.berrytweaks-queueDrop', BerryTweaks.raven.wrap(self.onDragOver));
+            plul.on('dragenter.berrytweaks-queueDrop', BerryTweaks.raven.wrap(self.onDragEnter));
+            plul.on('drop.berrytweaks-queueDrop', BerryTweaks.raven.wrap(self.onDrop));
         });
     },
     disable() {

@@ -3,6 +3,9 @@ BerryTweaks.modules['ctrlTab'] = (function(){
 
 const self = {
     handler(e) {
+        if ( window.TYPE < 2 )
+            return;
+
         if ( e.ctrlKey && !e.altKey && e.keyCode === 9 ){
             e.stopImmediatePropagation();
             e.preventDefault();
@@ -10,7 +13,7 @@ const self = {
         }
     },
     enable() {
-        $(window).on('keydown.btweaksCtrlTab', self.handler);
+        $(window).on('keydown.btweaksCtrlTab', BerryTweaks.raven.wrap(self.handler));
     },
     disable() {
         $(window).off('.btweaksCtrlTab');

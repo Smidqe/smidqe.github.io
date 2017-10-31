@@ -172,11 +172,11 @@ const self = {
                     $('<td>').append(
                         $('<select>', {
                             on: {
-                                change() {
+                                change: BerryTweaks.raven.wrap(function change() {
                                     self.preferred[kind] = $(this).val();
                                     self.cleanPreferred();
                                     BerryTweaks.setSetting('preferredUnits', self.preferred);
-                                }
+                                })
                             }
                         }).append(
                             $('<option>', {
@@ -203,15 +203,17 @@ const self = {
             click: self.showUnitsDialog,
             text: 'Set preferred units'
         }).appendTo(container);
+    },
+    bind: {
+        patchBefore: {
+            addChatMsg(data) {
+                if (self.preferred) {
+                    data.msg.msg = self.convertAll(data.msg.msg);
+                }
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'addChatMsg', data => {
-    if ( !self.enabled || !self.preferred )
-        return;
-
-    data.msg.msg = self.convertAll(data.msg.msg);
-}, true);
 
 return self;
 

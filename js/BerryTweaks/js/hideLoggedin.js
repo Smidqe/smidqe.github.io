@@ -4,7 +4,7 @@ BerryTweaks.modules['hideLoggedin'] = (function(){
 const self = {
     removedNode: null,
     enable() {
-        whenExists('.loginAs', el => {
+        BerryTweaks.whenExists('.loginAs', el => {
             const node = el.contents()[0];
             if ( node.nodeType === Element.TEXT_NODE ){
                 self.removedNode = node;
@@ -16,7 +16,7 @@ const self = {
         if ( !self.removedNode )
             return;
 
-        whenExists('.loginAs', el => {
+        BerryTweaks.whenExists('.loginAs', el => {
             el.prepend(self.removedNode);
             self.removedNode = null;
         });

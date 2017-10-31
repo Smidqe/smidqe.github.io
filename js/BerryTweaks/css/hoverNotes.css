@@ -1,0 +1,7 @@
+#chatlist ul li.note .chatlistname:after {
+    display: none;
+}
+
+#chatlist:hover ul li.note .chatlistname:after {
+    display: inline;
+}

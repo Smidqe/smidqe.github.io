@@ -26,6 +26,7 @@ base_aliases = {
     'shadowthug': {'shadowphone'},
     'ShippingIsMagic': {'a_Nickname', 'FlutterNickname'},
     'Smidqe': {'SmidqePi'},
+    'SunshineThunder': {'DrunkshinBlundr'},
     'WeedWuff': {'SpecialCoalWuff'},
     'Yakoshi': {'Yagoshi'},
 }

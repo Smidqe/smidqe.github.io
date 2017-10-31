@@ -24,7 +24,7 @@ const self = {
         self.applyVolume();
 
         // in case some other scripts haven't loaded yet
-        setTimeout(self.applyVolume, 1000 * 10);
+        BerryTweaks.setTimeout(self.applyVolume, 1000 * 10);
     },
     disable() {
         self.applyVolume();
@@ -45,13 +45,15 @@ const self = {
                     window.NOTIFY.play();
             }
         }).appendTo(container);
+    },
+    bind: {
+        patchAfter: {
+            initToastThemes() {
+                self.applyVolume();
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'initToastThemes', () => {
-    if ( self.enabled )
-        self.applyVolume();
-});
 
 return self;
 

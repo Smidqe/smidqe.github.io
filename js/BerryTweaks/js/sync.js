@@ -81,19 +81,19 @@ const self = {
             click: self['delete'],
             text: 'Delete synced data from server'
         }).appendTo(container);
+    },
+    bind: {
+        patchAfter: {
+            showCustomSqueesWindow() {
+                $('.controlWindow > div > .button:nth-child(2)').click(BerryTweaks.raven.wrap(function click() {
+                    self.sync();
+                }));
+            }
+        }
     }
 };
 
-BerryTweaks.patch(window, 'showCustomSqueesWindow', () => {
-    if ( !self.enabled )
-        return;
-
-    $('.controlWindow > div > .button:nth-child(2)').click(() => {
-        self.sync();
-    });
-});
-
-whenExists('#manageAlarms', () => {
+BerryTweaks.whenExists('#manageAlarms', () => {
     BerryTweaks.patch(PEP, 'setStorage', () => {
         self.sync();
     });

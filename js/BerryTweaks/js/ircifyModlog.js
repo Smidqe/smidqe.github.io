@@ -25,13 +25,17 @@ const self = {
             },
             ghost: false
         }, '#chatbuffer');
+    },
+    bind: {
+        socket: {
+            adminLog(data) {
+                if (window.TYPE >= 2) {
+                    self.addLogMsg(data);
+                }
+            }
+        }
     }
 };
-
-socket.on('adminLog', data => {
-    if ( self.enabled )
-        self.addLogMsg(data);
-});
 
 return self;
 

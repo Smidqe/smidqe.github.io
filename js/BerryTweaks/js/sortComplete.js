@@ -5,20 +5,20 @@ const self = {
     originalTabComplete: null,
     squees: {},
     onMessage(data) {
-        if ( data.msg.nick != window.NAME && window.NAME.length > 0 && window.detectName(window.NAME, data.msg.msg) )
+        if ( data.msg.nick !== window.NAME && window.NAME.length > 0 && window.detectName(window.NAME, data.msg.msg) )
             self.squees[data.msg.nick] = new Date(data.msg.timestamp).getTime();
     },
-    tabComplete(elem) { // copypasted from functions.js; changes annotated
-        var chat = elem.val();
-        var tabOptions = elem.data('tabcycle');
-        var hasTabOptions = (tabOptions !== undefined && tabOptions != false);
-        var who = '';
-        var result = [];
+    tabComplete(elem) { // originally copypasted from functions.js
+        const chat = elem.val();
+        let tabOptions = elem.data('tabcycle');
+        let hasTabOptions = !!tabOptions;
+        let who = '';
+        const result = [];
 
         if (!hasTabOptions) {
-            var onlyword = /^([^ ]*)$/i;
-            var endword = /([^ ]+)$/i;
-            var m = chat.match(endword);
+            const onlyword = /^([^ ]*)$/i;
+            const endword = /([^ ]+)$/i;
+            let m = chat.match(endword);
             if (m) {
                 who = m[1];
             }
@@ -26,17 +26,20 @@ const self = {
                 return;
             }
 
-            var re = new RegExp('^' + who + '.*', 'i');
-            for (var prop in CHATLIST) {
+            const re = new RegExp('^' + who + '.*', 'i');
+            for (const prop in CHATLIST) {
+                if (!CHATLIST.hasOwnProperty(prop)) {
+                    continue;
+                }
+
                 m = prop.match(re);
-                if (m && prop != window.NAME) { // BerryTweaks: added check for self-completes
-                    // BerryTweaks: removed sorting based on lastchat
+                if (m && prop !== window.NAME) {
                     result.push({ nick:prop, lastchat:CHATLIST[prop]||0, lastsquee:self.squees[prop]||0 }); // BerryTweaks: added lastsquee
                 }
             }
 
             if (result.length == 1) {
-                x = chat.replace(endword, result[0].nick);
+                let x = chat.replace(endword, result[0].nick);
                 if (chat.match(onlyword)) {
                     x += ": ";
                 }
@@ -46,17 +49,16 @@ const self = {
                 elem.val(x);
             }
             else if (result.length > 1) {
-                // BerryTweaks: added sorting
                 result.sort((a, b) => {
                     const diff = b.lastsquee - a.lastsquee;
                     return diff ? diff : (b.lastchat - a.lastchat);
                 });
 
                 tabOptions = [];
-                for (var i in result) {
-                    var x = chat.replace(endword, result[i].nick);
+                for (let i = 0; i < result.length; ++i) {
+                    let x = chat.replace(endword, result[i].nick);
                     if (chat.match(onlyword)) {
-                        x += ": "
+                        x += ": ";
                     }
                     else {
                         x += " ";
@@ -70,7 +72,7 @@ const self = {
         }
 
         if (hasTabOptions) {
-            var index = elem.data('tabindex');
+            let index = elem.data('tabindex');
             elem.val(tabOptions[index]);
             index = (index + 1) % tabOptions.length;
             elem.data('tabindex', index);
@@ -82,15 +84,15 @@ const self = {
     },
     disable() {
         window.tabComplete = self.originalTabComplete;
+    },
+    bind: {
+        patchAdter: {
+            addChatMsg(data) {
+                self.onMessage(data);
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'addChatMsg', (data, _to) => {
-    if ( !self.enabled )
-        return;
-
-    self.onMessage(data);
-});
 
 return self;
 

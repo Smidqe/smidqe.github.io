@@ -62,7 +62,6 @@ function load() {
                 path: "body",
                 config: { childList: true },
             },
-
         },
         interval: null,
         menu: null,

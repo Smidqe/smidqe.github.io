@@ -25,10 +25,10 @@ const self = {
                 width: '100%'
             },
             on: {
-                change() {
+                change: BerryTweaks.raven.wrap(function change() {
                     BerryTweaks.setSetting('squeeSound', $(this).val());
                     self.applySound();
-                }
+                })
             }
         }).appendTo(container);
     }

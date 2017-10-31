@@ -21,21 +21,21 @@ const self = {
     },
     disable() {
         $('#chatlist > ul > li .berrytweaks-flair').remove();
+    },
+    bind: {
+        patchAfter: {
+            addChatMsg(data) {
+                if ( !data || !data.msg )
+                    return;
+
+                self.ensureFlair(
+                    data.msg.nick,
+                    data.msg.metadata && data.msg.metadata.flair
+                );
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'addChatMsg', data => {
-    if ( !self.enabled )
-        return;
-
-    if ( !data || !data.msg )
-        return;
-
-    self.ensureFlair(
-        data.msg.nick,
-        data.msg.metadata && data.msg.metadata.flair
-    );
-});
 
 return self;
 

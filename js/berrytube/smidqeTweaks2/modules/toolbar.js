@@ -1,11 +1,3 @@
-/*
-    This module might be removed in the future,
-
-    I think the toolbar will eventually just hold the menu button
-    and some simplistic debugging buttons, like adding a new message
-    poll, playlist and other creation/handling, all enabled from the menu
-    Debugging options should not save, atleast not for now
-*/
 function load() {
     const self = {
         started: false,
@@ -61,7 +53,6 @@ function load() {
                     $("#st-toolbar-element-" + sub).addClass('hidden');
             })
         },
-
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
 

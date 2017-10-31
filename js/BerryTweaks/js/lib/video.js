@@ -34,7 +34,7 @@ const self = {
             return;
 
         if ( self.enabled ){
-            self.interval = setInterval(self.onSecondPassed, 1000);
+            self.interval = BerryTweaks.setInterval(self.onSecondPassed, 1000);
         }
         else{
             if ( self.interval ){
@@ -115,18 +115,18 @@ const self = {
     handleVideoDetails(data) {
         self.time = data.time;
         self.callCallbacks();
+    },
+    bind: {
+        socket: {
+            hbVideoDetail(data) {
+                self.handleVideoDetails(data);
+            },
+            forceVideoChange(data) {
+                self.handleVideoDetails(data);
+            }
+        }
     }
 };
-
-socket.on('hbVideoDetail', data => {
-    if ( self.enabled )
-        self.handleVideoDetails(data);
-});
-
-socket.on('forceVideoChange', data => {
-    if ( self.enabled )
-        self.handleVideoDetails(data);
-});
 
 return self;
 

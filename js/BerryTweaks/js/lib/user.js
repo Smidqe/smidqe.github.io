@@ -32,11 +32,11 @@ const self = {
                 }
             }
 
-            $.ajax({
-                data,
+            BerryTweaks.ajax({
                 type: data ? 'POST' : 'GET',
                 contentType: data ? 'text/plain' : undefined,
                 dataType: 'json',
+                data: data,
                 url: 'https://atte.fi/berrytweaks/api/' + fname,
                 success(data) {
                     self.cache[type] = data;

@@ -101,6 +101,11 @@ function load() {
                 })
             })
 
+            //update them from the get go
+            $.each(self.getUsers(), (key, value) => {
+                stats.update(key, value);
+            })
+
             self.started = true;
         },
     }

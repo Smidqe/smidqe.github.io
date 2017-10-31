@@ -3,7 +3,7 @@ BerryTweaks.lib['util'] = (function(){
 
 const self = {
     getPlaylist() {
-        let out = [];
+        const out = [];
         let item = PLAYLIST.first;
         for ( let i=0; i<PLAYLIST.length; ++i ){
             out.push(item);

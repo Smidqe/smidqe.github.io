@@ -56,17 +56,17 @@ const self = {
             });
         });
         return true;
+    },
+    bind: {
+        patchBefore: {
+            sendChatMsg(msg) {
+                if ( /^\s*\/r/.test(msg) )
+                    return !self.handleRequest.apply(this, arguments);
+                return true;
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'sendChatMsg', function(msg){
-    if ( !self.enabled )
-        return true;
-
-    if ( /^\s*\/r/.test(msg) )
-        return !self.handleRequest.apply(this, arguments);
-    return true;
-}, true);
 
 return self;
 

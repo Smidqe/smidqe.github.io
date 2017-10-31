@@ -17,7 +17,7 @@ const self = {
             id: 'berrytweaks-video_title',
             target: '_blank',
             rel: 'noopener noreferrer',
-            text: 'Loading...'
+            text: 'Video title will be available after video change'
         }).appendTo('#chatControls');
 
         BerryTweaks.lib.video.subscribe(self.onChange, self.onUpdate);

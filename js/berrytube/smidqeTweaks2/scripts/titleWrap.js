@@ -21,6 +21,7 @@ function load() {
         unwrap: () => {
             $("#berrytweaks-video_title").unwrap();
             $(".st-window-users").removeClass("wrap");
+
             self.wrapped = false;
         },
         enable: () => {

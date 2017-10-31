@@ -10,21 +10,21 @@ const self = {
     },
     enable() {
         self.isEven = true;
-        $('#chatbuffer > div').each(_to => {
-            self.handleMessage(_to);
+        $('#chatbuffer > div').each(function() {
+            self.handleMessage(this);
         });
     },
     disable() {
         $('#chatbuffer > div').removeClass('even odd');
+    },
+    bind: {
+        patchAfter: {
+            addChatMsg(data, _to) {
+                self.handleMessage(_to);
+            }
+        }
     }
 };
-
-BerryTweaks.patch(window, 'addChatMsg', (data, _to) => {
-    if ( !self.enabled )
-        return;
-
-    self.handleMessage(_to);
-});
 
 return self;
 
