@@ -30,7 +30,7 @@ function load() {
                 berrymotes.css('display', 'none');
         },
         init: () => {
-            $.each(self.settings, () => {
+            $.each(self.settings, (key, setting) => {
                 setting.callbacks.click = self.refresh;
             })
         },
