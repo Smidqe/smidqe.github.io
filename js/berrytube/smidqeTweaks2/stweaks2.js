@@ -7,8 +7,6 @@ const self = {
     scripts: {}, //simplistic methods
     check: null,
     queue: {},
-    base: {},
-    start: null,
     names: { //holds the names for modules, scripts and groups
         modules: ['listeners', 'toolbar', 'playlist', 'menu', 'windows', 'stats', 'time', 'chat', 'layout'],
         scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'originals'],
@@ -40,17 +38,25 @@ const self = {
                     'data-key': data.key,
                 })
                 .change(function() {
-                    self.settings.set($(this).attr('data-key'), $(this).prop('checked'), true);
+                    const checked = $(this).prop('checked');
+                    const key = $(this).attr('data-key');
 
-                    const script = self.scripts[$(this).attr('data-key')]
+                    self.settings.set(key, checked, true);
+
+                    const script = self.scripts[key];
 
                     if (!script)
                         return;
 
-                    if ($(this).prop('checked'))
+                    if (checked)
                         script.enable();
                     else
                         script.disable();
+                })
+
+            if (data.callbacks)
+                $.each(data.callbacks, (key, value) => {
+                    element.on(key, value);
                 })
 
             if (data.sub)
@@ -100,7 +106,10 @@ const self = {
         }
     },
     addModule: (title, mod) => {
-        self.modules[title] = mod;
+        if (mod.script)
+            self.scripts[title] = mod;
+        else
+            self.modules[title] = mod;
 
         //don't init twice those that are core modules
         if (mod.init && (self.names.modules.indexOf(title) == -1))
@@ -165,10 +174,9 @@ const self = {
             mod.init();
 
         //enable script according to settings
-        if (mod.script) {
+        if (mod.script)
             if (self.settings.get(mod.name))
                 mod.enable();
-        }
 
         delete src[mod.name];
     },
@@ -178,13 +186,13 @@ const self = {
 
         $.each(self.names.modules, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
-                self.base[name] = self.modules[name];
+                self.queue[name] = self.modules[name];
             })
         })
 
         $.each(self.names.scripts, (index, name) => {
             $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
-                self.base[name] = self.scripts[name];
+                self.queue[name] = self.scripts[name];
             })
         })
     },
@@ -199,33 +207,6 @@ const self = {
 
         socket.on('clearPoll', (data) => {
             self.settings.set('polldata', data, true);
-        })
-
-        //will ensure that modules are loaded in right order
-        self.start = setInterval(() => {
-            var skip = false;
-
-            //ensure everything is loaded
-            $.each(self.names, (key, names) => {
-                $.each(names, (index, key) => {
-                    if (skip)
-                        return;
-
-                    if (!self.base[key])
-                        skip = true;
-                })
-            })
-
-            if (skip)
-                return;
-
-            $.each(self.names, (key, names) => {
-                $.each(names, (index, key) => {
-                    self.startModule(self.base[key], self.base);
-                })
-            })
-
-            clearInterval(self.start);
         })
 
         self.check = setInterval(() => {

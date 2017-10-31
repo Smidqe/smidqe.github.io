@@ -5,6 +5,7 @@ function load() {
     const self = {
         name: 'originals',
         group: 'patches',
+        script: true,
         settings: [{
             title: "Show original settings button",
             type: "checkbox",
@@ -14,24 +15,28 @@ function load() {
             type: 'checkbox',
             key: 'showEmotes'
         }],
+        refresh: () => {
+            const berrymotes = $('#chatControls > .berrymotes_button');
+            const settings = $('#chatControls > .settings');
 
-        enable: () => {
             if (SmidqeTweaks.settings.get('showSettings'))
-                $('#chatControls > .settings').css('display', 'block');
+                settings.css('display', 'block');
+            else
+                settings.css('display', 'none');
 
             if (SmidqeTweaks.settings.get('showEmotes'))
-                $('#chatControls > .berrymotes_button').css('display', 'block');
+                berrymotes.css('display', 'block');
+            else
+                berrymotes.css('display', 'none');
         },
-        disable: () => {
-            if (!SmidqeTweaks.settings.get('showSettings'))
-                $('#chatControls > .settings').css('display', 'none');
-
-            if (!SmidqeTweaks.settings.get('showEmotes'))
-                $('#chatControls > .berrymotes_button').css('display', 'none');
+        init: () => {
+            $.each(self.settings, () => {
+                setting.callbacks.click = self.refresh;
+            })
         },
     }
 
     return self;
 }
 
-SmidqeTweaks.addScript('originals', load());
+SmidqeTweaks.addModule('originals', load());

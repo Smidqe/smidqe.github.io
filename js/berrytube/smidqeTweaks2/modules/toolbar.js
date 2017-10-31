@@ -11,15 +11,6 @@ function load() {
         started: false,
         name: 'toolbar',
         buttons: {},
-        settings: [{
-            title: 'Hide original settings button',
-            type: 'checkbox',
-            key: 'hideSettings',
-        }, {
-            title: 'Hide original emotes button',
-            type: 'checkbox',
-            key: 'hideEmotes',
-        }],
         add: (data) => {
             const element = $("<div>", {
                 class: "st-toolbar-element",
