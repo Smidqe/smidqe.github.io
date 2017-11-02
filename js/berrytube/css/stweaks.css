@@ -462,12 +462,12 @@ body #leftpane {
     padding-right: 5px;
 }
 
-.st-toast-menu {
+#st-toast-menu {
     position: relative;
     border: 1px solid #222222;
 }
 
-.st-toast-menu .themeButton {
+#st-toast-menu .themeButton {
     width: 100%;
     left: 0px;
     margin: auto;
