@@ -466,6 +466,8 @@ body #leftpane {
     position: relative;
     border: 1px solid #222222;
     flex-flow: column;
+    max-width: fit-content;
+    max-height: fit-content;
 }
 
 #st-toast-menu .themeButton {
@@ -508,4 +510,5 @@ body #leftpane {
 
 .st-toast-tab-buttons {
     align-self: flex-start;
+    max-width: fit-content;
 }
