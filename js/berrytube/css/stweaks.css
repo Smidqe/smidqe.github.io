@@ -461,3 +461,33 @@ body #leftpane {
     float: right;
     padding-right: 5px;
 }
+
+.st-toast-menu {
+    position: relative;
+    border: 1px solid #222222;
+}
+
+.st-toast-menu .themeButton {
+    width: 100%;
+    left: 0px;
+    margin: auto;
+    padding: unset;
+    height: 50px;
+    font-size: large;
+}
+
+.st-toast-menu #randomButton {
+    display: block;
+}
+
+.st-toast-menu #hiButton {
+    display: block;
+}
+
+.st-toast-tab {
+    display: block;
+}
+
+.st-toast-title {
+    display: block;
+}

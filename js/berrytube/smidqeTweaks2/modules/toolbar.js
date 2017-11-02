@@ -55,8 +55,7 @@ function load() {
         },
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
-
-            $("#chatControls > .settings").before(self.bar);
+            self.bar.insertBefore("#chatControls > .settings");
 
             self.started = true;
         },

@@ -76,6 +76,9 @@ function load() {
         add: (node, action) => {
             const title = node.find(".title").text()
 
+            console.log("Adding a new video to monitoring.");
+            console.log(node, action);
+
             //return the already existing value
             if (self.changes[title])
                 return self.changes[title];
