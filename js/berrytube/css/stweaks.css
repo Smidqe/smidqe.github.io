@@ -6,6 +6,8 @@
     align-items: center;
     z-index: 3;
     display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start;
     top: 0px;
     left: 0px;
     position: fixed;
@@ -519,4 +521,15 @@ body #leftpane {
 
 .st-titlebar-exit {
     float: right;
+    font-size: 25px;
+    border: 1px solid;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    display: table;
+    right: 5px;
+    top: 5px;
+    position: relative;
+    cursor: pointer;
+    background-color: gray;
 }

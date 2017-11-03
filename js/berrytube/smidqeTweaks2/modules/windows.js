@@ -77,7 +77,7 @@ function load() {
                     class: 'st-titlebar-exit'
                 }).on('click', () => {
                     self.hide(key);
-                }).text('x')
+                })
             );
 
             const window = $('' + selector);
@@ -92,7 +92,7 @@ function load() {
         hide: (key) => {
             const data = self.get(key);
 
-            $('.st-window-wrap > .st-button-exit').remove();
+            $('.st-window-wrap > .st-titlebar').remove();
 
             var selector = data.selectors[0];
 
