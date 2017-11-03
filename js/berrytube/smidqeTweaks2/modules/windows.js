@@ -87,10 +87,6 @@ function load() {
             $.each(data.classes, (key, value) => {
                 window.addClass(value);
             })
-
-            button.on('click', () => {
-                self.hide(key);
-            })
         },
 
         hide: (key) => {
