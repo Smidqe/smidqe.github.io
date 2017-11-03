@@ -398,7 +398,6 @@ body #leftpane {
     height: 20px;
     text-align: center;
     font-size: 20px;
-    display: table;
     cursor: pointer;
 }
 
@@ -511,4 +510,13 @@ body #leftpane {
 .st-toast-tab-buttons {
     align-self: flex-start;
     max-width: fit-content;
+}
+
+.st-titlebar {
+    width: 100%;
+    align-self: flex-start;
+}
+
+.st-titlebar-exit {
+    float: right;
 }

@@ -70,13 +70,19 @@ function load() {
             if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
                 selector = data.selectors[1];
 
-            const button = $('<div>', {
-                class: 'st-button-exit'
-            }).append($('<span>').text('x'));
+            const titlebar = $('<div>', {
+                class: 'st-titlebar'
+            }).append(
+                $('<div>', {
+                    class: 'st-titlebar-exit'
+                }).on('click', () => {
+                    self.hide(key);
+                }).text('x')
+            );
 
             const window = $('' + selector);
 
-            window.append(button);
+            window.prepend(titlebar);
 
             $.each(data.classes, (key, value) => {
                 window.addClass(value);
