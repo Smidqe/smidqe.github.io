@@ -255,7 +255,6 @@ body #leftpane {
 .st-window-users ul {
     top: 0px;
     right: 0px;
-    position: absolute;
     width: 100%;
 }
 
@@ -517,6 +516,8 @@ body #leftpane {
 .st-titlebar {
     width: 100%;
     align-self: flex-start;
+    height: fit-content;
+    background-color: dimgrey;
 }
 
 .st-titlebar-exit {
@@ -527,9 +528,19 @@ body #leftpane {
     height: 30px;
     text-align: center;
     display: table;
-    right: 5px;
-    top: 5px;
     position: relative;
     cursor: pointer;
-    background-color: gray;
+    background-color: red;
+    margin: 5px;
+}
+
+#chatlist .st-titlebar-exit {
+    right: 2px;
+    width: 15px;
+    height: 15px;
+    top: 3px;
+}
+
+#wutColorRefresh {
+    right: 20px;
 }

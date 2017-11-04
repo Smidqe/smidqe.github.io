@@ -1,8 +1,5 @@
 /*
-    For exit/close button placements we can have 3 different classes the tell us the location, similar to maltweaks
-        - left (top, middle)
-        - right (top, middle)
-        - normal
+
 */
 
 function load() {
@@ -15,30 +12,37 @@ function load() {
             rules: {
                 selectors: ["#st-wrap-motd", "#motdwrap"],
                 classes: ["st-window-open", 'st-window-wrap'],
+                text: 'Rules and MOTD'
             },
             header: {
                 selectors: ["#st-wrap-header", "#headwrap", ],
                 classes: ["st-window-open", 'st-window-wrap'],
+                text: 'Berrytube header'
             },
             footer: {
                 selectors: ["#st-wrap-footer", "#main #footwrap", ],
                 classes: ["st-window-open", 'st-window-wrap'],
+                text: 'Berrytube footer',
             },
             polls: {
                 selectors: ["#pollpane"],
                 classes: ["st-window-open st-window-overlap", 'st-window-wrap'],
+                text: 'Polls'
             },
             messages: {
                 selectors: ["#mailboxDiv"],
                 classes: ["st-window-open st-window-overlap", 'st-window-wrap'],
+                text: 'Personal messages'
             },
             login: {
                 selectors: [".wrapper #headbar"],
                 classes: ["st-window-open", 'st-window-wrap'],
+                text: 'Login window'
             },
             playlist: {
                 selectors: ["#main #leftpane"],
                 classes: ["st-window-open st-window-playlist", "st-window-overlap", 'st-window-wrap'],
+                text: 'Playlist',
                 callback: () => {
                     SmidqeTweaks.modules.playlist.refresh();
                 }
@@ -78,7 +82,7 @@ function load() {
                 }).on('click', () => {
                     self.hide(key);
                 })
-            );
+            ).append($('<span>').text(data.text));
 
             const window = $('' + selector);
 
