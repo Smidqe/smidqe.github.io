@@ -530,8 +530,12 @@ body #leftpane {
     display: table;
     position: relative;
     cursor: pointer;
-    background-color: red;
+    background-color: gray;
     margin: 5px;
+}
+
+#chatlist .st-titlebar {
+    background-color: none;
 }
 
 #chatlist .st-titlebar-exit {
@@ -542,5 +546,5 @@ body #leftpane {
 }
 
 #wutColorRefresh {
-    right: 20px;
+    right: 20px !important;
 }
