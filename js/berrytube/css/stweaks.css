@@ -535,16 +535,15 @@ body #leftpane {
 }
 
 #chatlist .st-titlebar {
-    background-color: none;
+    background-color: unset;
 }
 
 #chatlist .st-titlebar-exit {
-    right: 2px;
     width: 15px;
     height: 15px;
-    top: 3px;
 }
 
 #wutColorRefresh {
-    right: 20px !important;
+    right: 22px !important;
+    margin-top: 3px;
 }
