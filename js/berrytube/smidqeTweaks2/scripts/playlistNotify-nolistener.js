@@ -113,8 +113,7 @@ function load() {
                         object = SmidqeTweaks.modules.playlist.getObject()
                         for (var value in data) {
                             if (object[value] !== data[value]) {
-                                object
-
+                                console.log("Value exists", value)
                             }
                         }
                         break;
