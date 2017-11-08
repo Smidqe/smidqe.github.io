@@ -247,11 +247,6 @@ body #leftpane {
     border-bottom: 1px solid #BBBBBB !important;
 }
 
-.st-window-users.wrap {
-    top: 40px !important;
-    height: calc(100% - 70px) !important;
-}
-
 .st-window-users ul {
     top: 0px;
     right: 0px;
@@ -277,7 +272,7 @@ body #leftpane {
 
 /*BerryTweaks patches*/
 
-#st-videotitle-window.active {
+#st-videotitle-window {
     background-color: #474747;
     height: auto;
     width: 100%;
@@ -543,6 +538,11 @@ body #leftpane {
 #chatlist .st-titlebar-exit {
     width: 15px;
     height: 15px;
+}
+
+#chatlist.st-patch-berrytweaks {
+    top: 40px !important;
+    height: calc(100% - 70px) !important;
 }
 
 #wutColorRefresh {

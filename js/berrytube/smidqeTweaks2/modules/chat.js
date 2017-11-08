@@ -3,39 +3,10 @@ function load() {
         started: false,
         requires: ['stats'],
         name: 'chat',
-        pairs: [{
-            id: 'count',
-            title: 'Current usercount',
-            value: 0,
-        }, {
-            id: 'admins',
-            title: 'Moderators',
-            value: 0,
-            sub: true,
-        }, {
-            id: 'assistants',
-            title: 'Modmins',
-            value: 0,
-            sub: true,
-        }, {
-            id: 'users',
-            title: 'Normal users',
-            value: 0,
-            sub: true,
-        }, {
-            id: 'anons',
-            title: 'Anons',
-            value: 0,
-            sub: true,
-        }, {
-            id: 'lurkers',
-            title: 'Lurkers',
-            value: 0,
-            sub: true,
-        }],
         add: (nick, text, type) => {
             var time = new Date();
 
+            //utilise Berrytweaks to get consistent time, there is variability between local and server times \\fsnotmad
             if (SmidqeTweaks.settings.get('berrytweaks'))
                 time = BerryTweaks.getServerTime();
 
@@ -75,10 +46,8 @@ function load() {
             const result = {};
             const groups = $('#connectedCountWrapper').attr('title').split('<br />');
 
-            if (groups.length != 6)
-                return result;
-
-            result.count = $('#connectedCount').text();
+            //make sure the users is the top one
+            result.usercount = $('#connectedCount').text();
 
             $.each(groups, (index, value) => {
                 if (value === "")
@@ -87,32 +56,24 @@ function load() {
                 result[value.split(':')[0].toLowerCase()] = value.split(':')[1].trim();
             })
 
-
             return result;
         },
         init: () => {
             let stats = SmidqeTweaks.modules.stats;
-            var index = 0;
+
             $.each(self.getUsers(), (key, value) => {
                 stats.addPair('chat', {
                     id: key,
                     title: key[0].toUpperCase() + key.slice(1),
                     value: value,
-                    sub: index > 0,
+                    sub: key !== "usercount",
                 });
-
-                index++;
             })
 
             SmidqeTweaks.patch(window, 'handleNumCount', () => {
                 $.each(self.getUsers(), (key, value) => {
                     stats.update(key, value);
                 })
-            })
-
-            //update them from the get go
-            $.each(self.getUsers(), (key, value) => {
-                stats.update(key, value);
             })
 
             self.started = true;

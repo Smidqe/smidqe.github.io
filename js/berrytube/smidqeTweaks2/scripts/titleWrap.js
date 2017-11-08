@@ -14,13 +14,13 @@ function load() {
         wrap: () => {
             $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
             $("#st-videotitle-window").addClass("active");
-            $(".st-window-users").addClass("wrap");
+            $('#chatlist').addClass('st-patch-berrytweaks');
 
             self.wrapped = true;
         },
         unwrap: () => {
+            $('#chatlist').removeClass('st-patch-berrytweaks');
             $("#berrytweaks-video_title").unwrap();
-            $(".st-window-users").removeClass("wrap");
 
             self.wrapped = false;
         },

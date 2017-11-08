@@ -93,18 +93,19 @@ function load() {
         hide: (key) => {
             const data = self.get(key);
 
-            $('.st-window-wrap > .st-titlebar').remove();
-
             var selector = data.selectors[0];
 
             if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
                 selector = data.selectors[1];
 
             const window = $('' + selector);
+            const titlebar = window.find('.st-titlebar');
 
             $.each(data.classes, (key, value) => {
                 window.removeClass(value);
             })
+
+            titlebar.remove();
         },
 
         hideAll: () => {
