@@ -74,7 +74,7 @@ function load() {
                         var title = decodeURIComponent(data.video.videotitle);
                         var pos = SmidqeTweaks.modules.playlist.getObject(data.video.videotitle).pos;
 
-                        var obj = {
+                        object = {
                             id: data.video.videoid,
                             title: title,
                             pos: pos,
@@ -84,7 +84,7 @@ function load() {
                             changed: []
                         }
 
-                        self.tracking[obj.id] = obj;
+                        self.tracking[object.id] = object;
 
                         self.message = true;
                         break;
@@ -92,29 +92,29 @@ function load() {
                 case 'remove':
                     {
                         for (var i in self.tracking) {
-                            let obj = self.tracking[i];
+                            object = self.tracking[i];
 
-                            if (obj.pos == data.pos)
-                                obj.remove = true;
+                            if (object.pos == data.pos)
+                                object.remove = true;
 
-                            if (obj.remove)
-                                object = self.tracking[i];
-
-                            if (obj.remove)
+                            if (object.remove)
                                 break;
                         }
 
-                        self.message = true;
+                        if (object.remove)
+                            self.message = true;
+
                         break;
                     }
                 case 'modify':
                     {
-                        object = SmidqeTweaks.modules.playlist.getObject()
+
+                        /*
                         for (var value in data) {
                             if (object[value] !== data[value]) {
                                 console.log("Value exists", value)
                             }
-                        }
+                        }*/
                         break;
                     }
 
@@ -184,21 +184,21 @@ function load() {
 
             //these have the full node of data, so we can just change the values that have changed
 
-            SmidqeTweaks.patch(PLAYLIST, 'insertAfter', (node, newNode) => {
+            SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertAfter', (node, newNode) => {
                 if (!self.enabled)
                     return;
 
                 self.action(newNode, { id: 'modify', setting: 'playlistMove' });
             });
 
-            SmidqeTweaks.patch(PLAYLIST, 'append', (node, newNode) => {
+            SmidqeTweaks.patch(PLAYLIST.__proto__, 'append', (node, newNode) => {
                 if (!self.enabled)
                     return;
 
                 self.action(newNode, { id: 'modify', setting: 'playlistMove' });
             });
 
-            SmidqeTweaks.patch(PLAYLIST, 'insertBefore', (node, newNode) => {
+            SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertBefore', (node, newNode) => {
                 if (!self.enabled)
                     return;
 

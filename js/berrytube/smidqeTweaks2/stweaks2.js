@@ -127,9 +127,10 @@ const self = {
         const original = container[func];
 
         //don't patch an non existant function
-        if (!original)
+        if (!original) {
+            console.log("Original doesn't exist at", container);
             return;
-
+        }
         container[func] = function() {
             const before = original.apply(this, arguments);
             callback.apply(this, arguments);
