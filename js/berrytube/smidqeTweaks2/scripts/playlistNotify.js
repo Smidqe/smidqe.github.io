@@ -89,11 +89,11 @@ function load() {
             change.title = title;
             change.livestream = self.playlist.duration(node.find('.time').text()) === -1;
             change.timestamp = (new Date()).getTime();
-            change.position = obj.pos;
+            change.position = obj ? obj.pos : -1;
 
             change.state = {
                 action: action,
-                volatile: obj.value.volat,
+                volatile: node.hasClass('volatile'),
                 changed: action === 'changed',
             }
 

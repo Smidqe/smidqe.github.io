@@ -39,7 +39,22 @@ function load() {
 
             return {};
         },
+        getObjectByPos: (index) => {
+            var obj = window.PLAYLIST.first;
+            var result = undefined;
 
+            for (var i = 0; i < self.amount(); i++) {
+                if (i == index)
+                    result = obj;
+
+                if (result)
+                    break;
+
+                obj = obj.next;
+            }
+
+            return result;
+        },
         refresh: () => {
             smartRefreshScrollbar();
             scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2), 0);

@@ -21,14 +21,14 @@ function load() {
         }],
         enabled: false,
         calculate: function(data) {
-            if (data.votes.length > 9)
+            if (data.votes.length < 10) //to take into account that some mods don't use 0..10 scale, instead there's 1..10
                 return;
 
             var total = 0;
             var count = 0;
 
             $.each(data.votes, (index, value) => {
-                if (SmidqeTweaks.settings.get('ignoreZero') && index == 0)
+                if (SmidqeTweaks.settings.get('ignoreZero') && index == 0 && data.votes.length == 11)
                     return;
 
                 total += value * index;

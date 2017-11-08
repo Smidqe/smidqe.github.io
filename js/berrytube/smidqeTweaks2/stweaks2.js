@@ -216,6 +216,18 @@ const self = {
                 self.startModule(mod, self.queue);
             })
         }, 1000);
+
+        socket.on('addVideo', (data) => {
+            console.log("Video was added: ", data);
+        })
+
+        socket.on('setVidVolatile', (data) => {
+            self.settings.set('setVolatile', data, true);
+        })
+
+        socket.on('delVideo', (data) => {
+            self.settings.set('delVideo', data, true);
+        })
     },
 }
 

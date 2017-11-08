@@ -518,14 +518,16 @@ body #leftpane {
     align-self: flex-start;
     height: fit-content;
     background-color: dimgrey;
+    text-align: center;
+    font-size: 25px;
 }
 
 .st-titlebar-exit {
     float: right;
     font-size: 25px;
     border: 1px solid;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     text-align: center;
     display: table;
     position: relative;

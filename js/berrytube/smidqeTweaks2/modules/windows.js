@@ -50,21 +50,18 @@ function load() {
             users: {
                 selectors: ["#chatlist"],
                 classes: ["st-window-open st-window-users", 'st-window-wrap'],
+                text: 'List of users'
             },
         },
-
-
         add: (key, data, refresh) => {
             self.windows[key] = data;
 
             if (refresh)
                 self.refresh();
         },
-
         get: (key) => {
             return self.windows[key];
         },
-
         show: (key) => {
             console.log('Key applied to windows.show(): ' + key);
 
