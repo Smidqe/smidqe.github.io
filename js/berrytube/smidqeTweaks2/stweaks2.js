@@ -9,7 +9,7 @@ const self = {
     queue: {},
     names: { //holds the names for modules, scripts and groups
         modules: ['listeners', 'toolbar', 'playlist', 'menu', 'windows', 'stats', 'time', 'chat', 'layout'],
-        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'originals'],
+        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'originals', 'playlistNotify-nolistener'],
     },
     settings: {
         groups: ['dependencies', 'tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],

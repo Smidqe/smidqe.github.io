@@ -50,9 +50,8 @@ function load() {
                 if (data.changed['volat'])
                     SmidqeTweaks.modules.chat.add('Playlist modification')
 
-                if (data.changed['pos']) {
+                if (data.changed['pos'])
                     SmidqeTweaks.modules.chat.add('Playlist modification: ', data.title + ' was moved ')
-                }
 
                 data.changed.clear();
             }
@@ -135,7 +134,10 @@ function load() {
             if (message && SmidqeTweaks.settings.get(action.setting))
                 self.message(object, action.id);
 
-            if (object.remove && object)
+            if (!object)
+                return;
+
+            if (object.remove)
                 delete self.tracking[object.videoid];
         },
         enable: () => {

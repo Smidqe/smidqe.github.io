@@ -78,6 +78,8 @@ function load() {
             if (groups.length != 6)
                 return result;
 
+            result.count = $('#connectedCount').text();
+
             $.each(groups, (index, value) => {
                 if (value === "")
                     return;
@@ -85,14 +87,21 @@ function load() {
                 result[value.split(':')[0].toLowerCase()] = value.split(':')[1].trim();
             })
 
-            result.count = $('#connectedCount').text();
+
             return result;
         },
         init: () => {
             let stats = SmidqeTweaks.modules.stats;
+            var index = 0;
+            $.each(self.getUsers(), (key, value) => {
+                stats.addPair('chat', {
+                    id: key,
+                    title: key[0].toUpperCase() + key.slice(1),
+                    value: value,
+                    sub: index > 0,
+                });
 
-            $.each(self.pairs, (key, value) => {
-                stats.addPair('chat', value);
+                index++;
             })
 
             SmidqeTweaks.patch(window, 'handleNumCount', () => {
