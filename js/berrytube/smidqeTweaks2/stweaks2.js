@@ -52,7 +52,8 @@ const self = {
                             script.disable();
                     }
 
-                    data.callback();
+                    if (data.callback)
+                        data.callback();
                 })
 
             if (data.sub)
@@ -147,7 +148,7 @@ const self = {
             if (!result)
                 return;
 
-            const check = self.modules[mod.requires[index]]
+            const check = self.modules[mod.requires[index]];
 
             //check if it's not even loaded
             if (!check) {
@@ -198,14 +199,6 @@ const self = {
 
         $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))
 
-        self.patch(window, 'showConfigMenu', () => {
-            self.settings.show();
-        })
-
-        socket.on('clearPoll', (data) => {
-            self.settings.set('polldata', data, true);
-        })
-
         self.check = setInterval(() => {
             if ($.isEmptyObject(self.queue))
                 return;
@@ -217,6 +210,10 @@ const self = {
                 self.startModule(mod, self.queue);
             })
         }, 1000);
+
+        self.patch(window, 'showConfigMenu', () => {
+            self.settings.show();
+        })
 
         socket.on('addVideo', (data) => {
             console.log("Video was added: ", data);

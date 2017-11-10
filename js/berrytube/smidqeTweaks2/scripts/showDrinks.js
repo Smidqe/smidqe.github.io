@@ -12,6 +12,8 @@ function load() {
             title: 'Show drink count in chat',
             type: 'checkbox',
             key: 'showDrinks',
+        }, {
+            title: 'Add a movable overlay for drinks'
         }],
         pairs: [{
             id: 'current',
@@ -46,10 +48,6 @@ function load() {
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
 
-            $.each(self.pairs, (key, value) => {
-                self.stats.addPair('drinks', value);
-            })
-
             SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
                 if (!self.enabled)
                     return;
@@ -58,6 +56,10 @@ function load() {
                     return;
 
                 self.show();
+            })
+
+            $.each(self.pairs, (key, value) => {
+                self.stats.addPair('drinks', value);
             })
 
             self.stats.update('current', $('#drinkCounter').text());

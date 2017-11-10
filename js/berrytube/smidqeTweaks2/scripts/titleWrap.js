@@ -13,7 +13,6 @@ function load() {
         wrapped: false,
         wrap: () => {
             $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
-            $("#st-videotitle-window").addClass("active");
             $('#chatlist').addClass('st-patch-berrytweaks');
 
             self.wrapped = true;

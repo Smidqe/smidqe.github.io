@@ -65,30 +65,6 @@ function load() {
 
 
             switch (action.id) {
-                case 'add':
-                    {
-                        //don't re add the video
-                        if (self.tracking[data.video.videoid])
-                            break;
-
-                        var title = decodeURIComponent(data.video.videotitle);
-                        var pos = SmidqeTweaks.modules.playlist.getObject(data.video.videotitle).pos;
-
-                        object = {
-                            id: data.video.videoid,
-                            title: title,
-                            pos: pos,
-                            volatile: data.video.volat,
-                            length: data.video.videolength,
-                            type: data.video.videotype,
-                            changed: []
-                        }
-
-                        self.tracking[object.id] = object;
-
-                        self.message = true;
-                        break;
-                    }
                 case 'remove':
                     {
                         for (var i in self.tracking) {
@@ -108,14 +84,49 @@ function load() {
                     }
                 case 'modify':
                     {
+                        var video = self.tracking[data.video.videoid];
 
-                        /*
-                        for (var value in data) {
-                            if (object[value] !== data[value]) {
-                                console.log("Value exists", value)
-                            }
-                        }*/
-                        break;
+                        //don't re add the video
+                        if (video) {
+
+                            console.log(video, data.video);
+
+                            //check values
+                            $.each(data.video, (key, value) => {
+
+                                if (video[key] !== value) {
+                                    video.changed.push({
+                                        key: key,
+                                        old: video[key],
+                                        new: value
+                                    })
+
+                                    video[key] = value;
+                                }
+                            })
+
+                            break;
+                        }
+
+
+                        //add the thing
+
+                        var title = decodeURIComponent(data.video.videotitle);
+                        var pos = SmidqeTweaks.modules.playlist.getObject(data.video.videotitle).pos;
+
+                        object = {
+                            videoid: data.video.videoid,
+                            title: title,
+                            pos: pos,
+                            volat: data.video.volat,
+                            videolength: data.video.videolength,
+                            videotype: data.video.videotype,
+                            changed: []
+                        }
+
+                        self.tracking[object.id] = object;
+
+                        self.message = true;
                     }
 
                 case 'volatile':
@@ -161,12 +172,6 @@ function load() {
             self.enabled = false;
         },
         init: () => {
-            socket.on('addVideo', (data) => {
-                if (!self.enabled || self.sorting)
-                    return;
-
-                self.action(data, { id: 'add', setting: 'playlistAdd' });
-            });
 
             socket.on('setVidVolatile', (data) => {
                 if (!self.enabled || self.sorting)
@@ -175,7 +180,7 @@ function load() {
                 self.action(data, { id: 'modify', setting: 'playlistVolatile' })
             })
 
-            SmidqeTweaks.patch(PLAYLIST, 'remove', (node) => {
+            SmidqeTweaks.patch(PLAYLIST.__proto__, 'remove', (node) => {
                 if (!self.enabled || self.sorting)
                     return;
 
