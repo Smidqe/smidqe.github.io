@@ -93,7 +93,7 @@ function load() {
                             video = data.video
 
                         //don't re add the video
-                        if (video) {
+                        if (self.tracking[video.videoid]) {
 
                             console.log(video, data.video);
 
