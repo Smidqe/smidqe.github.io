@@ -27,6 +27,7 @@ function load() {
         sorting: false,
         script: true,
         tracking: {},
+        messaged: false,
         message: (data, id) => {
             if (id === 'added')
                 SmidqeTweaks.modules.chat.add()
@@ -63,7 +64,6 @@ function load() {
 
             console.log('Data: ', data, action);
 
-
             switch (action.id) {
                 case 'remove':
                     {
@@ -84,7 +84,10 @@ function load() {
                     }
                 case 'modify':
                     {
-                        var video = self.tracking[data.video.videoid];
+                        var video = null;
+
+                        if (data.video)
+                            video = data.video
 
                         //don't re add the video
                         if (video) {
@@ -159,6 +162,7 @@ function load() {
                 if (self.sorting && !self.messaged) {
                     SmidqeTweaks.modules.chat.add('Playlist', 'Shuffling', 'rcv');
                     self.messaged = true;
+                    return;
                 }
 
                 self.messaged = false;
@@ -184,7 +188,7 @@ function load() {
                 if (!self.enabled || self.sorting)
                     return;
 
-                self.action(data, { id: 'remove', setting: 'playlistRemove' });
+                self.action(node, { id: 'remove', setting: 'playlistRemove' });
             });
 
             //these have the full node of data, so we can just change the values that have changed
