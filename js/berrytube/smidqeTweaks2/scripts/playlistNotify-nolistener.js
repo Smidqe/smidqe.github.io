@@ -87,7 +87,7 @@ function load() {
                     }
                 case 'modify':
                     {
-                        var video = null;
+                        var video = data;
 
                         if (data.video)
                             video = data.video
