@@ -9,7 +9,7 @@ const self = {
     queue: {},
     names: { //holds the names for modules, scripts and groups
         modules: ['listeners', 'toolbar', 'playlist', 'menu', 'windows', 'stats', 'time', 'chat', 'layout'],
-        scripts: ['playlistNotify', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'originals', 'playlistNotify-nolistener'],
+        scripts: ['pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'originals', 'trackPlaylist'],
     },
     settings: {
         groups: ['dependencies', 'tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],
@@ -213,18 +213,6 @@ const self = {
 
         self.patch(window, 'showConfigMenu', () => {
             self.settings.show();
-        })
-
-        socket.on('addVideo', (data) => {
-            console.log("Video was added: ", data);
-        })
-
-        socket.on('setVidVolatile', (data) => {
-            self.settings.set('setVolatile', data, true);
-        })
-
-        socket.on('delVideo', (data) => {
-            self.settings.set('delVideo', data, true);
         })
     },
 }
