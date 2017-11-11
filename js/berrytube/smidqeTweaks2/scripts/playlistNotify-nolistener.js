@@ -87,18 +87,26 @@ function load() {
                     }
                 case 'modify':
                     {
-                        var video = data;
+                        var video = null;
+                        var newData = null;
 
                         if (data.video)
-                            video = data.video
+                            video = self.tracking[data.video.videoid];
+                        else
+                            video = self.tracking[data.videoid]
+
+                        if (data.video)
+                            newData = data.video;
+                        else
+                            newData = data;
 
                         //don't re add the video
-                        if (self.tracking[video.videoid]) {
+                        if (video) {
 
-                            console.log(video, data.video);
+                            console.log(video);
 
                             //check values
-                            $.each(data.video, (key, value) => {
+                            $.each(newData, (key, value) => {
 
                                 if (video[key] !== value) {
                                     video.changed.push({
@@ -117,16 +125,16 @@ function load() {
 
                         //add the thing
 
-                        var title = decodeURIComponent(video.videotitle);
-                        var pos = SmidqeTweaks.modules.playlist.getObject(video.videotitle).pos;
+                        var title = decodeURIComponent(newData.videotitle);
+                        var pos = SmidqeTweaks.modules.playlist.getObject(newData.videotitle).pos;
 
                         object = {
-                            videoid: video.videoid,
+                            videoid: newData.videoid,
                             title: title,
                             pos: pos,
-                            volat: video.volat,
-                            videolength: video.videolength,
-                            videotype: video.videotype,
+                            volat: newData.volat,
+                            videolength: newData.videolength,
+                            videotype: newData.videotype,
                             changed: []
                         }
 
