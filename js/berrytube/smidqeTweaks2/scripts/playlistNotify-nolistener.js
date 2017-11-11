@@ -28,6 +28,24 @@ function load() {
         script: true,
         tracking: {},
         messaged: false,
+        addToTracking: (video) => {
+            var title = decodeURIComponent(video.videotitle);
+            var pos = SmidqeTweaks.modules.playlist.getObject(title).pos;
+
+            var object = {
+                videoid: newData.videoid,
+                title: title,
+                pos: pos,
+                volat: newData.volat,
+                videolength: newData.videolength,
+                videotype: newData.videotype,
+                remove: false,
+                changed: false,
+                changes: [],
+            }
+
+            self.tracking[object.videoid] = object;
+        },
         message: (data, id) => {
             if (id === 'added')
                 SmidqeTweaks.modules.chat.add()
@@ -135,10 +153,10 @@ function load() {
                             volat: newData.volat,
                             videolength: newData.videolength,
                             videotype: newData.videotype,
-                            changed: []
+                            changed: [],
                         }
 
-                        self.tracking[object.id] = object;
+                        self.tracking[object.videoid] = object;
                         self.message = true;
 
                         break;
