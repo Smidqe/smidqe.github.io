@@ -140,11 +140,14 @@ function load() {
 
                         self.tracking[object.id] = object;
                         self.message = true;
+
+                        break;
                     }
 
                 case 'volatile':
                     {
-                        object = SmidqeTweaks.modules.playlist.getObjectByIndex(data.pos);
+                        console.log('Volatile change happened');
+                        //object = SmidqeTweaks.modules.playlist.getObjectByIndex(data.pos);
                         break;
                     }
 
@@ -202,7 +205,6 @@ function load() {
             });
 
             //these have the full node of data, so we can just change the values that have changed
-
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertAfter', (node, newNode) => {
                 if (!self.enabled)
                     return;
