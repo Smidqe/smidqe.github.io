@@ -77,6 +77,9 @@ function load() {
                                 break;
                         }
 
+                        if (!object)
+                            return;
+
                         if (object.remove)
                             self.message = true;
 
@@ -114,21 +117,20 @@ function load() {
 
                         //add the thing
 
-                        var title = decodeURIComponent(data.video.videotitle);
-                        var pos = SmidqeTweaks.modules.playlist.getObject(data.video.videotitle).pos;
+                        var title = decodeURIComponent(video.videotitle);
+                        var pos = SmidqeTweaks.modules.playlist.getObject(video.videotitle).pos;
 
                         object = {
-                            videoid: data.video.videoid,
+                            videoid: video.videoid,
                             title: title,
                             pos: pos,
-                            volat: data.video.volat,
-                            videolength: data.video.videolength,
-                            videotype: data.video.videotype,
+                            volat: video.volat,
+                            videolength: video.videolength,
+                            videotype: video.videotype,
                             changed: []
                         }
 
                         self.tracking[object.id] = object;
-
                         self.message = true;
                     }
 
