@@ -6,9 +6,9 @@ function load() {
             const values = str.split(":").reverse();
             var ms = 0;
 
-            //really shouldn't need days
+            //really shouldn't need days, because that would be just silly
             if (values.length > 3)
-                return;
+                return -1;
 
             $.each(values, (index) => {
                 ms += Math.pow(60, index) * 1000 * parseInt(values[index])

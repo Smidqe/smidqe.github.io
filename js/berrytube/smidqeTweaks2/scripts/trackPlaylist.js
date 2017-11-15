@@ -26,21 +26,25 @@ function load() {
             type: 'checkbox',
             key: 'trackPlaylist',
         }, {
-            title: 'Track playlist changes',
+            title: 'Playlist additions',
             type: 'checkbox',
-            key: 'trackPlaylist',
+            key: 'trackAdd',
+            sub: true,
         }, {
-            title: 'Track playlist changes',
+            title: 'Playlist removals',
             type: 'checkbox',
-            key: 'trackPlaylist',
+            key: 'trackRemove',
+            sub: true,
         }, {
-            title: 'Track playlist changes',
+            title: 'Playlist moves',
             type: 'checkbox',
-            key: 'trackPlaylist',
+            key: 'trackMove',
+            sub: true,
         }, {
-            title: 'Track playlist changes',
+            title: 'Volatile -> non-volatile',
             type: 'checkbox',
-            key: 'trackPlaylist',
+            key: 'trackVolatile',
+            sub: true,
         }],
         group: 'playlist',
         name: 'trackPlaylist',
@@ -68,6 +72,9 @@ function load() {
             self.tracking[object.videoid] = object;
             return object;
         },
+        checkSettings: () => {
+
+        },
         message: (data, id) => {
             if (id === 'remove' || id === 'add') {
                 let msg = '';
@@ -86,9 +93,15 @@ function load() {
 
             if (id === 'modify' && data.changed) {
                 $.each(data.changes, (key, value) => {
-                    console.log('Change happened: ', value);
+                    console.log('Change happened: ', key, value);
 
                     switch (value.key) {
+                        case 'add':
+                            {
+
+                                break;
+                            }
+
                         case 'volat':
                             {
                                 break;
@@ -99,12 +112,11 @@ function load() {
                             };
                     }
                 })
-
-                while (data.changes.length > 0)
-                    data.changes.pop();
             }
 
-
+            //this is not a time critical thing
+            while (data.changes.length > 0)
+                data.changes.pop();
         },
         action: (data, action) => {
             var object;
@@ -116,6 +128,14 @@ function load() {
                 case 'add':
                     {
                         object = self.tracking[data.videoid];
+
+                        //this is due to proto function callbacks are called first > addVideo callbacks
+                        //probably will need to prepend callbacks \\fsnotmad
+                        if (object) {
+                            object.changes.push({
+                                key: 'added'
+                            })
+                        }
 
                         if (!object) {
                             object = self.track(data);
