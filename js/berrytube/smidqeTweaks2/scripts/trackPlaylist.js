@@ -58,12 +58,12 @@ function load() {
             var pos = SmidqeTweaks.modules.playlist.getObject(title).pos;
 
             var object = {
-                videoid: newData.videoid,
+                videoid: video.videoid,
                 title: title,
                 pos: pos,
-                volat: newData.volat,
-                videolength: newData.videolength,
-                videotype: newData.videotype,
+                volat: video.volat,
+                videolength: video.videolength,
+                videotype: video.videotype,
                 timeout: 0,
                 changed: false,
                 changes: [],
