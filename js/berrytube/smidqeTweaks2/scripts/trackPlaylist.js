@@ -122,6 +122,9 @@ function load() {
             var object;
             var message = false;
 
+            if (!data)
+                return;
+
             console.log('Data: ', data, action);
 
             switch (action.id) {
