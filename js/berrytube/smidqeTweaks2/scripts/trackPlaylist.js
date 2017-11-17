@@ -172,10 +172,6 @@ function load() {
                         if (!object) {
                             object = self.track(data);
                             message = true;
-
-                            object.changes.push({
-                                key: 'added'
-                            })
                         }
                         console.log(object.pos);
                         console.log(object);
@@ -202,7 +198,7 @@ function load() {
                             }
                         })
 
-                        var pos = SmidqeTweaks.modules.playlist.getObject(object.title);
+                        var pos = SmidqeTweaks.modules.playlist.getObject(object.title).pos;
 
                         console.log(object.pos, pos);
 
@@ -215,6 +211,9 @@ function load() {
 
                         if (object.changes.length > 0)
                             message = true;
+
+                        if (object.changes.length > 0)
+                            object.changed = true;
 
                         break;
                     }
