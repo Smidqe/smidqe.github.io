@@ -111,7 +111,7 @@ function load() {
                             };
                         case 'pos':
                             {
-                                console.log(data.title + ' was moved');
+                                SmidqeTweaks.modules.chat.add(data.title, ' was moved', 'act');
                                 break;
                             };
                     }
