@@ -111,6 +111,7 @@ function load() {
                             };
                         case 'pos':
                             {
+                                console.log(data.title + ' was moved');
                                 break;
                             };
                     }
