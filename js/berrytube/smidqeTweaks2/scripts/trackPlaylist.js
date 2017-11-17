@@ -25,6 +25,7 @@ function load() {
             title: 'Track playlist changes',
             type: 'checkbox',
             key: 'trackPlaylist',
+            callback: null,
         }, {
             title: 'Playlist additions',
             type: 'checkbox',
@@ -223,6 +224,7 @@ function load() {
                         if (remove) {
                             if (SmidqeTweaks.settings.get('trackVolatile'))
                                 self.message(object, action.id);
+
                             delete self.tracking[object.videoid];
                         } else
                             message = true;
@@ -241,6 +243,15 @@ function load() {
             self.enabled = false;
         },
         init: () => {
+            self.settings[0].callback = function() {
+                console.log($(this));
+
+                if ($(this).prop('checked'))
+                    self.enable();
+                else
+                    self.disable();
+            }
+
             socket.on('randomizeList', () => {
                 SmidqeTweaks.modules.chat.add('Playlist', 'Shuffled', 'rcv');
                 self.shuffle = true;
