@@ -204,6 +204,15 @@ function load() {
 
                         var pos = SmidqeTweaks.modules.playlist.getObject(object.videotitle);
 
+                        console.log(object.pos, pos);
+
+                        if (object['pos'] !== pos)
+                            object.changes.push({
+                                key: 'pos',
+                                old: object.pos,
+                                new: pos,
+                            })
+
                         if (object.changes.length > 0)
                             message = true;
 
