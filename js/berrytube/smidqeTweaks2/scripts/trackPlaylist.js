@@ -168,35 +168,38 @@ function load() {
                     }
                 case 'modify':
                     {
-                        var video = self.tracking[data.videoid];
+                        object = self.tracking[data.videoid];
 
-                        if (!video) {
-                            video = self.track(data);
+                        if (!object) {
+                            object = self.track(data);
                             message = true;
                         }
-                        console.log(video);
+                        console.log(object);
                         console.log(data);
 
                         //a move happened
-                        if (video.timeout)
-                            clearTimeout(video.timeout);
+                        if (object.timeout)
+                            clearTimeout(object.timeout);
 
                         //check values
                         $.each(data, (key, value) => {
                             //don't check values that are non existant in the our end
-                            if (!video[key])
+                            if (!object[key])
                                 return;
 
-                            if (video[key] !== value) {
-                                video.changes.push({
+                            if (object[key] !== value) {
+                                object.changes.push({
                                     key: key,
                                     old: video[key],
                                     new: value
                                 })
 
-                                video[key] = value;
+                                object[key] = value;
                             }
                         })
+
+                        if (object.changes.length > 0)
+                            message = true;
 
                         break;
                     }
