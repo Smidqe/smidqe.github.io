@@ -144,9 +144,7 @@ function load() {
                         //this is due to proto function callbacks are called first > addVideo callbacks
                         //probably will need to prepend callbacks \\fsnotmad
                         if (object) {
-                            object.changes.push({
-                                key: 'added'
-                            })
+
                         }
 
                         message = true;
@@ -178,7 +176,12 @@ function load() {
                         if (!object) {
                             object = self.track(data);
                             message = true;
+
+                            object.changes.push({
+                                key: 'added'
+                            })
                         }
+                        console.log(object.pos);
                         console.log(object);
                         console.log(data);
 
@@ -257,6 +260,13 @@ function load() {
             self.settings[0].callback = function() {
                 self.toggle();
             }
+
+            socket.on('addVideo', (data) => {
+                if (!self.enabled || self.shuffle)
+                    return;
+
+                self.action(node, { id: 'add', settings: ['trackAdd'] })
+            })
 
             socket.on('randomizeList', () => {
                 SmidqeTweaks.modules.chat.add('Playlist', 'Shuffled', 'rcv');
