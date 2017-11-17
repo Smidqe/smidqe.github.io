@@ -265,7 +265,7 @@ function load() {
                 if (!self.enabled || self.shuffle)
                     return;
 
-                self.action(node, { id: 'add', settings: ['trackAdd'] })
+                self.action(data, { id: 'add', settings: ['trackAdd'] })
             })
 
             socket.on('randomizeList', () => {
