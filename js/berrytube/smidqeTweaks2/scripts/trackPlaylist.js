@@ -77,6 +77,8 @@ function load() {
 
         },
         message: (data, id) => {
+            console.log(data, id);
+
             if (id === 'remove' || id === 'add') {
                 let msg = '';
                 msg += data.title;
@@ -132,6 +134,8 @@ function load() {
             switch (action.id) {
                 case 'add':
                     {
+                        console.log('add');
+
                         object = self.tracking[data.videoid];
 
                         if (!object)
@@ -150,6 +154,7 @@ function load() {
                     }
                 case 'remove':
                     {
+                        console.log('Remove');
                         object = self.tracking[data.videoid];
 
                         if (!object)
