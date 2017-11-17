@@ -120,8 +120,10 @@ function load() {
                 return id !== "st-menu" || id !== "st-stats-container";
             }).removeClass('st-window-default');
 
+            /*
             if (SmidqeTweaks.settings.get('maltweaks')) // patch/hack, fixes wrong sized header when exiting from tweaks
                 $(".wrapper #dyn_header iframe").css({ "height": "140px" });
+            */
 
             SmidqeTweaks.modules.windows.removeMenuButtons();
 

@@ -122,6 +122,7 @@ function load() {
             var object;
             var message = false;
 
+            //Not sure why this happens, but meh
             if (!data)
                 return;
 
@@ -132,6 +133,9 @@ function load() {
                     {
                         object = self.tracking[data.videoid];
 
+                        if (!object)
+                            object = self.track(data);
+
                         //this is due to proto function callbacks are called first > addVideo callbacks
                         //probably will need to prepend callbacks \\fsnotmad
                         if (object) {
@@ -140,11 +144,7 @@ function load() {
                             })
                         }
 
-                        if (!object) {
-                            object = self.track(data);
-                            message = true;
-                        }
-
+                        message = true;
                         break;
                     }
                 case 'remove':
@@ -169,9 +169,10 @@ function load() {
                     {
                         var video = self.tracking[data.videoid];
 
-                        if (!video)
+                        if (!video) {
                             video = self.track(data);
-
+                            message = true;
+                        }
                         console.log(video);
                         console.log(data);
 
@@ -181,6 +182,7 @@ function load() {
 
                         //check values
                         $.each(data, (key, value) => {
+                            //don't check values that are non existant in the our end
                             if (!video[key])
                                 return;
 
@@ -201,20 +203,30 @@ function load() {
                 case 'volatile':
                     {
                         console.log('Volatile change happened');
-                        object = SmidqeTweaks.modules.playlist.getObjectByPos(data.pos);
 
-                        var video = self.tracking[object.videoid];
+                        var video = SmidqeTweaks.modules.playlist.getObjectByPos(data.pos);
+                        var remove = false;
 
-                        if (!video)
-                            video = self.track(object);
+                        object = self.tracking[video.videoid];
 
-                        video.changes.push({
+                        if (!object) {
+                            object = self.track(video);
+                            remove = true; //there is no reason to hold it longer than it should
+                        }
+
+                        object.changes.push({
                             key: 'volat',
                             old: !data.volat,
                             new: data.volat
                         })
 
-                        message = true;
+                        if (remove) {
+                            if (SmidqeTweaks.settings.get('trackVolatile'))
+                                self.message(object, action.id);
+                            delete self.tracking[object.videoid];
+                        } else
+                            message = true;
+
                         break;
                     }
             }
@@ -233,10 +245,6 @@ function load() {
                 SmidqeTweaks.modules.chat.add('Playlist', 'Shuffled', 'rcv');
                 self.shuffle = true;
             })
-
-            socket.on('addVideo', (data) => {
-                self.action(data.video, { id: 'add', settings: ['playlistAdd'] })
-            });
 
             socket.on('recvNewPlaylist', () => {
                 self.shuffle = false;
