@@ -202,7 +202,7 @@ function load() {
                             }
                         })
 
-                        var pos = SmidqeTweaks.modules.playlist.getObject(object.videotitle);
+                        var pos = SmidqeTweaks.modules.playlist.getObject(object.title);
 
                         console.log(object.pos, pos);
 
