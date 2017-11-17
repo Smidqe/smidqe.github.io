@@ -242,14 +242,12 @@ function load() {
         disable: () => {
             self.enabled = false;
         },
+        toggle: () => {
+            self.enabled = SmidqeTweaks.settings.get('trackPlaylist')
+        },
         init: () => {
             self.settings[0].callback = function() {
-                console.log($(this));
-
-                if ($(this).prop('checked'))
-                    self.enable();
-                else
-                    self.disable();
+                self.toggle();
             }
 
             socket.on('randomizeList', () => {
