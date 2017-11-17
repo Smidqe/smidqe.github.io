@@ -143,9 +143,6 @@ function load() {
 
                         //this is due to proto function callbacks are called first > addVideo callbacks
                         //probably will need to prepend callbacks \\fsnotmad
-                        if (object) {
-
-                        }
 
                         message = true;
                         break;
@@ -166,7 +163,6 @@ function load() {
                             delete self.tracking[object.videoid];
                         }, 1000);
 
-                        message = true;
                         break;
                     }
                 case 'modify':
@@ -205,6 +201,8 @@ function load() {
                                 object[key] = value;
                             }
                         })
+
+                        var pos = SmidqeTweaks.modules.playlist.getObject(object.videotitle);
 
                         if (object.changes.length > 0)
                             message = true;
