@@ -83,7 +83,7 @@ function load() {
                 let msg = '';
                 msg += data.title;
 
-                if (data.volatile)
+                if (data.volat)
                     msg += ' (volatile)';
 
                 if (id === 'remove')
@@ -111,7 +111,7 @@ function load() {
                             };
                         case 'pos':
                             {
-                                SmidqeTweaks.modules.chat.add(data.title, ' was moved', 'act');
+                                SmidqeTweaks.modules.chat.add("Playlist", data.title + ' was moved', 'act');
                                 break;
                             };
                     }
