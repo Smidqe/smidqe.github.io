@@ -158,7 +158,7 @@ function load() {
 
                         object.timeout = setTimeout(() => {
                             //this covers the move (removed and readded)
-                            if (SmidqeTweaks.settings.get('playlistRemove'))
+                            if (SmidqeTweaks.settings.get('trackRemove'))
                                 self.message(object, 'remove');
 
                             delete self.tracking[object.videoid];
