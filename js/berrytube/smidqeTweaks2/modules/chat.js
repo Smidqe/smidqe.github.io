@@ -29,7 +29,7 @@ function load() {
 
             //add option to hide the nick
             if (hideNick)
-                $('msg-' + nick).last().css('display', 'none');
+                $('.msg-' + nick).last().find('.nick').css('display', 'none');
 
             //prevent tabcomplete on non existant/wrong users
             delete CHATLIST[nick];
