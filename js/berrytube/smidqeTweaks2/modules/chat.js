@@ -3,7 +3,7 @@ function load() {
         started: false,
         requires: ['stats'],
         name: 'chat',
-        add: (nick, text, type) => {
+        add: (nick, text, type, hideNick) => {
             var time = new Date();
 
             //utilise Berrytweaks to get consistent time, there is variability between local and server times \\fsnotmad
@@ -26,6 +26,10 @@ function load() {
 
                 ghost: false,
             }, "#chatbuffer");
+
+            //add option to hide the nick
+            if (hideNick)
+                $('msg-' + nick).last().css('display', 'none');
 
             //prevent tabcomplete on non existant/wrong users
             delete CHATLIST[nick];

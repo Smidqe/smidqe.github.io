@@ -91,27 +91,28 @@ function load() {
                 else
                     msg += ' was added to playlist'
 
-                SmidqeTweaks.modules.chat.add('Playlist modification', msg, 'act')
+                SmidqeTweaks.modules.chat.add('Playlist', msg, 'act', true)
             }
 
             if (id === 'modify' && data.changed) {
                 $.each(data.changes, (key, value) => {
                     console.log('Change happened: ', key, value);
 
+                    //only mention 
                     switch (value.key) {
-                        case 'add':
-                            {
-
-                                break;
-                            }
-
                         case 'volat':
                             {
+                                console.log(data.title + ' ' + value.old + ' -> ' + value.new);
+                                SmidqeTweaks.modules.chat.add("Playlist", data.title + ' was set to ' + value.new === true ? " volatile " : " permanent", true);
                                 break;
                             };
                         case 'pos':
                             {
-                                SmidqeTweaks.modules.chat.add("Playlist", data.title + ' was moved', 'act');
+                                if (!SmidqeTweaks.settings.get('trackMove'))
+                                    break;
+
+                                console.log(data.title + 'moved: ' + value.old + ' -> ' + value.new);
+                                SmidqeTweaks.modules.chat.add("Playlist", data.title + ' was moved', 'act', true);
                                 break;
                             };
                     }
@@ -150,7 +151,6 @@ function load() {
                     }
                 case 'remove':
                     {
-                        console.log('Remove');
                         object = self.tracking[data.videoid];
 
                         if (!object)
@@ -174,7 +174,7 @@ function load() {
                             object = self.track(data);
                             message = true;
                         }
-                        console.log(object.pos);
+
                         console.log(object);
                         console.log(data);
 
@@ -201,14 +201,15 @@ function load() {
 
                         var pos = SmidqeTweaks.modules.playlist.getObject(object.title).pos;
 
-                        console.log(object.pos, pos);
-
-                        if (object['pos'] !== pos)
+                        if (object.pos !== pos) {
                             object.changes.push({
                                 key: 'pos',
                                 old: object.pos,
                                 new: pos,
                             })
+
+                            object.pos = pos;
+                        }
 
                         if (object.changes.length > 0)
                             message = true;
@@ -221,8 +222,6 @@ function load() {
 
                 case 'volatile':
                     {
-                        console.log('Volatile change happened');
-
                         var video = SmidqeTweaks.modules.playlist.getObjectByPos(data.pos);
                         var remove = false;
 
@@ -253,6 +252,9 @@ function load() {
 
             if (message)
                 self.message(object, action.id);
+
+            if (object.remove)
+                delete self.tracking[object.videoid];
         },
         enable: () => {
             self.enabled = true;
@@ -276,7 +278,7 @@ function load() {
             })
 
             socket.on('randomizeList', () => {
-                SmidqeTweaks.modules.chat.add('Playlist', 'Shuffled', 'rcv');
+                SmidqeTweaks.modules.chat.add('Playlist', 'Playlist has been shuffled', 'rcv', true);
                 self.shuffle = true;
             })
 
