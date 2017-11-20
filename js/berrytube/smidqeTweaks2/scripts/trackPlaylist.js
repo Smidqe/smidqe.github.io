@@ -112,6 +112,8 @@ function load() {
             if (!data)
                 return;
 
+            console.log(data, action);
+
             switch (action.id) {
                 case 'add':
                     {
@@ -144,10 +146,9 @@ function load() {
                     {
                         object = self.tracking[data.videoid];
 
-                        if (!object) {
+                        if (!object)
                             object = self.track(data);
-                            message = true;
-                        }
+
 
                         //a move happened
                         if (object.timeout)
