@@ -1,22 +1,7 @@
 /*
     TODO:
-        This is a non listener version of the playlist notify, which is actually doable with little research
+        - Have a global timeout for tracked videos, if there is a change within 60 seconds refresh timeout, otherwise remove it from the 
         
-
-{
-    queue: true,
-    sanityid:"0MIK7bb69xk"
-    video:domobj:[li.volatile]
-    meta:{
-        addedon: 1478307350051, 
-        colorTagVolat: true
-    }
-
-    videoid:"EPr-JrW-a8o"
-    videolength:321
-    videotitle:"A%20Cheeky%20Tea%20Break%20-%201999%20Ep07"
-    videotype:"yt"
-    volat:true
 */
 
 function load() {
@@ -27,25 +12,26 @@ function load() {
             key: 'trackPlaylist',
             callback: null,
         }, {
-            title: 'Playlist additions',
+            title: 'Track playlist additions',
             type: 'checkbox',
             key: 'trackAdd',
-            sub: true,
         }, {
-            title: 'Playlist removals',
+            title: 'Track playlist removals',
             type: 'checkbox',
             key: 'trackRemove',
-            sub: true,
         }, {
-            title: 'Playlist moves',
+            title: 'Track playlist moves',
             type: 'checkbox',
             key: 'trackMove',
+        }, {
+            title: 'Show position numbers',
+            type: 'checkbox',
+            key: 'showPositionChange',
             sub: true,
         }, {
-            title: 'Volatile -> non-volatile',
+            title: 'Track volatile changes',
             type: 'checkbox',
             key: 'trackVolatile',
-            sub: true,
         }],
         group: 'playlist',
         name: 'trackPlaylist',
@@ -73,55 +59,50 @@ function load() {
             self.tracking[object.videoid] = object;
             return object;
         },
-        checkSettings: () => {
-
-        },
         message: (data, id) => {
-            console.log(data, id);
+            var msg = data.title;
+
+            if (data.volat)
+                msg += ' (volatile)';
 
             if (id === 'remove' || id === 'add') {
-                let msg = '';
-                msg += data.title;
-
-                if (data.volat)
-                    msg += ' (volatile)';
-
                 if (id === 'remove')
                     msg += ' was removed from playlist';
                 else
                     msg += ' was added to playlist'
-
-                SmidqeTweaks.modules.chat.add('Playlist', msg, 'act', true)
             }
 
             if (id === 'modify' && data.changed) {
                 $.each(data.changes, (key, value) => {
-                    console.log('Change happened: ', key, value);
-
                     //only mention 
                     switch (value.key) {
                         case 'volat':
                             {
-                                console.log(data.title + ' ' + value.old + ' -> ' + value.new);
-                                SmidqeTweaks.modules.chat.add("Playlist", data.title + ' was set to ' + value.new === true ? " volatile " : " permanent", true);
+                                //possibly separate these to vol -> non vol && non vol -> vol
+
+                                msg += ' was set to ' + value.new === true ? ' volatile ' : ' permanent';
+
                                 break;
                             };
                         case 'pos':
                             {
-                                if (!SmidqeTweaks.settings.get('trackMove'))
-                                    break;
+                                msg += ' was moved'
 
-                                console.log(data.title + 'moved: ' + value.old + ' -> ' + value.new);
-                                SmidqeTweaks.modules.chat.add("Playlist", data.title + ' was moved', 'act', true);
+                                if (SmidqeTweaks.settings.get('showPositionChange'))
+                                    msg += ' (' + value.old + ' -> ' + value.new + ')';
+
                                 break;
                             };
                     }
                 })
             }
 
-            //this is not a time critical thing
+            SmidqeTweaks.modules.chat.add('Playlist', msg, 'act', true);
+
             while (data.changes.length > 0)
                 data.changes.pop();
+
+            data.changed = false;
         },
         action: (data, action) => {
             var object;
@@ -131,20 +112,13 @@ function load() {
             if (!data)
                 return;
 
-            console.log('Data: ', data, action);
-
             switch (action.id) {
                 case 'add':
                     {
-                        console.log('add');
-
                         object = self.tracking[data.videoid];
 
                         if (!object)
                             object = self.track(data);
-
-                        //this is due to proto function callbacks are called first > addVideo callbacks
-                        //probably will need to prepend callbacks \\fsnotmad
 
                         message = true;
                         break;
@@ -175,9 +149,6 @@ function load() {
                             message = true;
                         }
 
-                        console.log(object);
-                        console.log(data);
-
                         //a move happened
                         if (object.timeout)
                             clearTimeout(object.timeout);
@@ -195,7 +166,7 @@ function load() {
                                     new: value
                                 })
 
-                                object[key] = value;
+                                object[key] = value; //store new value
                             }
                         })
 
@@ -211,11 +182,10 @@ function load() {
                             object.pos = pos;
                         }
 
-                        if (object.changes.length > 0)
-                            message = true;
-
-                        if (object.changes.length > 0)
+                        if (object.changes.length > 0) {
                             object.changed = true;
+                            message = true;
+                        }
 
                         break;
                     }
@@ -250,7 +220,7 @@ function load() {
                     }
             }
 
-            if (message)
+            if (message && SmidqeTweaks.settings.get(action.setting))
                 self.message(object, action.id);
 
             if (object.remove)
@@ -274,7 +244,7 @@ function load() {
                 if (!self.enabled || self.shuffle)
                     return;
 
-                self.action(data.video, { id: 'add', settings: ['trackAdd'] })
+                self.action(data.video, { id: 'add', setting: 'trackAdd' })
             })
 
             socket.on('randomizeList', () => {
@@ -290,37 +260,38 @@ function load() {
                 if (!self.enabled || self.shuffle)
                     return;
 
-                self.action(data, { id: 'modify', settings: ['playlistVolatile'] })
+                self.action(data, { id: 'modify', setting: 'trackVolatile' })
             })
 
+            //this is the only one that I want to prepend the callback, due to position, if the callback is appended that data is lost and cause undefined value (not a huge issue but meh)
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'remove', (node) => {
                 if (!self.enabled || self.shuffle)
                     return;
 
-                self.action(node, { id: 'remove', settings: ['playlistRemove'] });
-            });
+                self.action(node, { id: 'remove', setting: 'trackRemove' });
+            }, true);
 
             //these have the full node of data, so we can just change the values that have changed
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertAfter', (node, newNode) => {
                 if (!self.enabled || self.shuffle)
                     return;
 
-                self.action(newNode, { id: 'modify', settings: ['playlistAdd', 'playlistMove'] })
-            });
+                self.action(newNode, { id: 'modify', setting: 'trackMove' })
+            }, false);
 
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'append', (node, newNode) => {
                 if (!self.enabled || self.shuffle)
                     return;
 
-                self.action(newNode, { id: 'modify', settings: ['playlistAdd', 'playlistMove'] })
-            });
+                self.action(newNode, { id: 'modify', setting: 'trackMove' })
+            }, false);
 
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertBefore', (node, newNode) => {
                 if (!self.enabled || self.shuffle)
                     return;
 
-                self.action(newNode, { id: 'modify', settings: ['playlistAdd', 'playlistMove'] })
-            });
+                self.action(newNode, { id: 'modify', setting: 'trackMove' })
+            }, false);
         },
     }
     return self;

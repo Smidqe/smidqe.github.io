@@ -25,6 +25,10 @@ function load() {
             }
         },
 
+        waitForElement: () => {
+
+        },
+
         start: function(obs) {
             if (!obs.observer)
                 obs.observer = self.create(obs);

@@ -1,5 +1,7 @@
 /*
-
+    TODO:
+        - Move creation of windows and such to a script, there is no need to keep them here it's just too much clutter
+        - Overall redo the logic behind the creation of the windows and separate them to different subfunctions
 */
 
 function load() {
@@ -113,11 +115,9 @@ function load() {
                 self.hide(key);
             })
         },
-
         getSelector: (value) => {
             return SmidqeTweaks.settings.get('maltweaks') && value.selectors.length > 1 ? value.selectors[1] : value.selectors[0];
         },
-
         addMenuButtons: () => {
             $.each(self.windows, (key, value) => {
                 var obj = {
@@ -143,7 +143,6 @@ function load() {
                 self.menu.addElement(obj);
             })
         },
-
         removeMenuButtons: () => {
             $.each(self.windows, (key, value) => {
                 var obj = {
@@ -155,7 +154,6 @@ function load() {
                 self.menu.removeElement(obj);
             })
         },
-
         refresh: () => {
             self.removeMenuButtons();
             self.addMenuButtons();
@@ -164,7 +162,6 @@ function load() {
                 $(self.getSelector(value)).addClass('st-window-default');
             })
         },
-
         init: () => {
             self.menu = SmidqeTweaks.modules.menu;
 

@@ -73,10 +73,7 @@ const self = {
             })
         },
         show: () => {
-            var cont = self.settings.container;
-
-            if (!cont)
-                cont = $('<fieldset>');
+            var cont = self.settings.container || $('<fieldset>');
 
             cont.empty();
             cont.append($('<legend>', { text: 'SmidqeTweaks' }));
@@ -124,19 +121,38 @@ const self = {
     addScript: (title, script) => {
         self.scripts[title] = script;
     },
-    patch: (container, func, callback) => {
-        const original = container[func];
+    //Credits to Atte and BerryTweaks, I just split them
+    appendCallback: (container, func, callback) => {
+        var original = container[func];
 
-        //don't patch an non existant function
-        if (!original) {
-            console.log("Original doesn't exist at", container);
-            return;
-        }
-        container[func] = function() {
+        patch = function() {
             const before = original.apply(this, arguments);
             callback.apply(this, arguments);
             return before;
         }
+
+        container[func] = patch;
+    },
+    prependCallback: (container, func, callback) => {
+        var original = container[func];
+
+        patch = function() {
+            if (callback.apply(this, arguments) !== false)
+                return original.apply(this, arguments);
+
+            return undefined;
+        }
+
+        container[func] = patch;
+    },
+    patch: (container, func, callback, prepend) => {
+        if (!container[func])
+            return;
+
+        if (prepend)
+            self.prependCallback(container, func, callback);
+        else
+            self.appendCallback(container, func, callback);
     },
     checkRequired: (mod) => {
         if (!mod.requires)
@@ -213,7 +229,7 @@ const self = {
 
         self.patch(window, 'showConfigMenu', () => {
             self.settings.show();
-        })
+        }, false)
     },
 }
 

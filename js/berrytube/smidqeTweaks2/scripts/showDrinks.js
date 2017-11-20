@@ -12,8 +12,6 @@ function load() {
             title: 'Show drink count in chat',
             type: 'checkbox',
             key: 'showDrinks',
-        }, {
-            title: 'Add a movable overlay for drinks'
         }],
         pairs: [{
             id: 'current',
@@ -28,16 +26,18 @@ function load() {
         stats: null,
         enabled: false,
         show: () => {
-            const last = $(".drink:last tr")
+            const last = $(".drink:last tr");
 
             if (last.find('.st-chat-drinkcount')[0])
                 return;
 
-            const wrap = $("<td>", { class: 'st-chat-drinkcount' })
-            const text = $("<span>", { text: 'x' + $('#drinkCounter').text() })
-
-            wrap.append(text);
-            last.prepend(wrap);
+            last.prepend(
+                $("<td>", {
+                    class: 'st-chat-drinkcount',
+                }).append($("<span>", {
+                    text: 'x' + $('#drinkCounter').text(),
+                }))
+            );
         },
         disable: () => {
             self.enabled = false;
@@ -56,21 +56,21 @@ function load() {
                     return;
 
                 self.show();
-            })
+            }, false);
 
             $.each(self.pairs, (key, value) => {
                 self.stats.addPair('drinks', value);
-            })
+            });
 
             self.stats.update('current', $('#drinkCounter').text());
 
             socket.on('forceVideoChange', () => {
                 self.stats.update('current', 0);
-            })
+            });
 
             socket.on('drinkCount', () => {
                 self.stats.update('current', $('#drinkCounter').text());
-            })
+            });
 
             setInterval(() => {
                 self.stats.update('dpm', $(".dpmCounter").text().substring(5));

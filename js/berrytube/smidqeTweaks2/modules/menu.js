@@ -116,7 +116,7 @@ function load() {
         },
         test: () => {
             self.addCategory({ id: 'berrytweaks' });
-            self.addGroup({ category: 'berrytweaks', id: 'general' })
+            self.addGroup({ category: 'berrytweaks', id: 'general' });
         },
         init: () => {
             self.container = $('<div>', { id: 'st-menu', class: 'st-window-default' });
