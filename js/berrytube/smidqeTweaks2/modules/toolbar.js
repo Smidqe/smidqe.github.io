@@ -28,7 +28,7 @@ function load() {
             })
         },
         remove: (key) => {
-            delete self.bar[key];
+            $('#st-toolbar-element-' + key).remove();
         },
         addCallback: (id, key, callback) => {
             $("#st-toolbar-element-" + id).on(key, callback);

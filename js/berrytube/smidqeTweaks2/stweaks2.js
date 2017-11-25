@@ -124,8 +124,7 @@ const self = {
     //Credits to Atte and BerryTweaks, I just split them
     appendCallback: (container, func, callback) => {
         var original = container[func];
-
-        patch = function() {
+        var patch = function() {
             const before = original.apply(this, arguments);
             callback.apply(this, arguments);
             return before;
@@ -135,8 +134,7 @@ const self = {
     },
     prependCallback: (container, func, callback) => {
         var original = container[func];
-
-        patch = function() {
+        var patch = function() {
             if (callback.apply(this, arguments) !== false)
                 return original.apply(this, arguments);
 

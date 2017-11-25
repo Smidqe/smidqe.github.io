@@ -261,7 +261,7 @@ function load() {
                 if (!self.enabled || self.shuffle)
                     return;
 
-                self.action(data, { id: 'modify', setting: 'trackVolatile' })
+                self.action(data, { id: 'volatile', setting: 'trackVolatile' })
             })
 
             //this is the only one that I want to prepend the callback, due to position, if the callback is appended that data is lost and cause undefined value (not a huge issue but meh)

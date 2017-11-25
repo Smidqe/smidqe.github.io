@@ -1,6 +1,6 @@
 /*
     TODO:
-        - Add time to toolbar
+        - Move this time thingy to scripts
 
 */
 
