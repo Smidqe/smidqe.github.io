@@ -31,7 +31,7 @@ function load() {
         }, {
             title: 'Show current position',
             type: 'checkbox',
-            key: 'showPositionChange',
+            key: 'showCurrentPosition',
             sub: true,
         }, {
             title: 'Track volatile changes',
