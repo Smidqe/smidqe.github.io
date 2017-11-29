@@ -29,6 +29,11 @@ function load() {
             key: 'showPositionChange',
             sub: true,
         }, {
+            title: 'Show current position',
+            type: 'checkbox',
+            key: 'showPositionChange',
+            sub: true,
+        }, {
             title: 'Track volatile changes',
             type: 'checkbox',
             key: 'trackVolatile',
@@ -72,7 +77,7 @@ function load() {
                     msg += ' was added to playlist'
             }
 
-            if (id === 'modify' && data.changed) {
+            if ((id === 'modify' || id === 'volatile') && data.changed) {
                 $.each(data.changes, (key, value) => {
                     //only mention 
                     switch (value.key) {
@@ -86,10 +91,13 @@ function load() {
                             };
                         case 'pos':
                             {
-                                msg += ' was moved'
+                                msg += ' was moved';
 
                                 if (SmidqeTweaks.settings.get('showPositionChange'))
                                     msg += ' (' + value.old + ' -> ' + value.new + ')';
+
+                                if (SmidqeTweaks.settings.get('showCurrentPosition'))
+                                    msg += ' Current: ' + SmidqeTweaks.modules.playlist.getObject(decodeURIComponent(window.ACTIVE.videotitle)).pos;
 
                                 break;
                             };
@@ -105,6 +113,9 @@ function load() {
             data.changed = false;
         },
         action: (data, action) => {
+            if (!self.enabled || self.shuffle)
+                return;
+
             var object;
             var message = false;
 
@@ -242,9 +253,6 @@ function load() {
             }
 
             socket.on('addVideo', (data) => {
-                if (!self.enabled || self.shuffle)
-                    return;
-
                 self.action(data.video, { id: 'add', setting: 'trackAdd' })
             })
 
@@ -258,39 +266,24 @@ function load() {
             })
 
             socket.on('setVidVolatile', (data) => {
-                if (!self.enabled || self.shuffle)
-                    return;
-
                 self.action(data, { id: 'volatile', setting: 'trackVolatile' })
             })
 
             //this is the only one that I want to prepend the callback, due to position, if the callback is appended that data is lost and cause undefined value (not a huge issue but meh)
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'remove', (node) => {
-                if (!self.enabled || self.shuffle)
-                    return;
-
                 self.action(node, { id: 'remove', setting: 'trackRemove' });
             }, true);
 
             //these have the full node of data, so we can just change the values that have changed
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertAfter', (node, newNode) => {
-                if (!self.enabled || self.shuffle)
-                    return;
-
                 self.action(newNode, { id: 'modify', setting: 'trackMove' })
             }, false);
 
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'append', (node, newNode) => {
-                if (!self.enabled || self.shuffle)
-                    return;
-
                 self.action(newNode, { id: 'modify', setting: 'trackMove' })
             }, false);
 
             SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertBefore', (node, newNode) => {
-                if (!self.enabled || self.shuffle)
-                    return;
-
                 self.action(newNode, { id: 'modify', setting: 'trackMove' })
             }, false);
         },
