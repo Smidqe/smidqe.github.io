@@ -6,8 +6,16 @@
 
 function load() {
     const self = {
-        runnable: true,
+        meta: {
+            category: 'module',
+            group: {
+                id: 'layout',
+                title: 'Layout'
+            },
+            name: 'layout'
+        },
         started: false,
+        category: 'module',
         requires: ['listeners', 'menu'], //soon menu aswell
         group: 'dependencies',
         enabled: false,
@@ -113,9 +121,7 @@ function load() {
                 self.unwrap();
 
             $('.st-window-default').filter(function(index, element) {
-                let id = $(this).attr('id');
-
-                return id !== "st-menu" || id !== "st-stats-container";
+                return ['st-menu', 'st-stats-container', 'playlist'].indexOf($(this).attr('id')) !== -1;
             }).removeClass('st-window-default');
 
             SmidqeTweaks.modules.windows.removeMenuButtons();
@@ -167,4 +173,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('layout', load());
+SmidqeTweaks.add(load());

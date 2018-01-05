@@ -1,7 +1,7 @@
 function load() {
     const self = {
         group: 'chat',
-        script: true,
+        category: 'script',
         name: 'rcvSquee',
         settings: [{
             title: 'Squee on RCV messages',

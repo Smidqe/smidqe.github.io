@@ -17,7 +17,8 @@ function load() {
         }, {
             title: 'Ignore 0-votes',
             type: 'checkbox',
-            key: 'ignoreZero'
+            key: 'ignoreZero',
+            sub: true,
         }],
         enabled: false,
         calculate: function(data) {
@@ -28,6 +29,7 @@ function load() {
             var count = 0;
 
             $.each(data.votes, (index, value) => {
+                //only ignore zeros when there are 11 values (0..10), and not when (1..10)
                 if (SmidqeTweaks.settings.get('ignoreZero') && index == 0 && data.votes.length == 11)
                     return;
 
@@ -58,4 +60,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addScript('pollAverage', load());
+SmidqeTweaks.add(load());

@@ -46,9 +46,6 @@ function load() {
 
             return msg;
         },
-        getTimers: () => {
-            //will eventually grab the values through ajax
-        },
         init: () => {
             self.toolbarElement.text = self.get();
 

@@ -1,42 +1,123 @@
 /*
-	This will be the new menu system for berrytweaks,
-    replacing the old bottom bar
-    
-    Category will differentiate the functionalities by script level, so other scripts may use it
-    Currently only categories will be Berrytube and SmidqeTweaks (perhaps some from Maltweaks)
-    category: {
-        title, 
-        items,
+    TODO:
+        - Rewrite
+        - Set to always on hover
+    Layout:
+        group
+            title
+            elements
+                buttons, etc.. 
+
+
+    data structs to add:
+
+    {
+        type: string,
+        id: string,
+        title: string,
+        group: string // only needed in elements
+        element: string //only needed in elements
+        callback: func // only needed in elements
     }
 
 
-    data: {
-        title,
-        category,
-        group,
-        type,
-        specific,
-        callbacks,
-    }
 */
 function load() {
     const self = {
         started: false,
         name: 'menu',
         requires: ['toolbar'],
-        categories: ['Berrytube', 'SmidqeTweaks'],
-        groups: {
-            'Berrytube': ['General', 'Other'],
-            'SmidqeTweaks': ['General', 'Windows', 'Other'],
-        },
         button: {
             id: 'menu',
             text: 'M',
             tooltip: 'Show/Hide the menu',
-            isToggle: false,
+            toggle: false,
             callbacks: {},
         },
         shown: false,
+        container: null,
+        
+        find: (type, dest) => {
+            var select = null;
+
+            if (type === 'group')
+                select = $('#st-menu-group-' + dest);
+
+            if (type === 'element' || type === 'callback')
+                select = $('#st-menu-element-' + dest);
+
+            return select[0] ? select[0] : undefined;
+        },
+        remove: (type, dest) => {
+            var element = self.find(type, dest);
+           
+            if (element)
+                element.remove();
+        },
+        add: (data) => {
+            //don't add doubles
+            if (self.find(data.type, data.id))
+                return;
+            
+            if (data.type === 'group')
+            {
+                let group = $('<div>', {id: 'st-menu-group-' + data.id});
+                let elements = $('<div>', {id: 'st-menu-elements-'+ data.id, class: 'st-menu-elements'});
+                let title = $('<div>', {class: 'st-menu-group-title'}).text(data.title);
+
+                group.append(title, elements);
+                self.container.append(group);
+            }
+
+            if (data.type === 'element')
+            {
+                let group = self.find('group', data.group);
+
+                //can't add to group because theres' none
+                if (!group)
+                    return;
+
+                var element = $('<' + data.element + '>', {id: 'st-menu-element-' + data.id, class: 'st-menu-element'})
+
+                if (data.callback)
+                    element.on(data.callback.key, data.callback.func);
+
+                group.append(element);
+            }
+
+            if (data.type === 'callback')
+            {
+                //find the element
+                let obj = $(self.find('element', data.id));
+
+                //can have multiple callbacks
+                
+            }
+        },
+        show: () => {
+            self.container.removeClass('st-window-default');
+        },
+        hide: () => {
+            self.container.addClass('st-window-default');
+        },
+        init: () => {
+            //create the window using the windows module
+            self.container = SmidqeTweaks.modules.windows.create({
+                wrap: false, 
+                id: 'menu',
+                titlebar: {
+                    title: 'Control center',
+                    remove: false,
+                },
+                classes: [],
+
+            });
+
+            //add the general group (includes toggle for tweaks,)
+            self.add({type: 'group', id: 'general', title: 'General functionality'});
+        }
+        
+        /*
         addCategory: (data) => {
             self.container.append($('<div>', { id: 'st-menu-category-' + data.id, class: 'st-menu-category' })
                 .append($('<div>', { class: 'st-menu-title-category' })
@@ -100,23 +181,23 @@ function load() {
 
             $(selector).find('#st-button-' + data.key.toLowerCase()).remove();
         },
-        show: () => {
-            $('#st-menu').addClass('st-window-open st-window-overlap st-menu-container');
-            self.shown = true;
+        show: (value) => {
+            let classes = 'st-window-open st-window-overlap st-menu-container';
+            let selector = $('#st-menu');
+
+            if (value)
+                selector.addClass(classes);
+            else
+                selector.removeClass(classes);
+
+            self.shown = value;
         },
-        hide: () => {
-            $('#st-menu').removeClass('st-window-open st-window-overlap st-menu-container');
-            self.shown = false;
-        },
+
         toggle: () => {
             if (self.shown)
                 self.hide();
             else
                 self.show();
-        },
-        test: () => {
-            self.addCategory({ id: 'berrytweaks' });
-            self.addGroup({ category: 'berrytweaks', id: 'general' });
         },
         init: () => {
             self.container = $('<div>', { id: 'st-menu', class: 'st-window-default' });
@@ -148,9 +229,10 @@ function load() {
             SmidqeTweaks.modules.toolbar.add(self.button);
             self.started = true;
         },
+        */
     }
 
     return self;
 }
 
-SmidqeTweaks.addModule('menu', load());
+SmidqeTweaks.add(load());

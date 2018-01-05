@@ -1,6 +1,9 @@
 /*
-    Now that the layout folder is gone clean this file
-	mainly the get/addModule
+    TODO:
+        - Move layout to scripts
+        - Rework the information system for modules
+        - Rework the start module system
+        - 
 */
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
@@ -15,6 +18,13 @@ const self = {
         groups: ['dependencies', 'tweaks', 'chat', 'time', 'polls', 'playlist', 'patches'],
         container: null,
         storage: {},
+        addGroup: (id) => {
+            //don't add duplicate group
+            if (self.settings.groups.indexOf(id) !== -1)
+                return;
+
+            self.settings.groups.push(id);
+        },
         get: (key) => {
             return self.settings.storage[key];
         },
@@ -30,6 +40,12 @@ const self = {
         save: () => {
             localStorage.SmidqeTweaks2 = JSON.stringify(self.settings.storage);
         },
+        /*
+        create: (data) => {
+            
+        }
+        */
+
         create: (data) => {
             const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
             const element = $('<input>', {
@@ -65,7 +81,7 @@ const self = {
             if (!mod.settings)
                 return;
 
-            $.each(mod.settings, (key, val) => {
+            $.each(mod.settings.ids, (key, val) => {
                 const setting = self.settings.create(val);
                 const group = cont.find('.st-settings-group.' + mod.group);
 
@@ -99,27 +115,27 @@ const self = {
             $("#settingsGui > ul").append($('<li>').append(cont));
         }
     },
-    addModule: (title, mod) => {
-        if (mod.script)
-            self.scripts[title] = mod;
+    add: (mod) => {
+        if (mod.category == 'script')
+            self.scripts[mod.name] = mod;
         else
-            self.modules[title] = mod;
+            self.modules[mod.name] = mod;
 
-        //don't init twice those that are core modules
-        if (mod.init && (self.names.modules.indexOf(title) == -1))
-            self.queue[title] = mod;
+        //don't init twice those that are core modules (is this required anymore???)
+        if (mod.init && (self.names.modules.indexOf(mod.name) == -1))
+            self.queue[mod.name] = mod;
     },
-    removeModule: (title, _from) => {
-        delete self.modules[title];
+    remove: (title, _from) => {
+        if (_from === 'script')
+            delete self.scripts[title];
+        else
+            delete self.modules[title];
     },
-    getModule: (title, _from) => {
-        return self.modules[title];
-    },
-    getScript: (title) => {
-        return self.scripts[title];
-    },
-    addScript: (title, script) => {
-        self.scripts[title] = script;
+    get: (title, _from) => {
+        if (_from === "script")
+            return self.scripts[title];
+        else
+            return self.modules[title];
     },
     //Credits to Atte and BerryTweaks, I just split them
     appendCallback: (container, func, callback) => {
@@ -209,8 +225,11 @@ const self = {
         })
     },
     init: () => {
+        console.log("Loading Smidqetweaks");
+
         self.load();
 
+        //append the min-css file
         $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))
 
         self.check = setInterval(() => {
@@ -227,7 +246,16 @@ const self = {
 
         self.patch(window, 'showConfigMenu', () => {
             self.settings.show();
-        }, false)
+        }, false);
+
+        self.settings.add({
+            text: 'Dependencies',
+            titles: ['Using BerryTweaks', 'Using Maltweaks'],
+            type: ['checkbox', 'checkbox'],
+            keys: ['berrytweaks', 'maltweaks'],
+            callbacks: [null, null],
+            subs: [false, false],
+        })
     },
 }
 

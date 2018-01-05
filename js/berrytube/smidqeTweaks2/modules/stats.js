@@ -1,6 +1,6 @@
 /*
     TODO
-        - Allow groups
+        - Allow groups (blocks)
         - Ensure the order for groups, prolly will have only 
         
 */
@@ -9,15 +9,70 @@ function load() {
     const self = {
         started: false,
         name: 'stats',
-        settings: [{
-            title: 'Show on hover',
-            type: 'checkbox',
-            key: 'statsOnHover',
-        }],
         requires: ['windows'],
         blocks: [],
         container: null,
         visible: false,
+        
+        /*
+        add: (type, data) => {
+            //don't add a duplicate value
+            if (self.find(type, data.id))
+                return;
+
+            if (type === 'block')
+            {
+                var wrap = $('<div>', {});
+            }
+
+            if (type === 'pair')
+            {
+                let wrap = $('<div>', {class: 'st-stats-pair'});
+
+                var title = $('<span>', {}).text(data.title);
+                var value = $('<span>', {}).text(data.value ? data.value : 'Not set');
+
+                wrap.append(title, value);
+
+                if (!data.block)
+                    return;
+
+                var block = self.find('block', data.block);
+                
+                if (block)
+                    block.append(wrap);
+            }
+        },
+
+        find: (type, id) => {
+            var select = null;
+
+            if (type === 'block')
+                select = $('#st-stats-block-' + id);
+
+            if (type === 'pair')
+                select = $('#st-stats-pair-' + id);
+        
+            return select[0] ? select[0] : undefined;
+        },
+        remove: () => {
+
+        },
+        update: (dest, value) => {
+            var pair = self.find('pair', dest);
+
+            if (!pair)
+                return;
+
+            pair.find('span:last-child').text(value);
+        },
+        init: () => {
+            //create the stats window
+
+
+            
+        }
+        */
         addBlock: (data) => {
             var block = null;
             let pos = self.blocks.indexOf(data.block);

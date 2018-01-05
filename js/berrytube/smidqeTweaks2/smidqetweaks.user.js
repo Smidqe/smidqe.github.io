@@ -3,6 +3,7 @@
 // @namespace   SS
 // @description SmidqeTweaks 2 for BT
 // @include     http://berrytube.tv/
+// @include     http://www.berrytube.tv/
 // @version     1
 // @grant       none
 // ==/UserScript==

@@ -2,7 +2,7 @@ function load() {
     const self = {
         group: 'patches',
         name: 'titleWrap',
-        script: true,
+        category: 'script',
         settings: [{
             title: 'Wrap videotitle to separate line',
             type: 'checkbox',
@@ -24,41 +24,28 @@ function load() {
             self.wrapped = false;
         },
         enable: () => {
-            if (SmidqeTweaks.settings.get('titleWrap')) {
-                if ($('#berrytweaks-video_title')[0])
-                    self.wrap();
-                else
-                    self.listeners.start(self.observer);
-            }
+            if ($('#berrytweaks-video_title')[0])
+                self.wrap();
+
+            self.enabled = true;
         },
         disable: () => {
-            self.unwrap();
-        },
-        callback: (mutations) => {
-            $.each(mutations, (key, mutation) => {
-                if (!mutation.addedNodes)
-                    return;
+            if ($('#st-videotitle-window')[0])
+                self.unwrap();
 
-                $.each(mutation.addedNodes, (key, node) => {
-                    if (self.wrapped)
-                        return;
-
-                    if ($(node).attr('id') !== 'berrytweaks-video_title')
-                        return;
-
-                    self.wrap();
-                    self.listeners.stop(self.observer);
-                })
-            })
+            self.enabled = false;
         },
         init: () => {
-            self.listeners = SmidqeTweaks.getModule('listeners', 'main');
-            self.observer = {
-                path: '#chatControls',
-                config: { childList: true }
-            }
 
-            self.observer.callback = self.callback;
+            socket.on('forceVideoChange', () => {
+                if (!self.enabled)
+                    self.enable();
+            });
+
+            socket.on('hbVideoDetail', () => {
+                if (!self.enabled)
+                    self.enable();
+            });
         },
     }
 

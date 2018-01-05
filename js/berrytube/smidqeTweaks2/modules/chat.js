@@ -1,13 +1,14 @@
 function load() {
     const self = {
         started: false,
+        category: 'module',
         requires: ['stats'],
         name: 'chat',
         add: (nick, text, type, hideNick) => {
             var time = new Date();
 
             //utilise Berrytweaks to get consistent time, there is variability between local and server times \\fsnotmad
-            if (SmidqeTweaks.settings.get('berrytweaks'))
+            if (SmidqeTweaks.settings.get('berrytweaks') && window.BerryTweaks)
                 time = BerryTweaks.getServerTime();
 
             addChatMsg({
@@ -85,4 +86,4 @@ function load() {
     }
     return self;
 }
-SmidqeTweaks.addModule('chat', load());
+SmidqeTweaks.addModule(load());

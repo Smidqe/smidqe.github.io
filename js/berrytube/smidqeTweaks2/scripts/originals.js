@@ -35,6 +35,8 @@ function load() {
             $.each(self.settings, (key, setting) => {
                 setting.callback = self.refresh;
             })
+
+            self.refresh();
         },
     }
 

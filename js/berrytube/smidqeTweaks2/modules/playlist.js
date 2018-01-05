@@ -43,6 +43,7 @@ function load() {
             var obj = window.PLAYLIST.first;
             var result = undefined;
 
+            //have to cycle through due to nature of circular linked list
             for (var i = 0; i < self.amount(); i++) {
                 if (i == index)
                     result = obj;
@@ -60,7 +61,6 @@ function load() {
             scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2), 0);
             realignPosHelper();
         },
-
         getLink: (title) => {
             const object = self.getObject(title);
             var url = null;
@@ -70,6 +70,9 @@ function load() {
                 case 'vimeo':
                     return ''
             }
+        },
+        showControls: () => {
+            
         },
     }
 

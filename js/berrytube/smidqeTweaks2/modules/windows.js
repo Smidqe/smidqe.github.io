@@ -2,6 +2,7 @@
     TODO:
         - Move creation of windows and such to a script, there is no need to keep them here it's just too much clutter
         - Overall redo the logic behind the creation of the windows and separate them to different subfunctions
+            - This is now the windows2.js
 */
 
 function load() {
@@ -52,7 +53,7 @@ function load() {
             users: {
                 selectors: ["#chatlist"],
                 classes: ["st-window-open st-window-users", 'st-window-wrap'],
-                text: 'List of users'
+                text: 'Userlist'
             },
         },
         add: (key, data, refresh) => {

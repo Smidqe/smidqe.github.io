@@ -4,13 +4,13 @@ function load() {
         name: 'toolbar',
         buttons: {},
         add: (data) => {
-            const element = $("<div>", {
+            var element = $("<div>", {
                 class: "st-toolbar-element",
                 id: "st-toolbar-element-" + data.id,
                 text: data.text,
             });
 
-            if (data.isToggle)
+            if (data.toggle)
                 element.on('click', function() {
                     $(this).toggleClass('active');
                 })
