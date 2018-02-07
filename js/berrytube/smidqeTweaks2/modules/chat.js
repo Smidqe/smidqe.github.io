@@ -1,9 +1,9 @@
 function load() {
     const self = {
-        started: false,
-        category: 'module',
-        requires: ['stats'],
-        name: 'chat',
+        meta: {
+            group: 'module',
+            name: 'chat'
+        },
         add: (nick, text, type, hideNick) => {
             var time = new Date();
 
@@ -36,18 +36,28 @@ function load() {
             delete CHATLIST[nick];
         },
 
-        //could be expanded more
-        getEmotes: (user) => {
-            var query = null;
-
-            if (!user)
-                query = $('.berryemote');
-            else
-                query = $('#chatbuffer > .' + user + ' .berryemote');
-
-            return query;
+        get: (type, data) => {
+            switch(type)
+            {
+                case 'usercounts': return self.usercount(); 
+                case 'users': return self.users(data); //list of users
+                case 'emotes': return self.emotes(data);//used emotes
+                case 'rcv': return self.rcv(data);  //rcv's
+                default:
+                    return undefined;
+            }
         },
-        getUsers: () => {
+        users: (data) => {
+            let selector = $('.user, .admin, .anon');
+            
+        },
+        emotes: (data) => {
+            
+        },
+        rcv: (data) => {
+
+        },
+        usercount: () => {
             const result = {};
             const groups = $('#connectedCountWrapper').attr('title').split('<br />');
 
@@ -63,27 +73,7 @@ function load() {
 
             return result;
         },
-        init: () => {
-            let stats = SmidqeTweaks.modules.stats;
-
-            $.each(self.getUsers(), (key, value) => {
-                stats.addPair('chat', {
-                    id: key,
-                    title: key[0].toUpperCase() + key.slice(1),
-                    value: value,
-                    sub: key !== "usercount",
-                });
-            })
-
-            SmidqeTweaks.patch(window, 'handleNumCount', () => {
-                $.each(self.getUsers(), (key, value) => {
-                    stats.update(key, value);
-                })
-            })
-
-            self.started = true;
-        },
     }
     return self;
 }
-SmidqeTweaks.addModule(load());
+SmidqeTweaks.add(load());

@@ -6,23 +6,37 @@
 
 function load() {
     const self = {
-
         settings: {
-            text: 'Playlist tracking',
-            titles: ['Track changes', 'Additions', 'Removals', 'Moves', 'Show position numbers', 'Show current position', 'Volatiles'],
-            type: ['checkbox', 'checkbox', 'checkbox', 'checkbox', 'checkbox', 'checkbox', 'checkbox'],
-            keys: ['trackPlaylist', 'trackAdd', 'trackRemove', 'trackMove', 'showPositionChange', 'showCurrentPosition', 'trackVolatile'],
-            callbacks: [null, null, null, null, null, null, null],
-            subs: [false, false, false, false, true, true, false],
+            group: 'playlist',
+            values: [{
+                title: 'Track changes',
+                key: 'trackPlaylist'
+            }, {
+                title: 'Additions',
+                key: 'trackAdd'
+            }, {
+                title: 'Removals',
+                key: 'trackRemove'
+            }, {
+                title: 'Moves',
+                key: 'trackMove'
+            }, {
+                title: 'Position numbers',
+                key: 'trackPosition',
+                sub: true,
+            }, {
+                title: 'Current position',
+                key: 'trackCurrent',
+                sub: true,
+            }, {
+                title: 'Volatiles',
+                key: 'trackVolatile'
+            },]
         },
         //this might be the future
         meta: {
-            category: 'script',
-            group: { //group is for settings
-                id: 'trackplaylist',
-                title: 'Playlist tracking',
-            },
-            name: 'trackPlaylist',
+            group: 'script',
+            name: 'trackPlaylist'
         },
         shuffle: false,
         tracking: {},
@@ -47,7 +61,7 @@ function load() {
             return object;
         },
         message: (data, id) => {
-            var msg = data.title;
+            let msg = data.title;
 
             if (data.volat)
                 msg += ' (volatile)';
@@ -60,6 +74,10 @@ function load() {
 
             //try to rewrite this
             if (data.changed) {
+                //???
+                if (Object.keys(data.changes).indexOf('volat'))
+                    msg += ' was set to ' + data.volat === true ? ' volatile ' : ' permanent';
+
                 $.each(data.changes, (key, value) => {
 
                     switch (value.key) {
@@ -98,7 +116,7 @@ function load() {
             if (!self.enabled || self.shuffle || !data)
                 return;
 
-            var object;
+            let object;
 
             switch (action.id) {
                 case 'add':
@@ -202,10 +220,6 @@ function load() {
             self.enabled = SmidqeTweaks.settings.get('trackPlaylist')
         },
         init: () => {
-            self.settings.callbacks[0] = function() {
-                self.toggle();
-            }
-
             socket.on('addVideo', (data) => {
                 self.action(data.video, { id: 'add', setting: 'trackAdd' })
             })

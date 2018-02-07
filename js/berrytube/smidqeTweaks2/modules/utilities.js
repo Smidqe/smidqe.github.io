@@ -5,6 +5,11 @@
 
 function load() {
     const self = {
+        meta: {
+            group: 'module',
+            name: 'utilities'
+        },
+
         waitForElement: (selector, callback) => {
             var interval = setInterval(() => {
                 if (!$(selector)[0])
@@ -45,4 +50,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('utilities', load());
+SmidqeTweaks.add(load());

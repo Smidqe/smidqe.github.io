@@ -1,65 +1,67 @@
-/*
-    TODO:
-        - Move this time thingy to scripts
-
-*/
-
 function load() {
     const self = {
         started: false,
-        requires: ['stats', 'listeners'],
-        stats: null,
-        group: 'time',
-        name: 'time',
-        settings: [{
-            title: 'Show time in 12h format instead of 24',
-            type: 'checkbox',
-            key: '12hour'
-        }],
-        toolbarElement: {
-            id: 'time',
-            text: '',
-            tooltip: 'Current time',
-            type: 'button',
-            callbacks: {},
+        meta: {
+            group: 'module',
+            name: 'time'
         },
-        addedValues: false,
-        //clean this function eventually
         get: () => {
             const time = new Date();
 
-            var hours = time.getHours();
-            const detail = hours < 12 ? "AM" : "PM";
+            let hours = time.getHours();
+            let minutes = time.getMinutes();
+            let seconds = time.getSeconds();
 
-            if (hours > 12 && SmidqeTweaks.settings.get('12hour'))
-                hours -= 12;
+            let obj = {h: hours, m: minutes, s: seconds, format: '24h', suffix: null};
 
-            var minutes = time.getMinutes();
+            $.each(obj, (key, val) => {
+                if (key === 'format' || key === 'suffix') //don't do anything to format
+                    return;
 
-            if (minutes < 10)
-                minutes = "0" + minutes;
+                obj[key] = val < 10 ? "0" + val : val;
+            })
 
-            var msg = hours + ":" + minutes;
+            obj.suffix = obj.h > 12 ? 'PM' : 'AM';
 
-            if (SmidqeTweaks.settings.get('12hour'))
-                msg += " " + detail;
-
-            return msg;
+            return obj;
         },
-        init: () => {
-            self.toolbarElement.text = self.get();
-
-            SmidqeTweaks.modules.toolbar.add(self.toolbarElement);
-
-            setInterval(() => {
-                SmidqeTweaks.modules.toolbar.updateText('time', self.get());
-            }, 60 * 1000)
-
-            self.started = true;
+        diff: (old, current) => {
+            //calculate diff (dunno if used)
         },
+        //rewrite this to something better???
+        convert: (format, value) => {
+            if (value.format === format)
+                return value;
+
+            if (format === 'normal' && value.format === 'ms')
+                return self.parse(value);
+
+            if (['12h', '24h'].indexOf(format) !== -1)
+            {
+                value.h += (format === '12h') ? -12 : 12;
+                value.format = format;
+            }
+
+            if (value.ms && (format === '24h' || format === '12h'))
+            {
+                let values = ['s', 'm', 'h'];
+
+                $.each(values, (index, key) => {
+                    value[key] = (value.ms / (1000 * (index + 1))) % 60;
+                })
+
+                value.suffix = value.h > 12 ? 'PM' : 'AM';
+                value.format = format;
+
+                if (value.h > 12 && format === '12h')
+                    value.h -= 12;
+            }
+
+            return value;
+        }
     }
 
     return self;
 }
 
-SmidqeTweaks.addModule('time', load());
+SmidqeTweaks.add(load());

@@ -1,67 +1,57 @@
+/*
+    Data structure for a toolbar element
+        - id
+        - text
+        - tooltip
+        - callback(s)
+*/
+
 function load() {
     const self = {
-        started: false,
-        name: 'toolbar',
-        buttons: {},
+        meta: {
+            group: 'module',
+            name: 'toolbar'
+        },
+        bar: null,
         add: (data) => {
-            var element = $("<div>", {
-                class: "st-toolbar-element",
-                id: "st-toolbar-element-" + data.id,
-                text: data.text,
-            });
-
-            if (data.toggle)
-                element.on('click', function() {
-                    $(this).toggleClass('active');
-                })
-
+            let element = $('<div>', {class: 'st-toolbar-element', id: 'st-toolbar-element-' + data.id});
+            
             if (data.tooltip)
                 element.attr('title', data.tooltip);
 
-            if (SmidqeTweaks.settings.get(data.setting) || data.active)
-                element.addClass('active');
+            if (data.text)
+                element.text(data.text);
+
+            //add possibility to different types? dropdowns and such?
 
             self.bar.append(element);
 
+            if (!data.callbacks)
+                return;
+
             $.each(data.callbacks, (key, value) => {
-                self.addCallback(data.id, key, value);
-            })
+                element.on(key, value);
+            })            
         },
-        remove: (key) => {
-            $('#st-toolbar-element-' + key).remove();
+        remove: key => {
+            self.bar.find('#st-toolbar-element-' + key).remove();
         },
-        addCallback: (id, key, callback) => {
-            $("#st-toolbar-element-" + id).on(key, callback);
+        hide: key => {
+            self.bar.find('#st-toolbar-element-' + key).css('display', 'none');
         },
-        show: (key) => {
-            $.each(self.buttons, (sub, value) => {
-                if (key && key !== sub)
-                    return;
-
-                $("#st-toolbar-element-" + sub).removeClass('hidden');
-            })
+        show: key => {
+            self.bar.find('#st-toolbar-element-' + key).css('display', 'block');
         },
-        updateText: (key, value) => {
-            $('#st-toolbar-element-' + key).text(value);
-        },
-        hide: (key) => {
-            $.each(self.buttons, (sub, value) => {
-                if (key && key !== sub)
-                    return;
-
-                if (!self.buttons[sub].alwaysVisible)
-                    $("#st-toolbar-element-" + sub).addClass('hidden');
-            })
+        update: (key, value) => {
+            self.bar.find('#st-toolbar-element-' + key).text(value);
         },
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
             self.bar.insertBefore("#chatControls > .settings");
-
-            self.started = true;
-        },
+        }
     }
 
     return self;
 }
 
-SmidqeTweaks.addModule('toolbar', load());
+SmidqeTweaks.add(load());

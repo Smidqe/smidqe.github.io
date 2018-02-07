@@ -3,7 +3,10 @@
 */
 function load() {
     const self = {
-        name: 'hideVideo',
+        meta: {
+            group: 'script',
+            name: 'hideVideo'
+        },
         button: {
             title: 'Toggle video',
             category: 'Berrytube',
@@ -11,7 +14,10 @@ function load() {
             type: 'button',
             callbacks: {},
         },
-
+        settings: {
+            group: 'video',
+            requires: ['maltweaks']
+        },
         hasMal: false,
         running: true,
         hide: () => {
@@ -51,4 +57,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addScript('hideVideo', load());
+SmidqeTweaks.add(load());

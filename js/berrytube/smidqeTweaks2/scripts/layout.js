@@ -34,90 +34,155 @@
             - title
             - selectors
             - 
+
+
+    - Problem with maltweaks
+        - 
 */
 
 function load() {
     const self = {
-        name: 'loadLayout',
-        category: 'script',
-        tries: 5,
-        /*
-        buttons: [{
-            text: "Enable/Disable tweaks",
-            id: 'tweaks',
-            type: 'button',
-            toggle: true,
-            'data-key': 'tweaks',
-            callbacks: {},
-        }],
-
-        */
-        //need to think through this part
-        
+        meta: {
+            group: 'script',
+            name: 'layout'
+        },
+        setting: null,
+        utilities: null,
+        maltweaks: false,
+        menuElement: {
+            element: ''
+        },
         windows: {
             rules: {
-                title: 'Rules and MotD',
-                selectors: [],
-                classes: [], //only special classes
+                selectors: ["#st-wrap-motd", "#motdwrap"],
+                title: 'Rules and MOTD'
             },
             header: {
-                title: 'Berrytube header',
-                selectors: [],
-            }
+                selectors: ["#st-wrap-header", "#headwrap", ],
+                title: 'Berrytube header'
+            },
+            footer: {
+                selectors: ["#st-wrap-footer", "#main #footwrap", ],
+                title: 'Berrytube footer',
+            },
+            polls: {
+                selectors: ["#pollpane"],
+                classes: ["st-window-overlap"],
+                title: 'Polls'
+            },
+            messages: {
+                selectors: ["#mailboxDiv"],
+                classes: ["st-window-overlap"],
+                title: 'Personal messages'
+            },
+            login: {
+                selectors: [".wrapper #headbar"],
+                title: 'Login window'
+            },
+            playlist: {
+                selectors: ["#main #leftpane"],
+                classes: ["st-window-playlist", "st-window-overlap"],
+                title: 'Playlist',
+            },
+            users: {
+                selectors: ["#chatlist"],
+                classes: ["st-window-users"],
+                title: 'Userlist'
+            },
         },
-        enable: () => {
-            //load windows
-            $.each(self.windows, (key, value) => {
-                let index = self.maltweaks && value.selectors.length > 1 ? value.selectors[1] : value.selectors[0];
-
-                var window = {
-                    id: key,
-                    wrap: true,
-                    selector: value.selectors[index],
-                    titlebar: {
-                        remove: false,
-                        title: value.title,
-                    },
-                    classes: ['st-window-default', 'st-window-wrap'].push(...value.classes)
-                }
-
-                self.windows.add(window);
-            })
-
-            //add wraps to the if maltweaks is not enabled
+        stylesheet: null,
+        load: () => {
             if (!self.maltweaks)
             {
                 $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
                 $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
                 $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
             }
+
+            //create windows
+            $.each(self.windows, (key, value) => {
+                let selector = self.maltweaks && value.selectors.length > 1 ? value.selectors[1] : value.selectors[0];
+                let window = {
+                    id: key,
+                    wrap: true,
+                    selector: selector,
+                    titlebar: {
+                        remove: false,
+                        title: value.title,
+                    },
+                    classes: ['st-window-wrap'],
+                }
+
+                if (value.classes)
+                    window.classes.push(...value.classes);
+
+                SmidqeTweaks.modules.windows.create(window);
+            })
+            
+            //append the css sheet (full version)
+            
+            $("#chatpane").addClass("st-chat");
+            $("#videowrap").addClass("st-video");
+
+            let location = self.maltweaks ? $('body') : $('head');
+
+            location.append(self.stylesheet);
+
+            self.enabled = true;
+        },
+        enable: () => {
+            let loaded = false;
+
+            self.interval = setInterval(() => { 
+                if (self.maltweaks && window.MT)
+                    loaded = window.MT.loaded;
+
+                if (!self.maltweaks)
+                    loaded = true;
+
+                if (loaded)
+                    self.load();
+
+                if (self.enabled)
+                    clearInterval(self.interval);
+            }, 500);
+
+            SmidqeTweaks.settings.set('layout', true, true);
         },
 
         disable: () => {
-            $.each(self.windows)
-
             //unwrap the wrapped elements
             if (!self.maltweaks)
                 $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
+
+            SmidqeTweaks.settings.set('layout', false, true);
         },
-
+        toggle: () => {
+            if (SmidqeTweaks.settings.get('layout'))
+                self.enable();
+            else
+                self.disable();
+        },
         init: () => {
-            self.settings = SmidqeTweaks.settings;
-            self.utilities = SmidqeTweaks.modules.utilities;
+            self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks.css"/>');            
+            self.maltweaks = SmidqeTweaks.settings.get('maltweaks');
+            /*
+                TODO:
+                    - Add button to menu (eventually)
+                    - 
+            */
 
-            self.maltweaks = self.settings.get('maltweaks');
+            //this handles the initial playlist load
+            socket.on('recvPlaylist', () => {
+                $("#playlist").addClass("st-window-playlist");
+            })
 
-            if (!self.settings.get('layout'))
-                return;
-
-            //we have layout enabled by default, so 
-            self.interval = setInterval(() => {
-                if (self.maltweaks && self.utilities.check(window.MT, window.MT.loaded) || !(self.settings.get('maltweaks')))
-                    self.enable();
-
-                if (self.enabled)
-                    clearIntervals(self.interval);
-            }, 500);
+            SmidqeTweaks.patch(SmidqeTweaks.modules.windows, 'show', (key) => {
+                if (key !== 'playlist')
+                    return;
+                
+                SmidqeTweaks.modules.playlist.refresh();
+            })
         }
     }
 

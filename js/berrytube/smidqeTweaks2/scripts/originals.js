@@ -1,9 +1,12 @@
 /*
-	Hides/shows the original emotes/settings button
+    This could be combined with layout?
 */
 function load() {
     const self = {
-        name: 'originals',
+        meta: {
+            group: 'script',
+            name: 'originals'
+        },
         group: 'patches',
         script: true,
         settings: [{
@@ -31,6 +34,9 @@ function load() {
             else
                 berrymotes.css('display', 'none');
         },
+        toggle: () => {
+            
+        },
         init: () => {
             $.each(self.settings, (key, setting) => {
                 setting.callback = self.refresh;
@@ -43,4 +49,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule('originals', load());
+SmidqeTweaks.add(load());

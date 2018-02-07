@@ -40,11 +40,6 @@ const self = {
         save: () => {
             localStorage.SmidqeTweaks2 = JSON.stringify(self.settings.storage);
         },
-        /*
-        create: (data) => {
-            
-        }
-        */
 
         create: (data) => {
             const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
@@ -95,6 +90,7 @@ const self = {
             cont.append($('<legend>', { text: 'SmidqeTweaks' }));
 
             //create the groups
+            /*
             $.each(self.settings.groups, (key, val) => {
                 cont.append($('<div>', {
                     class: 'st-settings-group ' + val,
@@ -102,7 +98,7 @@ const self = {
                     text: (val[0].toUpperCase() + val.slice(1)),
                 })));
             })
-
+            */
             //use the names defined in self.names, to ensure same order everytime
             $.each(self.names.modules, (key, mod) => {
                 self.settings.append(cont, self.modules[mod]);
@@ -208,7 +204,20 @@ const self = {
 
         delete src[mod.name];
     },
+    checkScripts: () => {
+        let checks = [{
+            key: 'berrytweaks',
+            value: window.BerryTweaks
+        }, {
+            key: 'maltweaks',
+            value: window.MT,
+        }];
 
+        $.each(checks, (c) => {
+            if (!!c.value !== self.settings.get(c.key))
+                self.settings.set(key, !!c.value, true);
+        })
+    },
     load: () => {
         self.settings.load();
 
@@ -248,14 +257,11 @@ const self = {
             self.settings.show();
         }, false);
 
-        self.settings.add({
-            text: 'Dependencies',
-            titles: ['Using BerryTweaks', 'Using Maltweaks'],
-            type: ['checkbox', 'checkbox'],
-            keys: ['berrytweaks', 'maltweaks'],
-            callbacks: [null, null],
-            subs: [false, false],
-        })
+        //remove this eventually
+
+        self.scriptCheck = setInterval(() => {
+            
+        }, 500)
     },
 }
 

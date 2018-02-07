@@ -1,3 +1,10 @@
+/*
+    TODO:
+        - Rework the container(window) css
+        - Rework the menu css
+        - Rework something else
+*/
+
 .st-window-open {
     background-color: rgba(0, 0, 0, 0.6);
     width: 70%;
@@ -13,9 +20,14 @@
     position: fixed;
 }
 
-.st-window-default {
+.st-window-container {
+    display: block;
+}
+
+.st-window-hidden {
     display: none;
 }
+
 
 #headwrap.st-window-open .floatinner .wrapper {
     background: none;

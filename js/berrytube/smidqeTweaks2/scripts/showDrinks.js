@@ -1,18 +1,26 @@
 /*
-	PLACEHOLDER FOR NOW
-
-	Eventually will handle the drinks data that will be shown in the infobox
+    ???
 */
 function load() {
     const self = {
+        meta: {
+            group: 'script',
+            name: 'showDrinks'
+        },
         group: 'tweaks',
         category: 'script',
         name: 'showDrinks',
-        settings: [{
-            title: 'Show drink count in chat',
-            type: 'checkbox',
-            key: 'showDrinks',
-        }],
+        settings: 
+        {
+            group: 'chat',
+            values: [{
+                title: 'Show drink count in chat',
+                type: 'checkbox',
+                key: 'showDrinks',
+            },{
+                title: 'Show video position'
+            }]
+        },
         pairs: [{
             id: 'current',
             title: 'Current drinks',
@@ -48,16 +56,15 @@ function load() {
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;
 
+            
             SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
-                if (!self.enabled)
-                    return;
-
-                if (data.msg.emote !== 'drink')
+                if (!self.enabled || data.msg.emote !== 'drink')
                     return;
 
                 self.show();
             }, false);
 
+            /*
             $.each(self.pairs, (key, value) => {
                 self.stats.addPair('drinks', value);
             });
@@ -75,10 +82,12 @@ function load() {
             setInterval(() => {
                 self.stats.update('dpm', $(".dpmCounter").text().substring(5));
             }, 1000);
+
+            */
         },
     }
 
     return self;
 }
 
-SmidqeTweaks.addScript('showDrinks', load());
+SmidqeTweaks.add(load());

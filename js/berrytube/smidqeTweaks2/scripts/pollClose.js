@@ -1,18 +1,26 @@
 function load() {
     const self = {
-        name: 'pollClose',
-        group: 'poll',
-        settings: [{
-            title: 'Show poll closures in chat',
-            type: 'checkbox',
-            key: 'pollClose',
-        }],
+        meta: {
+            group: 'script',
+            name: 'pollClose'
+        },
+        settings: {
+            group: 'poll',
+            values:[{
+                title: 'Show poll closures in chat',
+                type: 'checkbox',
+                key: 'pollClose',
+            }]
+        },
         enabled: false,
         enable: () => {
             self.enabled = true;
         },
         disable: () => {
             self.enabled = false;
+        },
+        toggle: () => {
+            
         },
         init: () => {
             socket.on('clearPoll', (data) => {
@@ -30,4 +38,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addModule()
+SmidqeTweaks.add(load())

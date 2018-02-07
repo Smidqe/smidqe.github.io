@@ -7,11 +7,7 @@
 function load() {
     const self = {
         meta: {
-            category: 'module',
-            group: {
-                id: 'layout',
-                title: 'Layout'
-            },
+            group: 'module',
             name: 'layout'
         },
         started: false,
@@ -62,29 +58,6 @@ function load() {
                 click: () => { showConfigMenu(); }
             },
         }],
-
-        listeners: {
-            maltweaks: {
-                path: "body",
-                config: { childList: true },
-            },
-        },
-        interval: null,
-        menu: null,
-        handleMaltweaks: (mutations) => {
-            $.each(mutations, (key, mutation) => {
-                if (!mutation.addedNodes)
-                    return;
-
-                $.each(mutation.addedNodes, (key, node) => {
-                    if (node.id !== 'headwrap')
-                        return;
-
-                    if (SmidqeTweaks.settings.get("active") && SmidqeTweaks.settings.get("maltweaks"))
-                        self.enable();
-                })
-            })
-        },
         wrap: () => {
             $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
             $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
@@ -105,8 +78,6 @@ function load() {
             self.interval = setInterval(() => {
                 if (!$('#playlist')[0])
                     return;
-
-                $("#playlist").addClass("st-window-playlist");
                 clearInterval(self.interval);
             })
 

@@ -1,16 +1,46 @@
+/*
+    Rewrite this one
+
+
+*/
+
 function load() {
     const self = {
+        meta: {
+            group: 'script',
+            name: 'titleWrap'
+        },
         group: 'patches',
         name: 'titleWrap',
         category: 'script',
         settings: [{
             title: 'Wrap videotitle to separate line',
-            type: 'checkbox',
             key: 'titleWrap',
         }],
-        requires: ['listeners'],
-        observer: null,
         wrapped: false,
+        /*
+        getBerrytweakSetting: (value) => {
+            if (!window.Berrytweaks)
+                return;
+
+            let config = window.BerryTweaks.loadSettings().enabled;
+
+            return config[value] || false;
+        },
+        enable: () => {
+            if (!window.BerryTweaks)
+                return;
+
+            let exists = self.getBerrytweakSetting(videotitle);
+
+            if (!exists)
+                return;
+
+            if ()
+        }
+        */
+
+
         wrap: () => {
             $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
             $('#chatlist').addClass('st-patch-berrytweaks');
@@ -36,6 +66,7 @@ function load() {
             self.enabled = false;
         },
         init: () => {
+            
 
             socket.on('forceVideoChange', () => {
                 if (!self.enabled)
@@ -46,9 +77,11 @@ function load() {
                 if (!self.enabled)
                     self.enable();
             });
+
+
         },
     }
 
     return self;
 }
-SmidqeTweaks.addScript('titleWrap', load());
+SmidqeTweaks.add(load());
