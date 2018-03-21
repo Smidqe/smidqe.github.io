@@ -1,189 +1,121 @@
 /*
-    TODO:
-        - Move creation of windows and such to a script, there is no need to keep them here it's just too much clutter
-        - Overall redo the logic behind the creation of the windows and separate them to different subfunctions
+    This is a rewrite of windows.js, meant to work purely as a module instead of mix of script/module
+
+    if ()
 */
 
 function load() {
     const self = {
-        name: 'windows',
-        started: false,
-        requires: ['menu', 'layout'],
-        menu: null,
-        windows: {
-            rules: {
-                selectors: ["#st-wrap-motd", "#motdwrap"],
-                classes: ["st-window-open", 'st-window-wrap'],
-                text: 'Rules and MOTD'
-            },
-            header: {
-                selectors: ["#st-wrap-header", "#headwrap", ],
-                classes: ["st-window-open", 'st-window-wrap'],
-                text: 'Berrytube header'
-            },
-            footer: {
-                selectors: ["#st-wrap-footer", "#main #footwrap", ],
-                classes: ["st-window-open", 'st-window-wrap'],
-                text: 'Berrytube footer',
-            },
-            polls: {
-                selectors: ["#pollpane"],
-                classes: ["st-window-open st-window-overlap", 'st-window-wrap'],
-                text: 'Polls'
-            },
-            messages: {
-                selectors: ["#mailboxDiv"],
-                classes: ["st-window-open st-window-overlap", 'st-window-wrap'],
-                text: 'Personal messages'
-            },
-            login: {
-                selectors: [".wrapper #headbar"],
-                classes: ["st-window-open", 'st-window-wrap'],
-                text: 'Login window'
-            },
-            playlist: {
-                selectors: ["#main #leftpane"],
-                classes: ["st-window-open st-window-playlist", "st-window-overlap", 'st-window-wrap'],
-                text: 'Playlist',
-                callback: () => {
-                    SmidqeTweaks.modules.playlist.refresh();
-                }
-            },
-            users: {
-                selectors: ["#chatlist"],
-                classes: ["st-window-open st-window-users", 'st-window-wrap'],
-                text: 'List of users'
-            },
+        meta: {
+            group: 'module',
+            name: 'windows'
         },
-        add: (key, data, refresh) => {
-            self.windows[key] = data;
-
-            if (refresh)
-                self.refresh();
-        },
-        get: (key) => {
-            return self.windows[key];
-        },
-        show: (key) => {
-            console.log('Key applied to windows.show(): ' + key);
-
-            let data = self.get(key);
-            var selector = data.selectors[0];
-
-            if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
-                selector = data.selectors[1];
-
-            const titlebar = $('<div>', {
+        requires: [],
+        windows: {}, //container to all windows (all are jquery)
+        titlebar: (data, id) => {
+            return $('<div>', {
                 class: 'st-titlebar'
             }).append(
                 $('<div>', {
-                    class: 'st-titlebar-exit'
-                }).on('click', () => {
-                    self.hide(key);
+                    class: 'st-titlebar-exit',
+                    'data-remove': data.remove,
+                    'data-id': id,
+                    'data-hover': data.hover,
+                }).on('click', function() {
+                    if ($(this).data('remove') == 'true')
+                        self.remove($(this));
+                    else
+                        self.show($(this).data('id'), false);
                 })
-            ).append($('<span>').text(data.text));
-
-            const window = $('' + selector);
-
-            window.prepend(titlebar);
-
-            $.each(data.classes, (key, value) => {
-                window.addClass(value);
-            })
+            ).append($('<span>').text(data.title));
         },
+        show: (name, value, callback) => {
+            let window = self.windows[name] || $('#st-window-container-' + name)
 
-        hide: (key) => {
-            const data = self.get(key);
+            if (!value)
+                window.addClass('st-window-hidden');
+            else
+                window.removeClass('st-window-hidden');
 
-            var selector = data.selectors[0];
-
-            if (SmidqeTweaks.settings.get('maltweaks') && data.selectors.length > 1)
-                selector = data.selectors[1];
-
-            const window = $('' + selector);
-            const titlebar = window.find('.st-titlebar');
-
-            $.each(data.classes, (key, value) => {
-                window.removeClass(value);
-            })
-
-            titlebar.remove();
+            if (callback)
+                callback();
         },
+        remove: (name) => {
+            let element = self.windows[name] || $('#st-window-container-' + name);
 
-        hideAll: () => {
-            $.each(self.windows, (key, value) => {
-                self.hide(key);
-            })
+            element.find('.titlebar').remove();
+            element.contents().unwrap();
+
+            delete self.windows[name];
         },
-        getSelector: (value) => {
-            return SmidqeTweaks.settings.get('maltweaks') && value.selectors.length > 1 ? value.selectors[1] : value.selectors[0];
+        get: (name) => { 
+            if (!name)
+                return self.windows;
+            
+            return self.windows[name] || $('#st-window-container-' + name);
         },
-        addMenuButtons: () => {
-            $.each(self.windows, (key, value) => {
-                var obj = {
-                    text: key[0].toUpperCase() + key.slice(1),
-                    id: key,
-                    category: 'SmidqeTweaks',
-                    group: 'Windows',
-                    type: 'button',
-                    'data-key': key
-                }
+        open: (name) => {
+            let window = self.windows[name] || $('#st-window-container-' + name);
+            let result = !window.hasClass('st-window-hidden');
 
-                obj.callbacks = {
-                    click: function() {
-                        self.show($(this).attr('data-key'));
-
-                        if (value.callback)
-                            value.callback();
-
-                        self.menu.hide();
-                    }
-                }
-
-                self.menu.addElement(obj);
-            })
+            return result;
         },
-        removeMenuButtons: () => {
-            $.each(self.windows, (key, value) => {
-                var obj = {
-                    category: 'SmidqeTweaks',
-                    group: 'Windows',
-                    key: key,
-                }
-
-                self.menu.removeElement(obj);
-            })
+        exists: (name) => {
+            return !!self.get(name)[0];
         },
-        refresh: () => {
-            self.removeMenuButtons();
-            self.addMenuButtons();
-
-            $.each(self.windows, (key, value) => {
-                $(self.getSelector(value)).addClass('st-window-default');
-            })
+        width: (name) => {
+            return self.get(name).width();
         },
-        init: () => {
-            self.menu = SmidqeTweaks.modules.menu;
+        height: (name) => {
+            return self.get(name).height();
+        },
+        create: (data) => {
+            if (data instanceof Array)
+            {
+                let result = [];
 
-            self.check = setInterval(() => {
-                let layout = SmidqeTweaks.modules.layout;
+                $.each(data, (index) => {
+                    result.push(self.create(data[index]))
+                })
+                
+                return result;
+            }
+            
+            let container = $('<div>', { id: 'st-window-container-' + data.id });
+            let elem = $(data.selector);
 
-                if (!layout)
-                    return;
+            if (data.wrap && elem[0])
+                container = elem.wrap(container).parent();
 
-                if (!layout.enabled)
-                    return;
+            container.addClass('st-window-container st-window-hidden');
 
-                self.refresh();
+            if (data.titlebar) {
+                let bar = self.titlebar(data.titlebar, data.id);
 
-                clearInterval(self.check);
-            })
+                //prepend the titlebar to ensure that it will always be on top if it's a wrap
+                if (data.wrap)
+                    container.prepend(bar);
+                else
+                    container.append(bar);
+            }
 
-            self.started = true;
+            if (data.classes)
+                $.each(data.classes, (key, value) => {
+                    container.addClass(value);
+                });
+
+            //append only those windows that are not wraps to the body
+            if (!data.wrap) 
+                $('body').append(container);
+
+            //save the jquery object for further use
+            self.windows[data.id] = container;
+
+            return container;
         },
     }
 
     return self;
 }
 
-SmidqeTweaks.addModule('windows', load());
+SmidqeTweaks.add(load());

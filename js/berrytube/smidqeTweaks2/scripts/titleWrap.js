@@ -1,67 +1,53 @@
+/*
+    Rewrite this one
+
+
+*/
+
 function load() {
     const self = {
-        group: 'patches',
-        name: 'titleWrap',
-        script: true,
+        meta: {
+            group: 'script',
+            name: 'titleWrap'
+        },
         settings: [{
             title: 'Wrap videotitle to separate line',
-            type: 'checkbox',
             key: 'titleWrap',
         }],
-        requires: ['listeners'],
-        observer: null,
-        wrapped: false,
-        wrap: () => {
-            $("#berrytweaks-video_title").wrap($("<div>", { id: "st-videotitle-window" }));
-            $('#chatlist').addClass('st-patch-berrytweaks');
-
-            self.wrapped = true;
-        },
-        unwrap: () => {
-            $('#chatlist').removeClass('st-patch-berrytweaks');
-            $("#berrytweaks-video_title").unwrap();
-
-            self.wrapped = false;
-        },
         enable: () => {
-            if (SmidqeTweaks.settings.get('titleWrap')) {
-                if ($('#berrytweaks-video_title')[0])
-                    self.wrap();
-                else
-                    self.listeners.start(self.observer);
-            }
+            if (self.enabled)
+                return;
+            
+            self.container.wrap($('<div>', {id: 'st-videotitle-window'}));
+            $('.st-window-users').addClass('st-patch-berrytweaks');
+
+            self.enabled = true;
         },
         disable: () => {
-            self.unwrap();
+            if (!self.enabled)
+                return;
+
+            $('.st-window-users').removeClass('st-patch-berrytweaks');
+
+            self.container.unwrap();
+            self.enabled = false;
         },
-        callback: (mutations) => {
-            $.each(mutations, (key, mutation) => {
-                if (!mutation.addedNodes)
-                    return;
-
-                $.each(mutation.addedNodes, (key, node) => {
-                    if (self.wrapped)
-                        return;
-
-                    if ($(node).attr('id') !== 'berrytweaks-video_title')
-                        return;
-
-                    self.wrap();
-                    self.listeners.stop(self.observer);
-                })
-            })
+        grab: () => {
+            self.container = $('#berrytweaks-video_title');
         },
-        init: () => {
-            self.listeners = SmidqeTweaks.getModule('listeners', 'main');
-            self.observer = {
-                path: '#chatControls',
-                config: { childList: true }
-            }
+        init: () => {   
+            socket.on('forceVideoChange', () => {
+                self.grab();
+                self.enable();
+            });
 
-            self.observer.callback = self.callback;
+            socket.on('hbVideoDetail', () => {
+                self.grab();
+                self.enable();
+            });
         },
     }
 
     return self;
 }
-SmidqeTweaks.addScript('titleWrap', load());
+SmidqeTweaks.add(load());

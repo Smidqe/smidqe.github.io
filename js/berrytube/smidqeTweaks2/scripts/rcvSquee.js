@@ -1,18 +1,22 @@
 function load() {
     const self = {
-        group: 'chat',
-        script: true,
-        name: 'rcvSquee',
-        settings: [{
-            title: 'Squee on RCV messages',
-            type: 'checkbox',
-            key: 'rcvSquee',
-        }, {
-            title: 'Highlight the message',
-            type: 'checkbox',
-            key: 'highlightRCV',
-            sub: true,
-        }],
+        meta: {
+            group: 'script',
+            name: 'rcvSquee'
+        },
+        settings: {
+            group: 'chat',
+            values: [{
+                title: 'Squee on RCV messages',
+                type: 'checkbox',
+                key: 'rcvSquee',
+            }, {
+                title: 'Highlight the message',
+                type: 'checkbox',
+                key: 'highlightRCV',
+                sub: true,
+            }]
+        },
         enabled: false,
         disable: () => {
             self.enabled = false;
@@ -34,4 +38,4 @@ function load() {
     }
     return self;
 }
-SmidqeTweaks.addScript('rcvSquee', load());
+SmidqeTweaks.add(load());

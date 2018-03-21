@@ -1,50 +1,45 @@
 /*
     TODO:
-        - Have a global timeout for tracked videos, if there is a change within 60 seconds refresh timeout, otherwise remove it from the 
+        - rewrite some parts 
         
 */
 
 function load() {
     const self = {
-        settings: [{
-            title: 'Track playlist changes',
-            type: 'checkbox',
-            key: 'trackPlaylist',
-            callback: null,
-        }, {
-            title: 'Track playlist additions',
-            type: 'checkbox',
-            key: 'trackAdd',
-        }, {
-            title: 'Track playlist removals',
-            type: 'checkbox',
-            key: 'trackRemove',
-        }, {
-            title: 'Track playlist moves',
-            type: 'checkbox',
-            key: 'trackMove',
-        }, {
-            title: 'Show position numbers',
-            type: 'checkbox',
-            key: 'showPositionChange',
-            sub: true,
-        }, {
-            title: 'Show current position',
-            type: 'checkbox',
-            key: 'showCurrentPosition',
-            sub: true,
-        }, {
-            title: 'Track volatile changes',
-            type: 'checkbox',
-            key: 'trackVolatile',
-        }],
-        group: 'playlist',
-        name: 'trackPlaylist',
-        check: null,
+        settings: {
+            group: 'playlist',
+            values: [{
+                title: 'Track changes',
+                key: 'trackPlaylist'
+            }, {
+                title: 'Additions',
+                key: 'trackAdd'
+            }, {
+                title: 'Removals',
+                key: 'trackRemove'
+            }, {
+                title: 'Moves',
+                key: 'trackMove'
+            }, {
+                title: 'Position numbers',
+                key: 'trackPosition',
+                sub: true,
+            }, {
+                title: 'Current position',
+                key: 'trackCurrent',
+                sub: true,
+            }, {
+                title: 'Volatiles',
+                key: 'trackVolatile'
+            },]
+        },
+        //this might be the future
+        meta: {
+            group: 'script',
+            name: 'trackPlaylist'
+        },
         shuffle: false,
-        script: true,
         tracking: {},
-        messaged: false,
         track: (video) => {
             var title = decodeURIComponent(video.videotitle);
             var pos = SmidqeTweaks.modules.playlist.getObject(title).pos;
@@ -59,27 +54,32 @@ function load() {
                 timeout: 0,
                 changed: false,
                 changes: [],
+                remove: false,
             }
 
             self.tracking[object.videoid] = object;
             return object;
         },
         message: (data, id) => {
-            var msg = data.title;
+            let msg = data.title;
 
             if (data.volat)
                 msg += ' (volatile)';
 
-            if (id === 'remove' || id === 'add') {
-                if (id === 'remove')
-                    msg += ' was removed from playlist';
-                else
-                    msg += ' was added to playlist'
-            }
+            if (id === 'remove')
+                msg += ' was removed from playlist';
 
-            if ((id === 'modify' || id === 'volatile') && data.changed) {
+            if (id === 'add')
+                msg += ' was added to playlist';
+
+            //try to rewrite this
+            if (data.changed) {
+                //???
+                if (Object.keys(data.changes).indexOf('volat'))
+                    msg += ' was set to ' + data.volat === true ? ' volatile ' : ' permanent';
+
                 $.each(data.changes, (key, value) => {
-                    //only mention 
+
                     switch (value.key) {
                         case 'volat':
                             {
@@ -113,17 +113,10 @@ function load() {
             data.changed = false;
         },
         action: (data, action) => {
-            if (!self.enabled || self.shuffle)
+            if (!self.enabled || self.shuffle || !data)
                 return;
 
-            var object;
-            var message = false;
-
-            //Not sure why this happens, but meh
-            if (!data)
-                return;
-
-            console.log(data, action);
+            let object;
 
             switch (action.id) {
                 case 'add':
@@ -160,10 +153,12 @@ function load() {
                         if (!object)
                             object = self.track(data);
 
-
                         //a move happened
                         if (object.timeout)
                             clearTimeout(object.timeout);
+
+                        //add position to the data
+                        data.pos = SmidqeTweaks.modules.playlist.getObject(object.title).pos;
 
                         //check values
                         $.each(data, (key, value) => {
@@ -182,22 +177,7 @@ function load() {
                             }
                         })
 
-                        var pos = SmidqeTweaks.modules.playlist.getObject(object.title).pos;
-
-                        if (object.pos !== pos) {
-                            object.changes.push({
-                                key: 'pos',
-                                old: object.pos,
-                                new: pos,
-                            })
-
-                            object.pos = pos;
-                        }
-
-                        if (object.changes.length > 0) {
-                            object.changed = true;
-                            message = true;
-                        }
+                        object.changed = object.changes.length > 0;
 
                         break;
                     }
@@ -205,14 +185,11 @@ function load() {
                 case 'volatile':
                     {
                         var video = SmidqeTweaks.modules.playlist.getObjectByPos(data.pos);
-                        var remove = false;
 
                         object = self.tracking[video.videoid];
 
-                        if (!object) {
+                        if (!object)
                             object = self.track(video);
-                            remove = true; //there is no reason to hold it longer than it should
-                        }
 
                         object.changes.push({
                             key: 'volat',
@@ -220,19 +197,14 @@ function load() {
                             new: data.volat
                         })
 
-                        if (remove) {
-                            if (SmidqeTweaks.settings.get('trackVolatile'))
-                                self.message(object, action.id);
-
-                            delete self.tracking[object.videoid];
-                        } else
-                            message = true;
+                        if (data.volat)
+                            object.remove = true;
 
                         break;
                     }
             }
 
-            if (message && SmidqeTweaks.settings.get(action.setting))
+            if ((message || object.changes.length > 0) && SmidqeTweaks.settings.get(action.setting))
                 self.message(object, action.id);
 
             if (object.remove)
@@ -248,10 +220,6 @@ function load() {
             self.enabled = SmidqeTweaks.settings.get('trackPlaylist')
         },
         init: () => {
-            self.settings[0].callback = function() {
-                self.toggle();
-            }
-
             socket.on('addVideo', (data) => {
                 self.action(data.video, { id: 'add', setting: 'trackAdd' })
             })
@@ -261,6 +229,7 @@ function load() {
                 self.shuffle = true;
             })
 
+            //this needs testing eventually (need to have a method to figure out if playlist has been shuffled)
             socket.on('recvNewPlaylist', () => {
                 self.shuffle = false;
             })
@@ -291,4 +260,4 @@ function load() {
     return self;
 }
 
-SmidqeTweaks.addScript('trackPlaylist', load());
+SmidqeTweaks.add(load());

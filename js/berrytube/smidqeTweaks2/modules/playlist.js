@@ -1,12 +1,17 @@
 function load() {
     const self = {
+        meta: {
+            group: 'module',
+            name: 'playlist'
+        },
         started: true,
+        requires: ['time'],
         name: 'playlist',
         duration: (str) => {
-            const values = str.split(":").reverse();
-            var ms = 0;
+            let values = str.split(":").reverse();
+            let ms = 0;
 
-            //really shouldn't need days, because that would be just silly
+            //really shouldn't need days, because that would be just silly, also may cause overflow?
             if (values.length > 3)
                 return -1;
 
@@ -20,60 +25,58 @@ function load() {
             return ms;
         },
         exists: (title) => {
-            return playlist.pos(title) != -1;
+            return self.get('title', title).pos !== -1;
         },
         amount: () => {
             return window.PLAYLIST.length;
         },
-        getObject: (title) => {
-            var obj = window.PLAYLIST.first;
+        diff: (prev, comp) => {
+            let current = null;
+            let search = self.get('title', prev);
 
-            for (var i = 0; i < self.amount(); i++) {
-                const elemTitle = decodeURIComponent(obj.videotitle);
+            if (search.pos === -1)
+                return 0;
 
-                if (elemTitle === title)
-                    return { value: obj, pos: i };
+            //if we haven't set the next video, compare to current active video
+            if (!comp)
+                current = self.get('title', window.ACTIVE.videotitle);
+            else
+                current = self.get('title', comp);
 
-                obj = obj.next;
-            }
-
-            return {};
+            return search.pos - current.pos;
         },
-        getObjectByPos: (index) => {
-            var obj = window.PLAYLIST.first;
-            var result = undefined;
-
+        get: (method, value) => {
+            let obj = window.PLAYLIST.first;
+            
             for (var i = 0; i < self.amount(); i++) {
-                if (i == index)
-                    result = obj;
+                let result = false;
+
+                if (method === 'title')
+                    result = (decodeURIComponent(obj.videotitle) === value);
+
+                if (method === 'index')
+                    result = (value === i);
 
                 if (result)
-                    break;
+                    return {value: obj, pos: i};
 
                 obj = obj.next;
             }
 
-            return result;
+            //correct thing wasn't found
+            return {value: null, pos: -1};
         },
         refresh: () => {
             smartRefreshScrollbar();
             scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2), 0);
             realignPosHelper();
         },
-
-        getLink: (title) => {
-            const object = self.getObject(title);
-            var url = null;
-            switch (object.videotype) {
-                case 'yt':
-                    return 'https://www.youtube.com/watch?v=' + object.videoid;
-                case 'vimeo':
-                    return ''
-            }
+        showControls: () => {
+            
         },
     }
 
     return self;
 }
 
-SmidqeTweaks.addModule('playlist', load());
+SmidqeTweaks.add(load());

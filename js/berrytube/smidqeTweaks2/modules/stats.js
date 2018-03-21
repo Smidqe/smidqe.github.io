@@ -1,103 +1,96 @@
 /*
     TODO
-        - Allow groups
-        - Ensure the order for groups, prolly will have only 
-        
+        - Do testing on this
 */
 
 function load() {
     const self = {
+        meta: {
+            group: 'module',
+            name: 'stats'
+        },
         started: false,
-        name: 'stats',
-        settings: [{
-            title: 'Show on hover',
-            type: 'checkbox',
-            key: 'statsOnHover',
-        }],
-        requires: ['windows'],
-        blocks: [],
+        requires: ['windows', 'menu'],
         container: null,
-        visible: false,
-        addBlock: (data) => {
-            var block = null;
-            let pos = self.blocks.indexOf(data.block);
+        add: (type, data) => {
+            //don't add a duplicate value
+            if (self.find(type, data.id))
+                return;
 
-            if (pos != -1)
-                block = $('#st-stats-block-' + data.block);
-            else
-                block = $('<div>', { id: 'st-stats-block-' + data.block, class: 'st-stats-block' })
+            if (type === 'block')
+            {
+                self.container.append($('<div>', {class: 'st-stats-block', id: 'st-stats-block-' + data.id}));
 
-            block.append($('<div>', { class: 'st-stats-block-title' }).append($('<span>').text(data.block[0].toUpperCase() + data.block.slice(1))))
+                //if the pairs are included on the block add them or exit if those don't exist
+                if (!data.pairs)
+                    return;
+                
+                $.each(data.pairs, (key, pair) => {
+                    self.add('pair', pair);
+                });
+            }
 
-            $.each(data.values, (key, value) => {
-                self.addPair(block, value);
-            })
+            if (type === 'pair')
+            {
+                let wrap = $('<div>', {class: 'st-stats-pair'});
 
-            if (pos == -1) {
-                self.blocks.push(data.block);
-                self.container.append(block);
+                let title = $('<span>', {}).text(data.title);
+                let value = $('<span>', {}).text(data.value ? data.value : 'Not set');
+
+                wrap.append(title, value);
+
+                if (!data.block)
+                    return;
+
+                let block = self.find('block', data.block);
+                
+                if (block)
+                    block.append(wrap);
             }
         },
-        getBlock: (key) => {
-            if (self.blocks.indexOf(key) == -1)
-                return null;
+        find: (type, id) => {
+            let select = null;
 
-            return $('#st-stats-block-' + key);
+            if (type === 'block')
+                select = self.container.find('#st-stats-block-' + id);    
+
+            if (type === 'pair')
+                select = self.container.find('#st-stats-pair-' + id);
+        
+            return select[0] ? select[0] : undefined;
         },
-        addPair: (key, value) => {
-            if (self.blocks.indexOf(key) == -1)
-                self.addBlock({ block: key, values: [] })
+        remove: (name) => {
+            if (!self.find('pair', name))
+                return;
 
-            const block = self.getBlock(key);
-            const pair = $('<div>', { id: 'st-stats-pair-' + value.id, class: 'st-stats-pair' });
-
-            var title = $('<span>').text(value.title).addClass('st-stats-pair-title');
-            var val = $('<span>').text(value.value).addClass('st-stats-pair-value');
-
-            pair.append(title, val);
-
-            if (value.sub)
-                pair.addClass('st-stats-pair-sub');
-
-            block.append(pair);
+            self.container.find('#st-stats-pair-' + name).remove();
         },
-        pairExists: (key) => {
-            return ($("#st-stats-pair-" + key)[0] !== undefined);
-        },
-        getPair: (key) => {
-            return $("#st-stats-pair-" + key);
-        },
-        getPairByTitle: (data) => {
-            var pair = self.getPair(data.key);
+        update: (dest, value) => {
+            let pair = self.find('pair', dest);
 
-            if (data.title === pair.title)
-                return pair;
-        },
-        update: (key, value) => {
-            //self.getPair(key).value.text(value);
-            $("#st-stats-pair-" + key).find('span:last-child').text(value);
-        },
-        show: () => {
-            $('#st-stats-container').addClass('st-window-overlap st-window-open st-menu-container');
+            if (!pair)
+                return;
+
+            $(pair).find('span:last-child').text(value);
         },
         init: () => {
-            self.container = $('<div>', { id: 'st-stats-container', class: 'st-window-default' })
-
-            //append it
-            $("body").append(self.container);
-
-            let windows = SmidqeTweaks.modules.windows;
-
-            windows.add('stats', {
-                selectors: ['#st-stats-container'],
-                classes: ['st-window-overlap st-window-open st-menu-container'],
-            }, true);
+            //create the stats window
+            self.container = SmidqeTweaks.modules.windows.create({
+                wrap: false, 
+                id: 'stats',
+                titlebar: {
+                    title: 'Statistics',
+                    remove: false,
+                },
+                classes: ['st-window-container-stats', 'st-window-overlap'],
+                menu: true,
+            });
 
             self.started = true;
-        },
+        }
     }
 
     return self;
 }
 
-SmidqeTweaks.addModule('stats', load());
+SmidqeTweaks.add(load());

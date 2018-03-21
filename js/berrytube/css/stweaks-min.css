@@ -1,7 +1,7 @@
 /* For the minimalistic css used before the main one is included */
 
-.st-window-default {
-    display: none;
+.st-window-hidden {
+    display: none !important;
 }
 
 .st-stats-block-title {
