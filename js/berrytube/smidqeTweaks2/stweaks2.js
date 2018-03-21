@@ -247,13 +247,23 @@ const self = {
         self.settings.load();
 
         $.each(self.names.modules, (index, name) => {
-            $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`, () => {
+            let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`
+
+            if (SmidqeTweaks.settings.get('development'))
+                path = `http://localhost/smidqetweaks/modules/${name}.js`;
+            
+            $.getScript(path, () => {
                 self.queue[name] = self.modules[name];
             })
         })
         
         $.each(self.names.scripts, (index, name) => {
-            $.getScript(`https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`, () => {
+            let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`
+
+            if (SmidqeTweaks.settings.get('development'))
+                path = `http://localhost/smidqetweaks/scripts/${name}.js`;
+            
+            $.getScript(path, () => {
                 self.queue[name] = self.scripts[name];
             })
         })
@@ -264,7 +274,10 @@ const self = {
         self.load();
 
         //append the min-css file
-        $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks-min.css"/>'))
+        if (SmidqeTweaks.settings.get('development'))
+            $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks-min.css"/>'))
+        else
+            $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    
 
         self.check = setInterval(() => {            
             if ($.isEmptyObject(self.queue))
