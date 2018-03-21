@@ -1,22 +1,4 @@
 /*
-    TODO:
-        - Rework the hoverstate
-            * Conditions when menu should be closed:
-                - Mouse exits menu button from up, left or right
-                - Mouse exits menu container from any side unless it's the menu button   
-            * This allows us to simplify the callbacks on multiple occasions to a single function
-            * Since we can utilise a mouseEvent 
-            * 
-    Layout:
-        group
-            * Will be a div
-            * Upon mouseenter -> show elements 
-            * If not enough space down, open it up
-                    
-            title
-            elements
-                * 
-
 
     data structs to add:
 
@@ -160,9 +142,13 @@ function load() {
         },
         update: (data) => {
             //TODO
-        },
-        refresh: () => {
+            /*
+                What do we need/or want to change here?
+                - Title
+                - callback?
+                - 
 
+            */
         },
         resize: () => {
             let group = $('.st-menu-group, .st-menu-group-title');
@@ -178,7 +164,6 @@ function load() {
             elements.width(width);
         },
         init: () => {
-            console.log('Menu.init()');
             self.utilities = SmidqeTweaks.modules.utilities;
             self.windows = SmidqeTweaks.modules.windows;
             self.enums = self.utilities.enums;
