@@ -1,7 +1,6 @@
 /*
     TODO
-        - Allow groups (blocks)
-        
+        - Do testing on this
 */
 
 function load() {
@@ -11,8 +10,7 @@ function load() {
             name: 'stats'
         },
         started: false,
-        name: 'stats',
-        requires: ['windows'],
+        requires: ['windows', 'menu'],
         container: null,
         add: (type, data) => {
             //don't add a duplicate value
@@ -51,7 +49,7 @@ function load() {
             }
         },
         find: (type, id) => {
-            var select = null;
+            let select = null;
 
             if (type === 'block')
                 select = self.container.find('#st-stats-block-' + id);    
@@ -81,13 +79,14 @@ function load() {
                 wrap: false, 
                 id: 'stats',
                 titlebar: {
-                    title: 'Control center',
+                    title: 'Statistics',
                     remove: false,
                 },
-                classes: ['st-stats'],
+                classes: ['st-window-container-stats', 'st-window-overlap'],
+                menu: true,
             });
 
-            
+            self.started = true;
         }
     }
 

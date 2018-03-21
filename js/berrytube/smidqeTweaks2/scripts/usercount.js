@@ -1,3 +1,19 @@
+function load() {
+    const self = {
+        meta: {
+            
+        },
+        enabled: false,
+
+        enable: () => {
+            self.enabled = true;
+        },
+        disable: () => {
+            self.enabled = false;
+        },
+
+        //create the listeners
+        init: () => {
             /*
             $.each(self.getUsers(), (key, value) => {
                 stats.addPair('chat', {
@@ -14,3 +30,9 @@
                 })
             })
             */
+        }
+    }
+
+    return self;
+}
+SmidqeTweaks.add(load())

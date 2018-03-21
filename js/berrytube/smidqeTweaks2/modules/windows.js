@@ -1,6 +1,7 @@
 /*
     This is a rewrite of windows.js, meant to work purely as a module instead of mix of script/module
 
+    if ()
 */
 
 function load() {
@@ -9,6 +10,7 @@ function load() {
             group: 'module',
             name: 'windows'
         },
+        requires: [],
         windows: {}, //container to all windows (all are jquery)
         titlebar: (data, id) => {
             return $('<div>', {
@@ -18,6 +20,7 @@ function load() {
                     class: 'st-titlebar-exit',
                     'data-remove': data.remove,
                     'data-id': id,
+                    'data-hover': data.hover,
                 }).on('click', function() {
                     if ($(this).data('remove') == 'true')
                         self.remove($(this));
@@ -26,13 +29,16 @@ function load() {
                 })
             ).append($('<span>').text(data.title));
         },
-        show: (name, value) => {
+        show: (name, value, callback) => {
             let window = self.windows[name] || $('#st-window-container-' + name)
 
             if (!value)
                 window.addClass('st-window-hidden');
             else
                 window.removeClass('st-window-hidden');
+
+            if (callback)
+                callback();
         },
         remove: (name) => {
             let element = self.windows[name] || $('#st-window-container-' + name);
@@ -42,7 +48,10 @@ function load() {
 
             delete self.windows[name];
         },
-        get: (name) => {
+        get: (name) => { 
+            if (!name)
+                return self.windows;
+            
             return self.windows[name] || $('#st-window-container-' + name);
         },
         open: (name) => {
@@ -54,14 +63,31 @@ function load() {
         exists: (name) => {
             return !!self.get(name)[0];
         },
+        width: (name) => {
+            return self.get(name).width();
+        },
+        height: (name) => {
+            return self.get(name).height();
+        },
         create: (data) => {
+            if (data instanceof Array)
+            {
+                let result = [];
+
+                $.each(data, (index) => {
+                    result.push(self.create(data[index]))
+                })
+                
+                return result;
+            }
+            
             let container = $('<div>', { id: 'st-window-container-' + data.id });
             let elem = $(data.selector);
 
-            if (data.wrap && data.selector)
-                container.append(elem);
+            if (data.wrap && elem[0])
+                container = elem.wrap(container).parent();
 
-            container.addClass('st-window-container st-window-default');
+            container.addClass('st-window-container st-window-hidden');
 
             if (data.titlebar) {
                 let bar = self.titlebar(data.titlebar, data.id);

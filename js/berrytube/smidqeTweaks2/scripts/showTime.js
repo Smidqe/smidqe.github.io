@@ -42,7 +42,8 @@ function load() {
 					time = SmidqeTweaks.modules.time.convert('12h', time);
 				
 				let text = '';
-				let skip = ['format', 'suffix']
+				let skip = ['format', 'suffix'];
+				
 				$.each(time, (key, val) => {
 					if (skip.indexOf(key) !== -1)
 						return;

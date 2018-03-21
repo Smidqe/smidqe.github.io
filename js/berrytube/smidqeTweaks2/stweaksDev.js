@@ -19,7 +19,8 @@
                 - group ()
 
 
-        - Possibly rework the settings???
+        - Possibly rework the settings
+            - Allow dependencies of certain settings
         
 */
 const self = {
@@ -116,21 +117,6 @@ const self = {
             const group = self.settings.group('get', settings.group);
             
             $.each(settings.values, (key, val) => {
-                /*
-                let show = true;
-
-                if (val.requires)
-                {
-                    
-                    $.each(val.requires, (index, val) => {
-
-                    })
-                }
-                
-                if (!show)
-                    return;
-                */
-
                 let setting = self.settings.create(val);
 
                 if (val.group)
@@ -229,19 +215,18 @@ const self = {
         if (!mod.requires)
             return true;
 
-        const result = true;
+        let result = true;
 
         $.each(mod.requires, (index) => {
             if (!result)
                 return;
 
-            const check = self.modules[mod.requires[index]];
+            let check = self.modules[mod.requires[index]];
 
-            //check if it's not even loaded
-            if (!check) {
+            if (!check)
                 result = false;
-                return;
-            }
+            else 
+                result = !!check.init ? check.started : true;
         })
 
         return result;

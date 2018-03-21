@@ -2,12 +2,7 @@
     - Layout
         - Video left (stays)
         - Chat right (stays)
-        - Menu (changes)
-            * Can be only opened on hover, will have a column of buttons or a full window (min vs full (settings))
-            * Flexible (meaning can work atleast 720p)
-            * Each button has either a hover or click
-                * Most windows are click
-                * Some are hover only
+        - Menu (changes) DONE
 
         - Playlist
             * Controls will be separated from the playlist and inserted into body
@@ -17,17 +12,6 @@
                 * Possibility to pop the playlist?
             * Having berry automatically opens the playlist controls and forces things
 
-        
-        - Userlist
-            * Will not be a click type of window, will vanish once the mouse leaves the area
-                * This can be changed from the settings if necessary
-            * WutColors refresh button will be moved to the menu
-                * wutColors -> refresh
-            * Might have a shortcut somewhere in chat (same as emotes)
-                * One side of the input a square button that opens a small menu
-                * Will be a script
-                    *
-        - 
 
     - Data structures
         * Window:
@@ -49,21 +33,18 @@ function load() {
         setting: null,
         utilities: null,
         maltweaks: false,
-        menuElement: {
-            element: ''
-        },
         windows: {
             rules: {
                 selectors: ["#st-wrap-motd", "#motdwrap"],
-                title: 'Rules and MOTD'
+                title: 'Rules/MOTD'
             },
             header: {
                 selectors: ["#st-wrap-header", "#headwrap", ],
-                title: 'Berrytube header'
+                title: 'Header'
             },
             footer: {
                 selectors: ["#st-wrap-footer", "#main #footwrap", ],
-                title: 'Berrytube footer',
+                title: 'Footer',
             },
             polls: {
                 selectors: ["#pollpane"],
@@ -73,11 +54,11 @@ function load() {
             messages: {
                 selectors: ["#mailboxDiv"],
                 classes: ["st-window-overlap"],
-                title: 'Personal messages'
+                title: 'Messages'
             },
             login: {
                 selectors: [".wrapper #headbar"],
-                title: 'Login window'
+                title: 'Login'
             },
             playlist: {
                 selectors: ["#main #leftpane"],
@@ -86,19 +67,14 @@ function load() {
             },
             users: {
                 selectors: ["#chatlist"],
-                classes: ["st-window-users"],
+                classes: ["st-window-overlap", "st-window-users"],
                 title: 'Userlist'
             },
         },
         stylesheet: null,
-        load: () => {
-            if (!self.maltweaks)
-            {
-                $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
-                $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
-                $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
-            }
-
+        __menu: null,
+        __windows: null,
+        loadWindows: () => {
             //create windows
             $.each(self.windows, (key, value) => {
                 let selector = self.maltweaks && value.selectors.length > 1 ? value.selectors[1] : value.selectors[0];
@@ -116,19 +92,87 @@ function load() {
                 if (value.classes)
                     window.classes.push(...value.classes);
 
-                SmidqeTweaks.modules.windows.create(window);
+                let menuItem = {
+                    type: 'element', 
+                    element: 'div', 
+                    group: 'windows', 
+                    menu: true, 
+                    id: key, 
+                    title: value.title, 
+                    callbacks: {
+                        'click': () => {__windows.show(key, true)}
+                    }
+                }
+
+                __windows.create(window);
+                __menu.add(menuItem);
             })
-            
-            //append the css sheet (full version)
-            
+        },
+        hideOriginals: () => {
+            $('.settings, .berrymotes_button').css('display', 'none');
+
+            if (!$('.berrymotes_button')[0])
+            {
+                //apply a patch for init script for berrymotes
+                SmidqeTweaks.patch(Bem, 'berrySiteInit', () => {
+                    $('.berrymotes_button').css('display', 'none');
+                })
+            }
+
+            //add settings window and emote window
+            let menuSettingsButton = {
+                type: 'element', 
+                element: 'div', 
+                group: 'berrytube', 
+                menu: true, 
+                id: 'settings', 
+                title: 'Settings', 
+                callbacks: {
+                    'click': () => {window.showConfigMenu()}
+                }
+            }
+
+            let menuEmotesButton = {
+                type: 'element', 
+                element: 'div', 
+                group: 'berrytube', 
+                menu: true, 
+                id: 'emotes', 
+                title: 'Emotes', 
+                callbacks: {
+                    'click': () => {Bem.showBerrymoteSearch()}
+                }
+            }
+
+            __menu.add([menuSettingsButton, menuEmotesButton])
+        },
+        setupCSS: (remove) => {
+            if (!remove)
+                (self.maltweaks ? $('body') : $('head')).append(self.stylesheet);
+            else
+                $('#st-stylesheet').remove();
+        },
+        load: () => {
+            if (!self.maltweaks)
+            {
+                $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
+                $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
+                $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
+            }
+
+            self.loadWindows();
+            self.hideOriginals();
+
+            //add custom classes to chat and video
             $("#chatpane").addClass("st-chat");
             $("#videowrap").addClass("st-video");
 
-            let location = self.maltweaks ? $('body') : $('head');
-
-            location.append(self.stylesheet);
+            self.setupCSS();
 
             self.enabled = true;
+
+            //modify the text on the
+            __menu.modify({id: 'tweaks', what: 'text', value: 'Disable tweaks'})
         },
         enable: () => {
             let loaded = false;
@@ -164,25 +208,36 @@ function load() {
                 self.disable();
         },
         init: () => {
+            //add menu group
+            __menu = SmidqeTweaks.modules.menu;
+            __windows = SmidqeTweaks.modules.windows;
+
+            //add the necessary groups
+            __menu.add({type: 'group', id: 'berrytube', title: 'Berrytube'});
+            __menu.add({type: 'group', id: 'windows', title: 'Windows'});
+            
+            //add the toggle for the 
+            __menu.add({type: 'element', id: ''});
+
             self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks.css"/>');            
             self.maltweaks = SmidqeTweaks.settings.get('maltweaks');
-            /*
-                TODO:
-                    - Add button to menu (eventually)
-                    - 
-            */
 
             //this handles the initial playlist load
             socket.on('recvPlaylist', () => {
+                if (!self.enabled)
+                    return;
+                
                 $("#playlist").addClass("st-window-playlist");
             })
 
-            SmidqeTweaks.patch(SmidqeTweaks.modules.windows, 'show', (key) => {
+            SmidqeTweaks.patch(__windows, 'show', (key) => {
                 if (key !== 'playlist')
                     return;
                 
                 SmidqeTweaks.modules.playlist.refresh();
             })
+
+
         }
     }
 

@@ -48,14 +48,24 @@ function load() {
             }
         },
         users: (data) => {
-            let selector = $('.user, .admin, .anon');
-            
+            /*
+                What data do we need?
+                data:
+                {
+                    filters: {
+                        users: [],
+                        groups: [],
+                    }, 
+
+                    keepGroup: false //if this is enabled return value will have group (user, anon, admin etc)
+                }
+            */
         },
         emotes: (data) => {
-            
+            return $('.berryemote');
         },
         rcv: (data) => {
-
+            return $('.rcv');
         },
         usercount: () => {
             const result = {};

@@ -35,8 +35,8 @@ function load() {
             if (data.votes.length < 10) //to take into account that some mods don't use 0..10 scale, instead there's 1..10
                 return;
 
-            var total = 0;
-            var count = 0;
+            let total = 0;
+            let count = 0;
 
             $.each(data.votes, (index, value) => {
                 //only ignore zeros when there are 11 values (0..10), and not when (1..10)
@@ -47,37 +47,27 @@ function load() {
                 count += value;
             })
 
-            const average = total / count;
-            const msg = "average is " + average;
+            let average = total / count;
+            let msg = "average is " + average;
             
             //don't show invalid values
             if (isNaN(average))
                 return;
 
+            //not functional yet
             if (self.main.get('statsAverage'))
                 self.save();
-
-            SmidqeTweaks.modules.chat.add("Episode ", msg, 'rcv', false);
+            
+            self.chat.add("Episode ", msg, 'rcv', false);
         },
         save: (value) => {
-            if (self.main.get('statsAverage'))
-            {
-                if (!self.stats.find('block', 'epavg'))
-                    self.stats.add({
-                        
-                    });
 
-                SmidqeTweaks.modules.stats.update('epavg', value);
-            }
         },
         enable: () => {
             self.enabled = true;
         },
         disable: () => {
             self.enabled = false;
-        },
-        toggle: () => {
-            
         },
         init: () => {
             self.stats = SmidqeTweaks.modules.stats;

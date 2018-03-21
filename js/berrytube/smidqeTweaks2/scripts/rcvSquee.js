@@ -24,9 +24,6 @@ function load() {
         enable: () => {
             self.enabled = true;
         },
-        toggle: () => {
-
-        },
         init: () => {
             SmidqeTweaks.patch(window, 'addChatMsg', (data, _to) => {
                 if (!self.enabled || data.msg.emote !== 'rcv')

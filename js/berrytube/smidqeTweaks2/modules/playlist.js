@@ -30,6 +30,21 @@ function load() {
         amount: () => {
             return window.PLAYLIST.length;
         },
+        diff: (prev, comp) => {
+            let current = null;
+            let search = self.get('title', prev);
+
+            if (search.pos === -1)
+                return 0;
+
+            //if we haven't set the next video, compare to current active video
+            if (!comp)
+                current = self.get('title', window.ACTIVE.videotitle);
+            else
+                current = self.get('title', comp);
+
+            return search.pos - current.pos;
+        },
         get: (method, value) => {
             let obj = window.PLAYLIST.first;
             

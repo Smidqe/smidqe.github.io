@@ -1,4 +1,8 @@
 /*
+    TODO:
+        - Modify the add() to be more uniform with the rest of the modules
+        - Expand functionality
+
     Data structure for a toolbar element
         - id
         - text
@@ -14,7 +18,11 @@ function load() {
         },
         bar: null,
         add: (data) => {
-            let element = $('<div>', {class: 'st-toolbar-element', id: 'st-toolbar-element-' + data.id});
+            //don't add duplicate with same name
+            if (self.get(data.id)[0])
+                return;
+
+            let element = $('<' + ((data.element) ? data.element : 'div') + '>', {class: 'st-toolbar-element', id: 'st-toolbar-element-' + data.id});
             
             if (data.tooltip)
                 element.attr('title', data.tooltip);
@@ -33,21 +41,36 @@ function load() {
                 element.on(key, value);
             })            
         },
+        get: (name) => {
+            return self.bar.find('#st-toolbar-element-' + name);
+        },
         remove: key => {
-            self.bar.find('#st-toolbar-element-' + key).remove();
+            let element = self.get(key);
+            
+            if (!element[0])
+                return undefined;
+
+            element.remove();
         },
         hide: key => {
-            self.bar.find('#st-toolbar-element-' + key).css('display', 'none');
+            self.get(key).css('display', 'none');
         },
-        show: key => {
-            self.bar.find('#st-toolbar-element-' + key).css('display', 'block');
+        show: (key, value) => {
+            let element = self.get(key);
+            
+            if (!element[0])
+                return;
+
+            element.css('display', value ? 'block' : 'none');
         },
         update: (key, value) => {
             self.bar.find('#st-toolbar-element-' + key).text(value);
         },
         init: () => {
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
-            self.bar.insertBefore("#chatControls > .settings");
+            self.bar.prependTo("#chatControls");
+
+            self.started = true;
         }
     }
 

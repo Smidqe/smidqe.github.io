@@ -25,22 +25,23 @@ function load() {
 
             return obj;
         },
-        diff: (old, current) => {
-            //calculate diff (dunno if used)
+        diff: (old, current, format = '24h') => {
+            //convert to ms
+            let oldms = self.convert('ms', old);
+            let newms = self.convert('ms', current);
+        
+            //substract diff and abs it and convert back to 24h format (or 12h)
+            let diff = self.convert(format, abs(newms - oldms));
+
+            return diff;
         },
         //rewrite this to something better???
         convert: (format, value) => {
             if (value.format === format)
                 return value;
 
-            if (format === 'normal' && value.format === 'ms')
-                return self.parse(value);
-
             if (['12h', '24h'].indexOf(format) !== -1)
-            {
                 value.h += (format === '12h') ? -12 : 12;
-                value.format = format;
-            }
 
             if (value.ms && (format === '24h' || format === '12h'))
             {
@@ -51,11 +52,12 @@ function load() {
                 })
 
                 value.suffix = value.h > 12 ? 'PM' : 'AM';
-                value.format = format;
 
                 if (value.h > 12 && format === '12h')
                     value.h -= 12;
             }
+
+            value.format = format;
 
             return value;
         }

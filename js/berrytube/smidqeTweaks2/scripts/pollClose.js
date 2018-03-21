@@ -19,9 +19,6 @@ function load() {
         disable: () => {
             self.enabled = false;
         },
-        toggle: () => {
-            
-        },
         init: () => {
             socket.on('clearPoll', (data) => {
                 if (!self.enabled)
