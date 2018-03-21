@@ -172,7 +172,7 @@ function load() {
             self.enabled = true;
 
             //modify the text on the
-            __menu.modify({id: 'tweaks', what: 'text', value: 'Disable tweaks'})
+            __menu.update({id: 'tweaks', what: 'text', value: 'Disable tweaks'})
         },
         enable: () => {
             let loaded = false;
