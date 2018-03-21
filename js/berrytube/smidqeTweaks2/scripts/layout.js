@@ -219,7 +219,13 @@ function load() {
             //add the toggle for the 
             __menu.add({type: 'element', id: ''});
 
-            self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks.css"/>');            
+
+            if (SmidqeTweaks.settings.get('development'))
+                self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks.css"/>');            
+            else
+                self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>');
+
+            
             self.maltweaks = SmidqeTweaks.settings.get('maltweaks');
 
             //this handles the initial playlist load
