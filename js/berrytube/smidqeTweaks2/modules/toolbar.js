@@ -30,6 +30,11 @@ function load() {
             if (data.text)
                 element.text(data.text);
 
+            if (data.classes)
+                $.each(data.classes, (c) => {
+                    element.addClass(c);
+                })
+
             //add possibility to different types? dropdowns and such?
 
             self.bar.append(element);
@@ -55,18 +60,15 @@ function load() {
         hide: key => {
             self.get(key).css('display', 'none');
         },
-        show: (key, value) => {
-            let element = self.get(key);
-            
-            if (!element[0])
-                return;
-
-            element.css('display', value ? 'block' : 'none');
+        show: (key) => {
+            self.get(key).css('display', 'block');
         },
         update: (key, value) => {
             self.bar.find('#st-toolbar-element-' + key).text(value);
         },
         init: () => {
+            console.log("Module[toolbar]: ", "Initialising");
+
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
             self.bar.prependTo("#chatControls");
 

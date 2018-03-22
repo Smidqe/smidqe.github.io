@@ -30,6 +30,7 @@ function load() {
             group: 'script',
             name: 'layout'
         },
+        requires: ['menu', 'toolbar', 'windows'],
         setting: null,
         utilities: null,
         maltweaks: false,
@@ -72,8 +73,10 @@ function load() {
             },
         },
         stylesheet: null,
+        playlist: false,
         __menu: null,
         __windows: null,
+        __toolbar: null,
         loadWindows: () => {
             //create windows
             $.each(self.windows, (key, value) => {
@@ -100,12 +103,12 @@ function load() {
                     id: key, 
                     title: value.title, 
                     callbacks: {
-                        'click': () => {__windows.show(key, true)}
+                        'click': () => {self.__windows.show(key, true)}
                     }
                 }
 
-                __windows.create(window);
-                __menu.add(menuItem);
+                self.__windows.create(window);
+                self.__menu.add(menuItem);
             })
         },
         hideOriginals: () => {
@@ -144,7 +147,7 @@ function load() {
                 }
             }
 
-            __menu.add([menuSettingsButton, menuEmotesButton])
+            self.__menu.add([menuSettingsButton, menuEmotesButton])
         },
         setupCSS: (remove) => {
             if (!remove)
@@ -166,13 +169,16 @@ function load() {
             //add custom classes to chat and video
             $("#chatpane").addClass("st-chat");
             $("#videowrap").addClass("st-video");
+            $("#playlist").addClass("st-window-playlist");
 
             self.setupCSS();
 
             self.enabled = true;
 
             //modify the text on the
-            __menu.update({id: 'tweaks', what: 'text', value: 'Disable tweaks'})
+            self.__menu.update({id: 'tweaks', what: 'text', value: 'Disable tweaks'})
+            self.__toolbar.hide('layout');
+            self.__toolbar.show('menu');
         },
         enable: () => {
             let loaded = false;
@@ -184,11 +190,13 @@ function load() {
                 if (!self.maltweaks)
                     loaded = true;
 
-                if (loaded)
+                if (loaded && $('#playlist')[0])
                     self.load();
 
                 if (self.enabled)
                     clearInterval(self.interval);
+
+                console.log("Enabled:", loaded);
             }, 500);
 
             SmidqeTweaks.settings.set('layout', true, true);
@@ -199,33 +207,67 @@ function load() {
             if (!self.maltweaks)
                 $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
 
+            $("#chatpane").removeClass("st-chat");
+            $("#videowrap").removeClass("st-video");
+            $("#playlist").removeClass("st-window-playlist");
+
             SmidqeTweaks.settings.set('layout', false, true);
+
+            self.__toolbar.show('layout');
+            self.__toolbar.hide('menu');
+
+            self.setupCSS(true);
+
+            $.each(self.windows, (window, key) => {
+                self.__windows.remove(window);
+            })
         },
         toggle: () => {
-            if (SmidqeTweaks.settings.get('layout'))
+            if (!SmidqeTweaks.settings.get('layout'))
                 self.enable();
             else
                 self.disable();
         },
         init: () => {
             //add menu group
-            __menu = SmidqeTweaks.modules.menu;
-            __windows = SmidqeTweaks.modules.windows;
+            self.__menu = SmidqeTweaks.modules.menu;
+            self.__windows = SmidqeTweaks.modules.windows;
+            self.__toolbar = SmidqeTweaks.modules.toolbar;
 
             //add the necessary groups
-            __menu.add({type: 'group', id: 'berrytube', title: 'Berrytube'});
-            __menu.add({type: 'group', id: 'windows', title: 'Windows'});
+            self.__menu.add({type: 'group', id: 'berrytube', title: 'Berrytube'});
+            self.__menu.add({type: 'group', id: 'windows', title: 'Windows'});
             
-            //add the toggle for the 
-            __menu.add({type: 'element', id: ''});
+            self.__menu.add({
+                type: 'element', 
+                element: 'div', 
+                group: 'berrytube', 
+                menu: true, 
+                id: 'layout', 
+                title: 'Disable layout', 
+                callbacks: {
+                    'click': () => {self.disable()}
+                }
+            })
 
+            //add the toggle for tweaks
+            self.__toolbar.add({
+                id: 'layout',
+                text: 'Tweaks',
+                tooltip: 'Enable/Disable layout',
+                toggle: true,
+                callbacks: {
+                    'click': () => {self.enable()}
+                }
+            });
+
+            //$('#st-toolbar-element-time').css('left', 'right');
 
             if (SmidqeTweaks.settings.get('development'))
                 self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks.css"/>');            
             else
                 self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>');
 
-            
             self.maltweaks = SmidqeTweaks.settings.get('maltweaks');
 
             //this handles the initial playlist load
@@ -233,17 +275,15 @@ function load() {
                 if (!self.enabled)
                     return;
                 
-                $("#playlist").addClass("st-window-playlist");
+                self.playlist = true;
             })
 
-            SmidqeTweaks.patch(__windows, 'show', (key) => {
+            SmidqeTweaks.patch(self.__windows, 'show', (key) => {
                 if (key !== 'playlist')
                     return;
                 
                 SmidqeTweaks.modules.playlist.refresh();
             })
-
-
         }
     }
 

@@ -43,7 +43,7 @@ function load() {
         remove: (name) => {
             let element = self.windows[name] || $('#st-window-container-' + name);
 
-            element.find('.titlebar').remove();
+            element.find('.st-titlebar').empty().remove();
             element.contents().unwrap();
 
             delete self.windows[name];
@@ -68,6 +68,21 @@ function load() {
         },
         height: (name) => {
             return self.get(name).height();
+        },
+        modularize: (name) => {
+            let window = self.get(name);
+
+            window.addClass('st-window-container-modular');
+            window.find('.st-titlebar').draggable();
+        },
+        unmodularize: (name) => {
+            let window = self.get(name);
+
+            window.removeClass('st-wind-container-modular');
+            window.find('.st-titlebar').draggable('destroy');
+        },
+        add: (name, what, value) => {
+
         },
         create: (data) => {
             if (data instanceof Array)

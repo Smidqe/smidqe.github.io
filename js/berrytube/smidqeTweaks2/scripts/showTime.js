@@ -31,6 +31,8 @@ function load() {
         init: () => {
 			SmidqeTweaks.modules.toolbar.add(self.element);
 
+			//$('#st-toolbar-element-time').css('float', 'right');
+
 			setInterval(() => {
 				if (!self.enabled)
 					return;
@@ -48,7 +50,7 @@ function load() {
 					if (skip.indexOf(key) !== -1)
 						return;
 					
-					if (key === 'seconds' && !SmidqeTweaks.settings.get('showSeconds'))
+					if (key === 's' && !SmidqeTweaks.settings.get('showSeconds'))
 						return;
 
 					if (key !== 'h')

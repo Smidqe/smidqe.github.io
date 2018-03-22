@@ -192,6 +192,7 @@ function load() {
 
             //add a button to the toolbar
             SmidqeTweaks.modules.toolbar.add(self.button);
+            SmidqeTweaks.modules.toolbar.hide(self.button.id);
             self.started = true;
         },
     }

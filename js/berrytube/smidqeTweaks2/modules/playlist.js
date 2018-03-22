@@ -6,7 +6,6 @@ function load() {
         },
         started: true,
         requires: ['time'],
-        name: 'playlist',
         duration: (str) => {
             let values = str.split(":").reverse();
             let ms = 0;

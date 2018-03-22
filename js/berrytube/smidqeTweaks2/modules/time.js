@@ -41,7 +41,13 @@ function load() {
                 return value;
 
             if (['12h', '24h'].indexOf(format) !== -1)
-                value.h += (format === '12h') ? -12 : 12;
+            {
+                if (value.format === '24h' && value.h > 12)
+                    value.h -= 12; 
+                
+                if (value.format === '12h')
+                    value.h += 12;
+            }
 
             if (value.ms && (format === '24h' || format === '12h'))
             {

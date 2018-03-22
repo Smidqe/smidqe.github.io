@@ -314,18 +314,6 @@ body #leftpane {
     background-color: #474747;
 }
 
-.st-menu-container {
-    background-color: rgb(34, 34, 34);
-    align-content: flex-start;
-    border-width: 3px;
-    border-style: solid;
-    border-color: rgb(71, 71, 71);
-    border-image: initial;
-    padding: 5px;
-    flex-flow: wrap;
-    overflow: auto;
-}
-
 .st-stats-block-title {
     border-bottom: 1px solid #474747;
     margin-bottom: 5px;

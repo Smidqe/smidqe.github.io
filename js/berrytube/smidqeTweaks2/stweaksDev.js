@@ -224,10 +224,16 @@ const self = {
             let check = self.modules[mod.requires[index]];
 
             if (!check)
+            {
                 result = false;
-            else 
-                result = !!check.init ? check.started : true;
+                return;
+            }
+            
+            if (check.init)
+                result = check.started;
         })
+
+        console.log(mod.meta.name, mod.requires, result);
 
         return result;
     },
