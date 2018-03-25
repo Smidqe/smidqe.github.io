@@ -1,7 +1,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'module',
+            group: 'modules',
             name: 'chat'
         },
         add: (nick, text, type, hideNick) => {

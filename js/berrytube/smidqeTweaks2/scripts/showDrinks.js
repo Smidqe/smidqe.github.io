@@ -4,7 +4,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'script',
+            group: 'scripts',
             name: 'showDrinks'
         },
         group: 'tweaks',

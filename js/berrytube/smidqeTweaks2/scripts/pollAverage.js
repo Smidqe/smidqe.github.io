@@ -8,7 +8,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'script',
+            group: 'scripts',
             name: 'pollAverage'
         },
         name: 'pollAverage',
@@ -42,6 +42,10 @@ function load() {
                 //only ignore zeros when there are 11 values (0..10), and not when (1..10)
                 if (self.main.get('ignoreZero') && index == 0 && data.votes.length == 11)
                     return;
+
+                //add one to index if we only have 10 options (1..10)
+                if (data.votes.length == 10)
+                    index += 1;
 
                 total += value * index;
                 count += value;

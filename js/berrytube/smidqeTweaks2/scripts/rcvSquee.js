@@ -1,7 +1,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'script',
+            group: 'scripts',
             name: 'rcvSquee'
         },
         settings: {

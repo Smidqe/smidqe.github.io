@@ -118,7 +118,7 @@ const self = {
             
             $.each(settings.values, (key, val) => {
                 let setting = self.settings.create(val);
-
+                
                 if (val.group)
                     self.settings.group('get', val.group).append(setting);
                 else
@@ -143,42 +143,34 @@ const self = {
 
             self.settings.append(cont, self.config);
 
+            $.each(self.names, (key) => {
+                if (key === 'groups')
+                    return;
+
+                $.each(self.names[key], (index, mod) => {
+                    self.settings.append(cont, self[key][mod].settings);
+                })
+            })
+
             //use the names defined in self.names, to ensure same order everytime
-            $.each(self.names.modules, (key, mod) => {
-                self.settings.append(cont, self.modules[mod].settings);
-            })
-
-            $.each(self.names.scripts, (key, mod) => {
-                self.settings.append(cont, self.scripts[mod].settings);
-            })
-
             $("#settingsGui > ul").append($('<li>').append(cont));
         }
     },
     add: (mod) => {
         if (!mod.meta)
             return;
-        
-        let location = mod.meta.group === 'script' ? self.scripts : self.modules;
-
-        if (mod.meta.name)
-            location[mod.meta.name] = mod;
+        console.log(mod.meta);
+        self[mod.meta.group][mod.meta.name] = mod;
 
         //don't init twice those that are core modules (is this required anymore???)
         if (mod.init && (self.names.modules.indexOf(mod.meta.name) == -1))
             self.queue[mod.meta.name] = mod;
     },
     remove: (title, _from) => {
-        if (_from === 'script')
-            delete self.scripts[title];
-        else
-            delete self.modules[title];
+        delete self[_from][title];
     },
     get: (title, _from) => {
-        if (_from === "script")
-            return self.scripts[title];
-        else
-            return self.modules[title];
+        return self[_from][title];
     },
     //Credits to Atte and BerryTweaks, I just split them
     appendCallback: (container, func, callback) => {
@@ -212,16 +204,17 @@ const self = {
             self.appendCallback(container, func, callback);
     },
     checkRequired: (mod) => {
-        if (!mod.requires)
+        if (!mod.meta.requires)
             return true;
 
         let result = true;
+        let list = mod.meta.requires;
 
-        $.each(mod.requires, (index) => {
+        $.each(list, (index) => {
             if (!result)
                 return;
 
-            let check = self.modules[mod.requires[index]];
+            let check = self.modules[list[index]];
 
             if (!check)
                 result = false;
@@ -238,7 +231,7 @@ const self = {
             mod.init();
 
         //enable script according to settings
-        if (mod.meta.group === 'script' && self.settings.get(mod.meta.name))
+        if (mod.meta.group === 'scripts' && self.settings.get(mod.meta.name))
             mod.enable();
 
         delete src[mod.meta.name];
@@ -246,25 +239,19 @@ const self = {
     load: () => {
         self.settings.load();
 
-        $.each(self.names.modules, (index, name) => {
-            let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/modules/${name}.js`
+        $.each(self.names, (key) => {
+            if (key === 'groups')
+                return;
 
-            if (SmidqeTweaks.settings.get('development'))
-                path = `http://localhost/smidqetweaks/modules/${name}.js`;
-            
-            $.getScript(path, () => {
-                self.queue[name] = self.modules[name];
-            })
-        })
-        
-        $.each(self.names.scripts, (index, name) => {
-            let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/scripts/${name}.js`
+            $.each(self.names[key], (index, name) => {
+                let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/${key}/${name}.js`
 
-            if (SmidqeTweaks.settings.get('development'))
-                path = `http://localhost/smidqetweaks/scripts/${name}.js`;
-            
-            $.getScript(path, () => {
-                self.queue[name] = self.scripts[name];
+                if (self.settings.get('development'))
+                    path = `http://localhost/smidqetweaks/${key}/${name}.js`;
+
+                $.getScript(path, () => {
+                    self.queue[name] = self[key][name];
+                })
             })
         })
     },
@@ -274,7 +261,7 @@ const self = {
         self.load();
 
         //append the min-css file
-        if (SmidqeTweaks.settings.get('development'))
+        if (self.settings.get('development'))
             $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks-min.css"/>'))
         else
             $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    

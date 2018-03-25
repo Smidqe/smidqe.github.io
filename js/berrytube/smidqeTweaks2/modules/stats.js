@@ -6,7 +6,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'module',
+            group: 'modules',
             name: 'stats'
         },
         started: false,
@@ -78,12 +78,8 @@ function load() {
             self.container = SmidqeTweaks.modules.windows.create({
                 wrap: false, 
                 id: 'stats',
-                titlebar: {
-                    title: 'Statistics',
-                    remove: false,
-                },
+                title: 'Statistics',
                 classes: ['st-window-container-stats', 'st-window-overlap'],
-                menu: true,
             });
 
             self.started = true;

@@ -20,6 +20,14 @@
     position: fixed;
 }
 
+.st-window-container-modular {
+    position: absolute;
+}
+
+.st-window-container-modular .st-titlebar {
+    cursor: pointer;
+}
+
 .st-window-hidden {
     display: none !important;
 }
@@ -111,7 +119,7 @@
     top: 0px;
     left: auto;
     position: fixed;
-    height: calc(100% - 2px) !important;
+    height: 100% !important;
     width: 30% !important;
 }
 
@@ -132,6 +140,7 @@ body #leftpane {
 
 #playlist {
     height: inherit !important;
+    resize: none;
 }
 
 #leftpane>.st-button-exit {
@@ -161,7 +170,7 @@ body #leftpane {
 }
 
 .st-window-users {
-    width: 20% !important;
+    width: 15% !important;
     height: calc(100% - 50px) !important;
     right: inherit !important;
     left: auto;
@@ -364,6 +373,7 @@ body #leftpane {
 #st-toolbar-element-time {
     float: right;
     padding-right: 5px;
+    padding-left: 5px;
 }
 
 #st-toast-menu {
@@ -456,3 +466,4 @@ body #leftpane {
 #extras {
     top: 30px;
 }
+

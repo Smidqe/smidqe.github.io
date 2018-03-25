@@ -4,15 +4,6 @@
         - Chat right (stays)
         - Menu (changes) DONE
 
-        - Playlist
-            * Controls will be separated from the playlist and inserted into body
-            * Playlist position varies
-                * If opened from the controls it opens to the bottom of the controls
-                * If opened from the menu, covers the chat, berry overrides this
-                * Possibility to pop the playlist?
-            * Having berry automatically opens the playlist controls and forces things
-
-
     - Data structures
         * Window:
             - title
@@ -27,12 +18,10 @@
 function load() {
     const self = {
         meta: {
-            group: 'script',
-            name: 'layout'
+            group: 'scripts',
+            name: 'layout',
+            requires: ['menu', 'toolbar', 'windows'],
         },
-        requires: ['menu', 'toolbar', 'windows'],
-        setting: null,
-        utilities: null,
         maltweaks: false,
         windows: {
             rules: {
@@ -85,21 +74,15 @@ function load() {
                     id: key,
                     wrap: true,
                     selector: selector,
-                    titlebar: {
-                        remove: false,
-                        title: value.title,
-                    },
-                    classes: ['st-window-wrap'],
+                    title: value.title,
+                    classes: [],
                 }
 
                 if (value.classes)
                     window.classes.push(...value.classes);
 
                 let menuItem = {
-                    type: 'element', 
-                    element: 'div', 
                     group: 'windows', 
-                    menu: true, 
                     id: key, 
                     title: value.title, 
                     callbacks: {
@@ -111,74 +94,53 @@ function load() {
                 self.__menu.add(menuItem);
             })
         },
-        hideOriginals: () => {
-            $('.settings, .berrymotes_button').css('display', 'none');
-
-            if (!$('.berrymotes_button')[0])
-            {
-                //apply a patch for init script for berrymotes
-                SmidqeTweaks.patch(Bem, 'berrySiteInit', () => {
-                    $('.berrymotes_button').css('display', 'none');
-                })
-            }
-
-            //add settings window and emote window
-            let menuSettingsButton = {
-                type: 'element', 
-                element: 'div', 
-                group: 'berrytube', 
-                menu: true, 
-                id: 'settings', 
-                title: 'Settings', 
-                callbacks: {
-                    'click': () => {window.showConfigMenu()}
-                }
-            }
-
-            let menuEmotesButton = {
-                type: 'element', 
-                element: 'div', 
-                group: 'berrytube', 
-                menu: true, 
-                id: 'emotes', 
-                title: 'Emotes', 
-                callbacks: {
-                    'click': () => {Bem.showBerrymoteSearch()}
-                }
-            }
-
-            self.__menu.add([menuSettingsButton, menuEmotesButton])
-        },
-        setupCSS: (remove) => {
-            if (!remove)
+        setupCSS: () => {  
+            if (self.enabled)
                 (self.maltweaks ? $('body') : $('head')).append(self.stylesheet);
             else
                 $('#st-stylesheet').remove();
         },
-        load: () => {
-            if (!self.maltweaks)
+        specials: () => {
+            if (self.enabled) 
+            {
+                $("#chatpane").addClass("st-chat");
+                $("#videowrap").addClass("st-video");
+                $("#playlist").addClass("st-window-playlist");
+            }
+            else
+                $('#chatpane, #videowrap, #playlist').removeClass("st-chat st-video st-window-playlist");
+        },
+        wraps: () => {
+            if (self.enabled) 
             {
                 $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
                 $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
                 $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
             }
+            else
+                $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
+        },
+        updateToolbar: () => {
+            let values = ['layout', 'menu'];
 
-            self.loadWindows();
-            self.hideOriginals();
+            if (!self.enabled)
+                values.reverse();
 
-            //add custom classes to chat and video
-            $("#chatpane").addClass("st-chat");
-            $("#videowrap").addClass("st-video");
-            $("#playlist").addClass("st-window-playlist");
+            self.__toolbar.hide(values[0]);
+            self.__toolbar.show(values[1]);
+        },
+        setup: () => {
+            self.enabled = !self.enabled;
 
+            if (self.enabled)
+                self.loadWindows();
+            
+            self.specials();
             self.setupCSS();
+            self.updateToolbar();
 
-            self.enabled = true;
-
-            //modify the text on the
-            self.__menu.update({id: 'tweaks', what: 'text', value: 'Disable tweaks'})
-            self.__toolbar.hide('layout');
-            self.__toolbar.show('menu');
+            if (!self.maltweaks)
+                self.wraps();
         },
         enable: () => {
             let loaded = false;
@@ -191,42 +153,22 @@ function load() {
                     loaded = true;
 
                 if (loaded && $('#playlist')[0])
-                    self.load();
+                    self.setup();
 
                 if (self.enabled)
                     clearInterval(self.interval);
-
-                console.log("Enabled:", loaded);
             }, 500);
 
             SmidqeTweaks.settings.set('layout', true, true);
         },
-
         disable: () => {
-            //unwrap the wrapped elements
-            if (!self.maltweaks)
-                $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
-
-            $("#chatpane").removeClass("st-chat");
-            $("#videowrap").removeClass("st-video");
-            $("#playlist").removeClass("st-window-playlist");
-
-            SmidqeTweaks.settings.set('layout', false, true);
-
-            self.__toolbar.show('layout');
-            self.__toolbar.hide('menu');
-
-            self.setupCSS(true);
-
+            self.setup();
+            
             $.each(self.windows, (window, key) => {
                 self.__windows.remove(window);
             })
-        },
-        toggle: () => {
-            if (!SmidqeTweaks.settings.get('layout'))
-                self.enable();
-            else
-                self.disable();
+
+            SmidqeTweaks.settings.set('layout', false, true);
         },
         init: () => {
             //add menu group
@@ -235,14 +177,10 @@ function load() {
             self.__toolbar = SmidqeTweaks.modules.toolbar;
 
             //add the necessary groups
-            self.__menu.add({type: 'group', id: 'berrytube', title: 'Berrytube'});
-            self.__menu.add({type: 'group', id: 'windows', title: 'Windows'});
+            self.__menu.add([{type: 'group', id: 'berrytube', title: 'Berrytube'}, {type: 'group', id: 'windows', title: 'Windows'}])
             
             self.__menu.add({
-                type: 'element', 
-                element: 'div', 
                 group: 'berrytube', 
-                menu: true, 
                 id: 'layout', 
                 title: 'Disable layout', 
                 callbacks: {
@@ -261,22 +199,11 @@ function load() {
                 }
             });
 
-            //$('#st-toolbar-element-time').css('left', 'right');
-
-            if (SmidqeTweaks.settings.get('development'))
-                self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks.css"/>');            
-            else
-                self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks.css"/>');
-
+            self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css"/>').attr("href", "http://smidqe.github.io/js/berrytube/css/stweaks.css");
             self.maltweaks = SmidqeTweaks.settings.get('maltweaks');
 
-            //this handles the initial playlist load
-            socket.on('recvPlaylist', () => {
-                if (!self.enabled)
-                    return;
-                
-                self.playlist = true;
-            })
+            if (SmidqeTweaks.settings.get('development'))
+                self.stylesheet.attr("href", "http://localhost/smidqetweaks/css/stweaks.css");
 
             SmidqeTweaks.patch(self.__windows, 'show', (key) => {
                 if (key !== 'playlist')

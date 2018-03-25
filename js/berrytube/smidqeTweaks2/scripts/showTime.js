@@ -1,9 +1,10 @@
 function load() {
     const self = {
         meta: {
-            group: 'script',
-            name: 'showTime'
-        },
+            group: 'scripts',
+			name: 'showTime',
+			requires: ['toolbar'],
+		},
         settings: {
 			group: 'time',
 			values: [{
@@ -30,8 +31,6 @@ function load() {
 		},
         init: () => {
 			SmidqeTweaks.modules.toolbar.add(self.element);
-
-			//$('#st-toolbar-element-time').css('float', 'right');
 
 			setInterval(() => {
 				if (!self.enabled)

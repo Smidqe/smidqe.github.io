@@ -16,8 +16,9 @@
 function load() {
     const self = {
         meta: {
-            group: 'module',
-            name: 'menu'
+            group: 'modules',
+            name: 'menu',
+            requires: ['toolbar', 'windows', 'utilities'],
         },
         started: false,
         requires: ['toolbar', 'windows', 'utilities'],
@@ -30,8 +31,6 @@ function load() {
         window: {
             id: 'menu',
             classes: ['st-menu', 'st-window-overlap'],
-            hover: true,
-            menu: false,
         },
         timers: {},
         utilities: null,
@@ -72,9 +71,16 @@ function load() {
                 return;
             }
 
-            //don't add doubles
+            //default to element unless specified
+            if (!data.type)
+                data.type = 'element';
+
+            if (!data.element)
+                data.element = 'div';
+
             let obj = self.find(data.type, data.id);
 
+            //don't add doubles
             if (obj && data.type !== 'callback')
                 return;
             

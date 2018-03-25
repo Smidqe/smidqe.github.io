@@ -2,7 +2,7 @@ function load() {
     const self = {
         started: false,
         meta: {
-            group: 'module',
+            group: 'modules',
             name: 'time'
         },
         get: () => {

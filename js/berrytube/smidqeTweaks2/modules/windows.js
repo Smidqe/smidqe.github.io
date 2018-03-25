@@ -7,27 +7,22 @@
 function load() {
     const self = {
         meta: {
-            group: 'module',
+            group: 'modules',
             name: 'windows'
         },
         requires: [],
         windows: {}, //container to all windows (all are jquery)
-        titlebar: (data, id) => {
+        titlebar: (title, id) => {
             return $('<div>', {
                 class: 'st-titlebar'
             }).append(
                 $('<div>', {
                     class: 'st-titlebar-exit',
-                    'data-remove': data.remove,
                     'data-id': id,
-                    'data-hover': data.hover,
                 }).on('click', function() {
-                    if ($(this).data('remove') == 'true')
-                        self.remove($(this));
-                    else
-                        self.show($(this).data('id'), false);
+                    self.show($(this).data('id'), false);
                 })
-            ).append($('<span>').text(data.title));
+            ).append($('<span>').text(title));
         },
         show: (name, value, callback) => {
             let window = self.windows[name] || $('#st-window-container-' + name)
@@ -73,13 +68,22 @@ function load() {
             let window = self.get(name);
 
             window.addClass('st-window-container-modular');
-            window.find('.st-titlebar').draggable();
+            window.draggable({
+                handle: '.st-titlebar',
+                start: () => {
+                    $('#videowrap').css('pointer-events', 'none');
+                },
+                stop: () => {
+                    $('#videowrap').css('pointer-events', 'all');
+                },
+                containment: 'window'
+            });
         },
         unmodularize: (name) => {
             let window = self.get(name);
 
             window.removeClass('st-wind-container-modular');
-            window.find('.st-titlebar').draggable('destroy');
+            window.draggable('destroy');
         },
         add: (name, what, value) => {
 
@@ -102,10 +106,13 @@ function load() {
             if (data.wrap && elem[0])
                 container = elem.wrap(container).parent();
 
+            if (data.wrap)
+                container.addClass('st-window-wrap');
+
             container.addClass('st-window-container st-window-hidden');
 
-            if (data.titlebar) {
-                let bar = self.titlebar(data.titlebar, data.id);
+            if (data.title) {
+                let bar = self.titlebar(data.title, data.id);
 
                 //prepend the titlebar to ensure that it will always be on top if it's a wrap
                 if (data.wrap)

@@ -7,7 +7,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'module',
+            group: 'modules',
             name: 'utilities'
         },
 

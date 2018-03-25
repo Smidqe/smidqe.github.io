@@ -35,9 +35,10 @@ function load() {
         },
         //this might be the future
         meta: {
-            group: 'script',
+            group: 'scripts',
             name: 'trackPlaylist'
         },
+        requires: ['playlist', 'chat'],
         shuffle: false,
         tracking: {},
         track: (video) => {
@@ -116,26 +117,26 @@ function load() {
             if (!self.enabled || self.shuffle || !data)
                 return;
 
-            let object;
+            let volatile = action.id == 'volatile';
+            let object = self.tracking[data.videoid];
+            let video = volatile ? SmidqeTweaks.modules.playlist.get('index', data.pos) : null;
+
+            if (volatile)
+                object = self.tracking[video.videoid];
+
+            if (!object)
+                object = self.track(object);
+
+
 
             switch (action.id) {
                 case 'add':
                     {
-                        object = self.tracking[data.videoid];
-
-                        if (!object)
-                            object = self.track(data);
-
                         message = true;
                         break;
                     }
                 case 'remove':
                     {
-                        object = self.tracking[data.videoid];
-
-                        if (!object)
-                            object = self.track(data);
-
                         object.timeout = setTimeout(() => {
                             //this covers the move (removed and readded)
                             if (SmidqeTweaks.settings.get('trackRemove'))
@@ -148,11 +149,6 @@ function load() {
                     }
                 case 'modify':
                     {
-                        object = self.tracking[data.videoid];
-
-                        if (!object)
-                            object = self.track(data);
-
                         //a move happened
                         if (object.timeout)
                             clearTimeout(object.timeout);
@@ -184,13 +180,6 @@ function load() {
 
                 case 'volatile':
                     {
-                        var video = SmidqeTweaks.modules.playlist.getObjectByPos(data.pos);
-
-                        object = self.tracking[video.videoid];
-
-                        if (!object)
-                            object = self.track(video);
-
                         object.changes.push({
                             key: 'volat',
                             old: !data.volat,

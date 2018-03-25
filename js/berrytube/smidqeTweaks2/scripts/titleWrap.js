@@ -7,7 +7,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'script',
+            group: 'scripts',
             name: 'titleWrap'
         },
         settings: [{
@@ -37,12 +37,16 @@ function load() {
         },
         init: () => {   
             socket.on('forceVideoChange', () => {
-                self.grab();
+                if (!self.container)
+                    self.grab();
+                
                 self.enable();
             });
 
             socket.on('hbVideoDetail', () => {
-                self.grab();
+                if (!self.container)
+                    self.grab();
+                
                 self.enable();
             });
         },

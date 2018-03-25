@@ -4,8 +4,9 @@
 function load() {
     const self = {
         meta: {
-            group: 'script',
-            name: 'originals'
+            group: 'scripts',
+            name: 'originals',
+            requires: ['menu'],
         },
         group: 'patches',
         script: true,

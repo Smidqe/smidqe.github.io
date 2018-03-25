@@ -1,7 +1,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'module',
+            group: 'modules',
             name: 'playlist'
         },
         started: true,
@@ -73,6 +73,10 @@ function load() {
         showControls: () => {
             
         },
+        loaded: () => {
+            //check if the playlist has loaded
+        },
+        
     }
 
     return self;
