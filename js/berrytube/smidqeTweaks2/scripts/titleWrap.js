@@ -10,10 +10,13 @@ function load() {
             group: 'scripts',
             name: 'titleWrap'
         },
-        settings: [{
-            title: 'Wrap videotitle to separate line',
-            key: 'titleWrap',
-        }],
+        settings: {
+            group: 'playlist',
+            values: [{
+                title: 'Wrap videotitle to separate line',
+                key: 'titleWrap',
+            }]
+        },
         enable: () => {
             if (self.enabled)
                 return;

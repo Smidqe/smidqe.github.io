@@ -1,7 +1,7 @@
 function load() {
     const self = {
         meta: {
-            group: 'scripts',
+			group: 'scripts',
 			name: 'showTime',
 			requires: ['toolbar'],
 		},
