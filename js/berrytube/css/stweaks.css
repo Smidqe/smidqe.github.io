@@ -40,9 +40,10 @@
     display: block !important;
 }
 
-#st-wrap-footer #dyn_footer {
-    max-height: calc(100% - 75px);
-    overflow: auto;
+#st-wrap-footer {
+    height: 100%;
+    overflow-y: auto;
+    width: 100%;
 }
 
 #drinkWrap {

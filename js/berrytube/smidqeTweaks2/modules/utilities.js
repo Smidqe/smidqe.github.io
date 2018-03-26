@@ -33,6 +33,8 @@ function load() {
             $.each(dists, (index, value) => {
                 let absolute = Math.abs(value);
 
+                console.log("D:", absolute, "R:", result);
+
                 //handle the initial set and the rest
                 if (result.index == -1 || absolute < result.value)
                     result = {index: index, value: absolute}

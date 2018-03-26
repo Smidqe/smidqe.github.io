@@ -132,15 +132,15 @@ function load() {
         setup: () => {
             self.enabled = !self.enabled;
 
+            if (!self.maltweaks)
+                self.wraps();
+
             if (self.enabled)
                 self.loadWindows();
             
             self.specials();
             self.setupCSS();
             self.updateToolbar();
-
-            if (!self.maltweaks)
-                self.wraps();
         },
         enable: () => {
             let loaded = false;
