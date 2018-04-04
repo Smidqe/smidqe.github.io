@@ -14,11 +14,13 @@ function load() {
 			},{
 				title: 'Force open on berry',
 				key: 'pollControlsBerry',
-				depends: ['layout', 'pollControls']
+				depends: ['layout', 'pollControls'],
+				sub: true,
 			},{
 				title: 'Force open on login',
 				key: 'pollControlsLogin',
-				depends: ['layout', 'pollControls']
+				depends: ['layout', 'pollControls'],
+				sub: true,
 			}]
 		},
 		created: false,
@@ -33,7 +35,7 @@ function load() {
 				classes: [],
 			})
 
-			self.windows.modularize('playlistControls', true);
+			self.windows.modularize('pollControls', true);
 		},
 		open: () => {
 			let allow = false;

@@ -8,7 +8,7 @@ function load() {
 		settings: {
 			group: 'playlist',
 			values: [{
-				title: 'Make poll controls modular',
+				title: 'Make playlist modular',
 				key: 'playlistControls',
 				depends: ['layout']
 			},{

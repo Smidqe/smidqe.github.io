@@ -49,7 +49,7 @@ function load() {
             return self.windows[name] || $('#st-window-container-' + name);
         },
         exists: (name) => {
-            return self.get(name).length == 0;
+            return self.get(name).length !== 0;
         },
         width: (name) => {
             return self.get(name).width();
@@ -98,7 +98,7 @@ function load() {
                 
                 return result;
             }
-            
+
             let container = $('<div>', { id: 'st-window-container-' + data.id });
             let elem = $(data.selector);
 
