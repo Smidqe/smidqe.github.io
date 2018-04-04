@@ -81,6 +81,9 @@ function load() {
             window.removeClass('st-window-container-modular');
             window.draggable('destroy');
         },
+        isModular: (name) => {
+            return self.get(name).hasClass('st-window-container-modular');
+        },
         add: (name, what, value) => {
             
         },

@@ -128,7 +128,7 @@ function load() {
             let volatile = action.id === 'volatile';
             let object = self.tracking[data.videoid];
             let video = volatile ? self.playlist.get('index', data.pos) : null;
-            let message = true;
+            let message = false;
 
             if (volatile)
                 object = self.tracking[video.videoid];
@@ -140,6 +140,7 @@ function load() {
                 object = self.track(video);
 
             switch (action.id) {
+                case 'add': message = true; break;
                 case 'remove':
                     {
                         object.timeout = setTimeout(() => {
@@ -162,24 +163,28 @@ function load() {
                         }
                         //add position to the data
                         data.pos = self.playlist.get('title', object.title).pos;
-
+                        
                         //check values
                         $.each(data, (key, value) => {
                             //don't check values that are non existant in the our end
                             if (!object[key])
                                 return;
 
-                            if (object[key] !== value) {
-                                object.changes.push({
-                                    key: key,
-                                    old: video[key],
-                                    new: value
-                                })
+                            if (object[key] !== value)
+                                return;
 
-                                object[key] = value; //store new value
-                            }
+                            object.changes.push({
+                                key: key,
+                                old: object[key],
+                                new: value
+                            })
+
+                            object[key] = value; //store new value
+                            
                         })
                         
+                        message = object.changes.length > 0;
+
                         break;
                     }
 

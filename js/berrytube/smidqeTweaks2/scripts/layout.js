@@ -151,6 +151,9 @@ function load() {
             let loaded = false;
 
             self.interval = setInterval(() => { 
+                //if (self.maltweaks)
+                //  loaded = self.utilities.linearCheck(window.MT, window.MT.loaded);
+
                 if (self.maltweaks && window.MT)
                     loaded = window.MT.loaded;
 

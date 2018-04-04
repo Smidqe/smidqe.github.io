@@ -42,6 +42,25 @@ function load() {
 
             return result;
         },
+        linearCheck: (...booleans) => {
+            let result = true;
+
+            for (var i = 0; i < booleans.length; i++)
+            {
+                result = booleans[i];
+
+                if (!result)
+                    break;
+            }
+
+            return result;
+        },
+        isMaltweaksLoaded: () => {
+            if (!window.MT)
+                return false;
+
+            result = window.MT.loaded;
+        }
     }
 
     return self;
