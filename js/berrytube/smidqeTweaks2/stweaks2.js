@@ -1,9 +1,5 @@
 /*
     TODO:
-        - Move layout to scripts, DONE
-        - Rework the information system for modules DONE
-        - Rework the start module system DONE
-        
         - Integration with wutShot
             * Show the amount of shots taken
             * Squee when button is ready for another shot
@@ -30,7 +26,7 @@ const self = {
     queue: {},
     names: { //holds the names for modules, scripts and groups
         modules: ['toolbar', 'windows', 'playlist', 'menu', 'stats', 'time', 'chat', 'utilities'],
-        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime'],
+        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'berryPlaylist'],
         groups: ['dependencies', 'time', 'chat', 'playlist', 'poll'],
     },
     //will hold all depedencies
@@ -46,6 +42,7 @@ const self = {
     },
     //possiblity to move this into a module or scatter it to this file??
     settings: {
+        dependencies: {},
         container: null,
         storage: {},
         group: (method, name) => {
@@ -82,24 +79,21 @@ const self = {
                     type: data.type ? data.type : 'checkbox',
                     checked: self.settings.get(data.key),
                     'data-key': data.key,
-                    'data-reload': data.reload
+                    'data-reload': data.reload,
+                    'data-others': data.depends
                 })
                 .change(function() {
                     let checked = $(this).prop('checked');
                     let key = $(this).data('key');
-                    let reload = $(this).data('reload')
+                    let reload = $(this).data('reload');
 
                     self.settings.set(key, checked, true);
 
+                    if (self.settings.dependencies[key])
+                        self.settings.show(false);
+                
                     if (self.names.scripts.indexOf(key) !== -1)
-                    {
-                        let script = self.scripts[key];
-                        
-                        if (checked)    
-                            script.enable();
-                        else
-                            script.disable();
-                    }
+                        (checked ? self.scripts[key].enable : self.scripts[key].disable)();
                     
                     if (reload)
                         alert('Refresh is needed to take effect');
@@ -117,6 +111,9 @@ const self = {
             const group = self.settings.group('get', settings.group);
             
             $.each(settings.values, (key, val) => {
+                if (!self.settings.check(val.depends))
+                    return;
+
                 let setting = self.settings.create(val);
                 
                 if (val.group)
@@ -127,11 +124,29 @@ const self = {
 
             return group;
         },
-        show: () => {
+        check: (list) => {
+            if (!list)
+                return true;
+
+            let result = true;
+
+            $.each(list, (index, key) => {
+                if (!result)
+                    return;
+
+                if (!self.settings.get(key))
+                    result = false;
+            })
+
+            return result;
+        },
+        show: (append = true) => {
             let cont = self.settings.container || $('<fieldset>');
 
             if (!self.settings.container)
                 self.settings.container = cont;
+            else
+                cont = self.settings.container;
 
             cont.empty();
             cont.append($('<legend>', { text: 'SmidqeTweaks' }));
@@ -153,13 +168,31 @@ const self = {
             })
 
             //use the names defined in self.names, to ensure same order everytime
-            $("#settingsGui > ul").append($('<li>').append(cont));
+            if (append)
+                $("#settingsGui > ul").append($('<li>').append(cont));
+        },
+        updateDependencies: (settings) => {
+            if (!settings)
+                return;
+
+            let deps = self.settings.dependencies
+            $.each(settings.values, (index, value) => {
+                if (!value.depends)
+                    return;
+
+                $.each(value.depends, (index, key) => {
+                    if (!deps[key])
+                        deps[key] = [];
+
+                    deps[key].push(value.key);
+                })
+            })
         }
     },
     add: (mod) => {
         if (!mod.meta)
             return;
-        console.log(mod.meta);
+
         self[mod.meta.group][mod.meta.name] = mod;
 
         //don't init twice those that are core modules (is this required anymore???)
@@ -227,6 +260,9 @@ const self = {
 
     startModule: (mod, src) => {
         //if something need to be initialised
+
+        self.settings.updateDependencies(mod.settings);
+
         if (mod.init)
             mod.init();
 
@@ -266,7 +302,7 @@ const self = {
         else
             $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    
 
-        self.check = setInterval(() => {            
+        self.check = setInterval(() => {
             if ($.isEmptyObject(self.queue))
                 return;
 
@@ -275,7 +311,7 @@ const self = {
                     return;
 
                 self.startModule(mod, self.queue);
-            })        
+            })
         }, 1000);
 
         self.patch(window, 'showConfigMenu', () => {

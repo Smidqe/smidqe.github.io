@@ -7,10 +7,10 @@ function load() {
     const self = {
         meta: {
             group: 'modules',
-            name: 'stats'
+            name: 'stats',
+            requires: ['windows', 'menu'],
         },
         started: false,
-        requires: ['windows', 'menu'],
         container: null,
         add: (type, data) => {
             //don't add a duplicate value

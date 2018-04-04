@@ -5,7 +5,6 @@ function load() {
             name: 'playlist'
         },
         started: true,
-        requires: ['time'],
         duration: (str) => {
             let values = str.split(":").reverse();
             let ms = 0;
@@ -69,9 +68,6 @@ function load() {
             smartRefreshScrollbar();
             scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2), 0);
             realignPosHelper();
-        },
-        showControls: () => {
-            
         },
         loaded: () => {
             //check if the playlist has loaded

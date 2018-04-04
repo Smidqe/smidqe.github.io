@@ -15,43 +15,45 @@ function load() {
             values: [{
                 title: 'Wrap videotitle to separate line',
                 key: 'titleWrap',
+                depends: ['berrytweaks'],
             }]
         },
         enable: () => {
-            if (self.enabled)
-                return;
-            
-            self.container.wrap($('<div>', {id: 'st-videotitle-window'}));
-            $('.st-window-users').addClass('st-patch-berrytweaks');
-
             self.enabled = true;
+            
+            socket.on('forceVideoChange', self.grab);
+            socket.on('hbVideoDetail', self.grab);
         },
         disable: () => {
-            if (!self.enabled)
-                return;
-
-            $('.st-window-users').removeClass('st-patch-berrytweaks');
-
-            self.container.unwrap();
             self.enabled = false;
+            
+            socket.removeListener('forceVideoChange', self.grab);
+            socket.removeListener('hbVideoDetail', self.grab);
+
+            if (self.container)
+            {
+                self.container.unwrap();
+                self.container = null;
+            }
+            
+            $('.st-window-users').removeClass('st-patch-berrytweaks');
         },
         grab: () => {
-            self.container = $('#berrytweaks-video_title');
-        },
-        init: () => {   
-            socket.on('forceVideoChange', () => {
-                if (!self.container)
-                    self.grab();
-                
-                self.enable();
-            });
+            if (!self.enabled)
+                return;
+            
+            if (self.container)
+                return;
 
-            socket.on('hbVideoDetail', () => {
-                if (!self.container)
-                    self.grab();
-                
-                self.enable();
-            });
+            let title = $('#berrytweaks-video_title');
+            
+            if (self.enabled && title.length == 0)
+                return;
+
+            self.container = title
+            self.container.wrap($('<div>', {id: 'st-videotitle-window'}));
+            
+            $('.st-window-users').addClass('st-patch-berrytweaks');
         },
     }
 

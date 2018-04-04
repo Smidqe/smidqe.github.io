@@ -10,9 +10,8 @@
             - selectors
             - 
 
-
-    - Problem with maltweaks
-        - 
+    TODO:
+        - Integration with theme changes for selected elements
 */
 
 function load() {
@@ -35,30 +34,36 @@ function load() {
             footer: {
                 selectors: ["#st-wrap-footer", "#main #footwrap", ],
                 title: 'Footer',
+                wrap: true,
             },
             polls: {
                 selectors: ["#pollpane"],
                 classes: ["st-window-overlap"],
-                title: 'Polls'
+                title: 'Polls',
+                wrap: true,
             },
             messages: {
                 selectors: ["#mailboxDiv"],
                 classes: ["st-window-overlap"],
-                title: 'Messages'
+                title: 'Messages',
+                wrap: true,
             },
             login: {
                 selectors: [".wrapper #headbar"],
-                title: 'Login'
+                title: 'Login',
+                wrap: true,
             },
             playlist: {
                 selectors: ["#main #leftpane"],
                 classes: ["st-window-playlist", "st-window-overlap"],
                 title: 'Playlist',
+                wrap: true,
             },
             users: {
                 selectors: ["#chatlist"],
                 classes: ["st-window-overlap", "st-window-users"],
-                title: 'Userlist'
+                title: 'Userlist',
+                wrap: true,
             },
         },
         stylesheet: null,
@@ -152,7 +157,7 @@ function load() {
                 if (!self.maltweaks)
                     loaded = true;
 
-                if (loaded && $('#playlist')[0])
+                if (loaded && $('#playlist')[0]) //use playlist.loaded()
                     self.setup();
 
                 if (self.enabled)

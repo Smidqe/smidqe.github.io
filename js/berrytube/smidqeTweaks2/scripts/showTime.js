@@ -12,10 +12,14 @@ function load() {
 				key: 'showTime',
 			},{
 				title: 'Show time in 12h format',
-				key: '12hour'
+				key: '12hour',
+				depends: ['showTime'],
+				sub: true,
 			},{
 				title: 'Show seconds',
 				key: 'showSeconds',
+				depends: ['showTime'],
+				sub: true,
 			}]
 		},
 		element: {
@@ -24,14 +28,14 @@ function load() {
 		},
 		enabled: false,
 		enable: () => {
+			SmidqeTweaks.modules.toolbar.add(self.element);
 			self.enabled = true;
 		},
 		disable: () => {
+			SmidqeTweaks.modules.toolbar.remove('time');
 			self.enabled = false;
 		},
         init: () => {
-			SmidqeTweaks.modules.toolbar.add(self.element);
-
 			setInterval(() => {
 				if (!self.enabled)
 					return;

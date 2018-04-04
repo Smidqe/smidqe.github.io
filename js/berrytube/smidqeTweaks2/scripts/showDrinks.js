@@ -17,8 +17,6 @@ function load() {
                 title: 'Show drink count in chat',
                 type: 'checkbox',
                 key: 'showDrinks',
-            },{
-                title: 'Show video position'
             }]
         },
         pairs: [{

@@ -21,13 +21,17 @@ function load() {
                 title: 'Ignore 0-votes',
                 key: 'ignoreZero',
                 sub: true,
+                depends: ['pollAverage']
             }, {
                 title: 'Show average in stats',
                 key: 'statsAverage',
+                sub: true,
+                depends: ['pollAverage']
             }, {
                 title: 'Show previous averages',
                 key: 'historyAverage',
                 sub: true,
+                depends: ['pollAverage']
             }],
         },
         enabled: false,

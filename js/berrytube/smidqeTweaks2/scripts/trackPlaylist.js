@@ -10,40 +10,51 @@ function load() {
             group: 'playlist',
             values: [{
                 title: 'Track changes',
-                key: 'trackPlaylist'
+                key: 'trackPlaylist',
             }, {
-                title: 'Additions',
-                key: 'trackAdd'
+                title: 'Show video additions',
+                key: 'trackAdd',
+                depends: ['trackPlaylist'],
+                sub: true,
             }, {
-                title: 'Removals',
-                key: 'trackRemove'
+                title: 'Show video removals',
+                key: 'trackRemove',
+                depends: ['trackPlaylist'],
+                sub: true,
             }, {
-                title: 'Moves',
-                key: 'trackMove'
+                title: 'Show video moves',
+                key: 'trackMove',
+                depends: ['trackPlaylist'],
+                sub: true,
             }, {
-                title: 'Position numbers',
+                title: 'Show video index',
                 key: 'trackPosition',
                 sub: true,
+                depends: ['trackPlaylist'],
             }, {
-                title: 'Current position',
+                title: 'Show current index',
                 key: 'trackCurrent',
                 sub: true,
+                depends: ['trackPlaylist', 'trackPosition'],
             }, {
-                title: 'Volatiles',
-                key: 'trackVolatile'
+                title: 'Show volatile changes',
+                key: 'trackVolatile',
+                depends: ['trackPlaylist'],
+                sub: true,
             },]
         },
         //this might be the future
         meta: {
             group: 'scripts',
-            name: 'trackPlaylist'
+            name: 'trackPlaylist',
+            requires: ['playlist', 'chat'],
         },
-        requires: ['playlist', 'chat'],
         shuffle: false,
         tracking: {},
+        playlist: null,
         track: (video) => {
             var title = decodeURIComponent(video.videotitle);
-            var pos = SmidqeTweaks.modules.playlist.getObject(title).pos;
+            var pos = self.playlist.get('title', title).pos;
 
             var object = {
                 videoid: video.videoid,
@@ -98,7 +109,7 @@ function load() {
                                     msg += ' (' + value.old + ' -> ' + value.new + ')';
 
                                 if (SmidqeTweaks.settings.get('showCurrentPosition'))
-                                    msg += ' Current: ' + SmidqeTweaks.modules.playlist.getObject(decodeURIComponent(window.ACTIVE.videotitle)).pos;
+                                    msg += ' Current: ' + self.playlist.get('title', decodeURIComponent(window.ACTIVE.videotitle)).pos;
 
                                 break;
                             };
@@ -108,33 +119,27 @@ function load() {
 
             SmidqeTweaks.modules.chat.add('Playlist', msg, 'act', true);
 
-            while (data.changes.length > 0)
-                data.changes.pop();
-
-            data.changed = false;
+            data.changes = [];
         },
         action: (data, action) => {
             if (!self.enabled || self.shuffle || !data)
                 return;
 
-            let volatile = action.id == 'volatile';
+            let volatile = action.id === 'volatile';
             let object = self.tracking[data.videoid];
-            let video = volatile ? SmidqeTweaks.modules.playlist.get('index', data.pos) : null;
+            let video = volatile ? self.playlist.get('index', data.pos) : null;
+            let message = true;
 
             if (volatile)
                 object = self.tracking[video.videoid];
 
-            if (!object)
-                object = self.track(object);
+            if (!object && !volatile)
+                object = self.track(data);
 
-
+            if (!object && volatile)
+                object = self.track(video);
 
             switch (action.id) {
-                case 'add':
-                    {
-                        message = true;
-                        break;
-                    }
                 case 'remove':
                     {
                         object.timeout = setTimeout(() => {
@@ -151,10 +156,12 @@ function load() {
                     {
                         //a move happened
                         if (object.timeout)
+                        {
                             clearTimeout(object.timeout);
-
+                            object.timeout = null;
+                        }
                         //add position to the data
-                        data.pos = SmidqeTweaks.modules.playlist.getObject(object.title).pos;
+                        data.pos = self.playlist.get('title', object.title).pos;
 
                         //check values
                         $.each(data, (key, value) => {
@@ -172,9 +179,7 @@ function load() {
                                 object[key] = value; //store new value
                             }
                         })
-
-                        object.changed = object.changes.length > 0;
-
+                        
                         break;
                     }
 
@@ -186,8 +191,7 @@ function load() {
                             new: data.volat
                         })
 
-                        if (data.volat)
-                            object.remove = true;
+                        object.remove = data.volat;
 
                         break;
                     }
@@ -209,6 +213,8 @@ function load() {
             self.enabled = SmidqeTweaks.settings.get('trackPlaylist')
         },
         init: () => {
+            self.playlist = SmidqeTweaks.get('playlist', 'modules');
+
             socket.on('addVideo', (data) => {
                 self.action(data.video, { id: 'add', setting: 'trackAdd' })
             })

@@ -15,6 +15,7 @@ function load() {
                 type: 'checkbox',
                 key: 'highlightRCV',
                 sub: true,
+                depends: ['rcvSquee']
             }]
         },
         enabled: false,

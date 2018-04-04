@@ -10,8 +10,7 @@ function load() {
             group: 'modules',
             name: 'windows'
         },
-        requires: [],
-        windows: {}, //container to all windows (all are jquery)
+        windows: {}, //container to hold all windows (all are jquery selectors)
         titlebar: (title, id) => {
             return $('<div>', {
                 class: 'st-titlebar'
@@ -25,19 +24,19 @@ function load() {
             ).append($('<span>').text(title));
         },
         show: (name, value, callback) => {
-            let window = self.windows[name] || $('#st-window-container-' + name)
+            let window = self.get(name);
 
-            if (!value)
-                window.addClass('st-window-hidden');
-            else
+            if (value)
                 window.removeClass('st-window-hidden');
+            else
+                window.addClass('st-window-hidden')
 
             if (callback)
                 callback();
         },
         remove: (name) => {
-            let element = self.windows[name] || $('#st-window-container-' + name);
-
+            let element = self.get(name);
+            
             element.find('.st-titlebar').empty().remove();
             element.contents().unwrap();
 
@@ -49,14 +48,8 @@ function load() {
             
             return self.windows[name] || $('#st-window-container-' + name);
         },
-        open: (name) => {
-            let window = self.windows[name] || $('#st-window-container-' + name);
-            let result = !window.hasClass('st-window-hidden');
-
-            return result;
-        },
         exists: (name) => {
-            return !!self.get(name)[0];
+            return self.get(name).length == 0;
         },
         width: (name) => {
             return self.get(name).width();
@@ -64,7 +57,10 @@ function load() {
         height: (name) => {
             return self.get(name).height();
         },
-        modularize: (name) => {
+        modularize: (name, value) => {
+            if (!value)
+                return self.unmodularize(name);
+
             let window = self.get(name);
 
             window.addClass('st-window-container-modular');
@@ -82,11 +78,11 @@ function load() {
         unmodularize: (name) => {
             let window = self.get(name);
 
-            window.removeClass('st-wind-container-modular');
+            window.removeClass('st-window-container-modular');
             window.draggable('destroy');
         },
         add: (name, what, value) => {
-
+            
         },
         create: (data) => {
             if (data instanceof Array)

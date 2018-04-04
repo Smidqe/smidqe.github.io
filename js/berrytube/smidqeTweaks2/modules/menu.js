@@ -21,7 +21,6 @@ function load() {
             requires: ['toolbar', 'windows', 'utilities'],
         },
         started: false,
-        requires: ['toolbar', 'windows', 'utilities'],
         button: {
             id: 'menu',
             text: 'Menu',
