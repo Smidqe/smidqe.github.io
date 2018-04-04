@@ -19,6 +19,15 @@ function load() {
 		},
 		enable: () => {
 			self.enabled = true;
+
+			self.windows.create({
+				id: 'pollControls',
+				wrap: true,
+				selector: '#pollControl',
+				title: 'Poll Controls',
+				classes: [],
+			})
+
 			socket.on('handleACL', self.modularize);
 		},
 		disable: () => {
@@ -27,13 +36,6 @@ function load() {
 		},
 		init: () => {
 			self.windows = SmidqeTweaks.get('windows', 'modules');
-			self.windows.create({
-				id: 'pollControls',
-				wrap: true,
-				selector: '#pollControl',
-				title: 'Poll Controls',
-				classes: [],
-			})
 		}
 	}
 
