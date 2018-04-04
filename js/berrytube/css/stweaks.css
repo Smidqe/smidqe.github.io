@@ -101,6 +101,23 @@
     max-width: 250px;
 }
 
+.st-window-container-modular #pollControl {
+    display: block;
+    width: 100%;
+    overflow-y: auto;
+}
+
+#st-window-container-pollControls {
+    width: 400px;
+    height: 400px;
+    overflow: auto;
+    resize: vertical;
+}
+
+#pollControl .mainbtns {
+    width: 100%
+}
+
 /* Footer */
 
 /* Menu css */

@@ -14,19 +14,13 @@ function load() {
 			}]
 		},
 		windows: null,
-		enabled: false,
 		enable: () => {
-			self.enabled = true;
 			socket.on('handleACL', self.modularize);
 		},
 		disable: () => {
-			self.enabled = false;
 			socket.removeListener('handleACL', self.modularize)
 		},
 		modularize: () => {
-			if (!self.enabled)
-				return;
-
 			if (!self.windows.exists('playlist'))
 				return;
 			

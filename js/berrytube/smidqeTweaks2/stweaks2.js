@@ -26,7 +26,7 @@ const self = {
     queue: {},
     names: { //holds the names for modules, scripts and groups
         modules: ['toolbar', 'windows', 'playlist', 'menu', 'stats', 'time', 'chat', 'utilities'],
-        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'berryPlaylist'],
+        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'berryPlaylist', 'berryPollControls'],
         groups: ['dependencies', 'time', 'chat', 'playlist', 'poll'],
     },
     //will hold all depedencies
