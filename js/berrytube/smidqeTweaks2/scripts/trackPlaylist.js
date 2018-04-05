@@ -84,31 +84,26 @@ function load() {
             if (id === 'add')
                 msg += ' was added to playlist';
 
-            //try to rewrite this
-            if (data.changed) {
-                //???
-                if (Object.keys(data.changes).indexOf('volat'))
-                    msg += ' was set to ' + data.volat === true ? ' volatile ' : ' permanent';
 
+            if (data.changes.length > 0)
+            {
                 $.each(data.changes, (key, value) => {
 
                     switch (value.key) {
                         case 'volat':
                             {
                                 //possibly separate these to vol -> non vol && non vol -> vol
-
                                 msg += ' was set to ' + value.new === true ? ' volatile ' : ' permanent';
-
                                 break;
                             };
                         case 'pos':
                             {
                                 msg += ' was moved';
 
-                                if (SmidqeTweaks.settings.get('showPositionChange'))
+                                if (SmidqeTweaks.settings.get('trackPosition'))
                                     msg += ' (' + value.old + ' -> ' + value.new + ')';
 
-                                if (SmidqeTweaks.settings.get('showCurrentPosition'))
+                                if (SmidqeTweaks.settings.get('trackCurrent'))
                                     msg += ' Current: ' + self.playlist.get('title', decodeURIComponent(window.ACTIVE.videotitle)).pos;
 
                                 break;
@@ -116,6 +111,7 @@ function load() {
                     }
                 })
             }
+
 
             SmidqeTweaks.modules.chat.add('Playlist', msg, 'act', true);
 
@@ -170,7 +166,7 @@ function load() {
                             if (!object[key])
                                 return;
 
-                            if (object[key] !== value)
+                            if (object[key] === value)
                                 return;
 
                             object.changes.push({
@@ -182,8 +178,6 @@ function load() {
                             object[key] = value; //store new value
                             
                         })
-                        
-                        message = object.changes.length > 0;
 
                         break;
                     }
@@ -201,6 +195,8 @@ function load() {
                         break;
                     }
             }
+
+            console.log(message, object.changes, data, action);
 
             if ((message || object.changes.length > 0) && SmidqeTweaks.settings.get(action.setting))
                 self.message(object, action.id);
