@@ -63,8 +63,12 @@ function load() {
 					self.modularize();
 
 				if (ready)
+				{
 					self.windows.show('pollControls', true);
-			
+					self.windows.modularize('polls', true);
+					self.windows.show('polls', true);
+				}
+				
 				if (ready)
 					clearInterval(self.interval);
 			}, 500);
