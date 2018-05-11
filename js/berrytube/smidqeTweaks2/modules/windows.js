@@ -1,7 +1,7 @@
 /*
-    This is a rewrite of windows.js, meant to work purely as a module instead of mix of script/module
 
-    if ()
+    Add another button to make a window completely modular (instead of )
+
 */
 
 function load() {
@@ -11,7 +11,7 @@ function load() {
             name: 'windows'
         },
         windows: {}, //container to hold all windows (all are jquery selectors)
-        titlebar: (title, id) => {
+        titlebar: (id) => {
             return $('<div>', {
                 class: 'st-titlebar'
             }).append(
@@ -19,20 +19,23 @@ function load() {
                     class: 'st-titlebar-exit',
                     'data-id': id,
                 }).on('click', function() {
-                    self.show($(this).data('id'), false);
+                    self.show({name: $(this).data('id'), show: false});
                 })
-            ).append($('<span>').text(title));
+            );
         },
-        show: (name, value, callback) => {
-            let window = self.get(name);
+        show: (data) => {
+            let window = self.get(data.name);
 
-            if (value)
+            if (data.show)
                 window.removeClass('st-window-hidden');
             else
-                window.addClass('st-window-hidden')
+                window.addClass('st-window-hidden');
+            
+            if (data.modular)
+                self.modularize(data.name, data.modular);
 
-            if (callback)
-                callback();
+            if (data.callback)
+                data.callback();
         },
         remove: (name) => {
             let element = self.get(name);
@@ -46,7 +49,7 @@ function load() {
             if (!name)
                 return self.windows;
             
-            return self.windows[name] || $('#st-window-container-' + name);
+            return self.windows[name];
         },
         exists: (name) => {
             return self.get(name).length !== 0;
@@ -81,7 +84,7 @@ function load() {
             window.removeClass('st-window-container-modular');
             window.draggable('destroy');
         },
-        isModular: (name) => {
+        modular: (name) => {
             return self.get(name).hasClass('st-window-container-modular');
         },
         add: (name, what, value) => {
@@ -99,33 +102,31 @@ function load() {
                 return result;
             }
 
-            let container = $('<div>', { id: 'st-window-container-' + data.id });
-            let elem = $(data.selector);
+            if (self.get(data.id))
+                return;
 
-            if (data.wrap && elem[0])
-                container = elem.wrap(container).parent();
+            let container = $('<div>', { id: 'st-window-container-' + data.id });
+
+            if (data.wrap)
+                container = $(data.selector).wrap(container).parent();
 
             if (data.wrap)
                 container.addClass('st-window-wrap');
 
             container.addClass('st-window-container st-window-hidden');
 
-            if (data.title) {
-                let bar = self.titlebar(data.title, data.id);
+            let bar = self.titlebar(data.id);
 
-                //prepend the titlebar to ensure that it will always be on top if it's a wrap
-                if (data.wrap)
-                    container.prepend(bar);
-                else
-                    container.append(bar);
-            }
-
+            if (data.wrap)
+                container.prepend(bar);
+            else
+                container.append(bar);
+            
             if (data.classes)
                 $.each(data.classes, (key, value) => {
                     container.addClass(value);
                 });
 
-            //append only those windows that are not wraps to the body
             if (!data.wrap) 
                 $('body').append(container);
 

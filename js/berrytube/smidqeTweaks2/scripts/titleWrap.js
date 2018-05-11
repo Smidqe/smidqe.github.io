@@ -8,9 +8,10 @@ function load() {
     const self = {
         meta: {
             group: 'scripts',
-            name: 'titleWrap'
+            name: 'titleWrap',
+            requires: ['settings']
         },
-        settings: {
+        config: {
             group: 'playlist',
             values: [{
                 title: 'Wrap videotitle to separate line',
@@ -53,7 +54,16 @@ function load() {
             self.container = title
             self.container.wrap($('<div>', {id: 'st-videotitle-window'}));
             
-            $('.st-window-users').addClass('st-patch-berrytweaks');
+            let interval = setInterval(() => {
+                let element = $('.st-window-users')
+                
+                if (!element[0])
+                    return;
+
+                element.addClass('st-patch-berrytweaks');
+                clearInterval(interval);
+            }, 500)
+            
         },
     }
 

@@ -1,16 +1,11 @@
-/*
-    ???
-*/
 function load() {
     const self = {
         meta: {
             group: 'scripts',
-            name: 'showDrinks'
+            name: 'showDrinks',
+            requires: ['settings']
         },
-        group: 'tweaks',
-        category: 'script',
-        name: 'showDrinks',
-        settings: 
+        config: 
         {
             group: 'chat',
             values: [{
@@ -19,20 +14,12 @@ function load() {
                 key: 'showDrinks',
             }]
         },
-        pairs: [{
-            id: 'current',
-            title: 'Current drinks',
-            value: 0,
-        }, {
-            id: 'dpm',
-            title: 'Drinks per minute',
-            value: 0,
-        }],
-        requires: ['stats'],
-        stats: null,
         enabled: false,
-        show: () => {
-            const last = $(".drink:last tr");
+        show: (data) => {
+            if (!self.enabled || data.msg.emote !== 'drink')
+                return;
+
+            let last = $(".drink:last tr");
 
             if (last.find('.st-chat-drinkcount')[0])
                 return;
@@ -47,41 +34,11 @@ function load() {
         },
         disable: () => {
             self.enabled = false;
+            SmidqeTweaks.unpatch({container: 'chatmessage', name: 'addChatMsg', callback: self.show});
         },
         enable: () => {
             self.enabled = true;
-        },
-        init: () => {
-            self.stats = SmidqeTweaks.modules.stats;
-
-            
-            SmidqeTweaks.patch(window, 'addChatMsg', (data) => {
-                if (!self.enabled || data.msg.emote !== 'drink')
-                    return;
-
-                self.show();
-            }, false);
-
-            /*
-            $.each(self.pairs, (key, value) => {
-                self.stats.addPair('drinks', value);
-            });
-
-            self.stats.update('current', $('#drinkCounter').text());
-
-            socket.on('forceVideoChange', () => {
-                self.stats.update('current', 0);
-            });
-
-            socket.on('drinkCount', () => {
-                self.stats.update('current', $('#drinkCounter').text());
-            });
-
-            setInterval(() => {
-                self.stats.update('dpm', $(".dpmCounter").text().substring(5));
-            }, 1000);
-
-            */
+            SmidqeTweaks.patch({container: {obj: window, name: 'chatmessage'}, name: 'addChatMsg', callback: self.show})
         },
     }
 

@@ -27,15 +27,11 @@ function load() {
             tooltip: 'Show/Hide the menu',
             toggle: false,
         },
-        window: {
-            id: 'menu',
-            classes: ['st-menu', 'st-window-overlap'],
-        },
-        timers: {},
         utilities: null,
         enums: null,
         container: null,
         windows: null,
+        toolbar: null,
         find: (type, dest) => {
             let select = null;
 
@@ -57,7 +53,7 @@ function load() {
             self.resize();
 
             if (type === 'main')
-                SmidqeTweaks.modules.windows.show('menu', value);
+                self.windows.show({name: 'menu', show: value});
         },
         add: (data) => {
             //loop if array is present
@@ -100,25 +96,29 @@ function load() {
                     elements.addClass('st-window-hidden');
                 })
 
-                elements.hover(() => {
-                    clearTimeout(self.timers.elements);
-                }, () => {
+                elements.on('mouseleave', () => {
                     elements.addClass('st-window-hidden');
                 })
 
                 //if there are elements included in the group (das a huge one)
                 //append those aswell, if not just jump out
                 if (!data.elements)
-                    return;
+                    return group;
 
                 $.each(data.elements, (index, element) => {
                     self.add(element);
                 })
+
+                return group;
             }
 
             if (data.type === 'element')
             {
                 let group = $(self.find('group', data.group)).find('#st-menu-elements-' + data.group);
+
+                if (group.length === 0 && data.group)
+                    group = self.add({type: 'group', id: data.group, title: data.group[0].toUpperCase() + data.group.slice(1)}).find('#st-menu-elements-' + data.group);
+
                 let element = $('<' + data.element + '>', {id: 'st-menu-element-' + data.id, class: 'st-menu-element'})
 
                 if (data.title)
@@ -132,6 +132,8 @@ function load() {
                 $.each(data.callbacks, (key, func) => {
                     element.on(key, func);
                 })
+
+                return element;
             }
 
             if (data.type === 'callback')
@@ -144,16 +146,6 @@ function load() {
                     obj.on(key, callback);
                 })
             }
-        },
-        update: (data) => {
-            //TODO
-            /*
-                What do we need/or want to change here?
-                - Title
-                - callback?
-                - 
-
-            */
         },
         resize: () => {
             let group = $('.st-menu-group, .st-menu-group-title');
@@ -169,12 +161,19 @@ function load() {
             elements.width(width);
         },
         init: () => {
-            self.utilities = SmidqeTweaks.modules.utilities;
-            self.windows = SmidqeTweaks.modules.windows;
+            console.log('Starting menu');
+            
+            self.utilities = SmidqeTweaks.get('modules', 'utilities');
+            self.windows = SmidqeTweaks.get('modules', 'windows');
+            self.toolbar = SmidqeTweaks.get('modules', 'toolbar');
             self.enums = self.utilities.enums;
-
             //create the window using the windows module
-            self.container = self.windows.create(self.window);
+
+            self.container = self.windows.create({
+                id: 'menu',
+                classes: ['st-menu', 'st-window-overlap'],
+            });
+
             self.container.on('mouseleave', () => {
                 self.show('main', false);
             });
@@ -195,9 +194,11 @@ function load() {
                 }
             }
 
+            self.container.find('.st-titlebar').css('display', 'none');
+
             //add a button to the toolbar
-            SmidqeTweaks.modules.toolbar.add(self.button);
-            SmidqeTweaks.modules.toolbar.hide(self.button.id);
+            self.toolbar.add(self.button);
+            self.toolbar.hide(self.button.id);
             self.started = true;
         },
     }

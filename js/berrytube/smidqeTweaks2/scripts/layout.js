@@ -1,17 +1,5 @@
 /*
-    - Layout
-        - Video left (stays)
-        - Chat right (stays)
-        - Menu (changes) DONE
 
-    - Data structures
-        * Window:
-            - title
-            - selectors
-            - 
-
-    TODO:
-        - Integration with theme changes for selected elements
 */
 
 function load() {
@@ -19,13 +7,13 @@ function load() {
         meta: {
             group: 'scripts',
             name: 'layout',
-            requires: ['menu', 'toolbar', 'windows'],
+            requires: ['menu', 'toolbar', 'windows', 'settings'],
         },
         maltweaks: false,
         windows: {
             rules: {
                 selectors: ["#st-wrap-motd", "#motdwrap"],
-                title: 'Rules/MOTD'
+                title: 'Rules'
             },
             header: {
                 selectors: ["#st-wrap-header", "#headwrap", ],
@@ -33,38 +21,45 @@ function load() {
             },
             footer: {
                 selectors: ["#st-wrap-footer", "#main #footwrap", ],
-                title: 'Footer',
                 wrap: true,
+                title: 'Footer'
             },
             polls: {
-                selectors: ["#pollpane"],
+                selectors: ["#pollpane, #pollbox"],
                 classes: ["st-window-overlap"],
-                title: 'Polls',
                 wrap: true,
+                title: 'Polls'
             },
             messages: {
                 selectors: ["#mailboxDiv"],
                 classes: ["st-window-overlap"],
-                title: 'Messages',
                 wrap: true,
+                title: 'Messages'
             },
             login: {
                 selectors: [".wrapper #headbar"],
-                title: 'Login',
                 wrap: true,
+                title: 'Login'
             },
             playlist: {
                 selectors: ["#main #leftpane"],
                 classes: ["st-window-playlist", "st-window-overlap"],
-                title: 'Playlist',
                 wrap: true,
+                title: 'Playlist'
             },
             users: {
                 selectors: ["#chatlist"],
                 classes: ["st-window-overlap", "st-window-users"],
-                title: 'Userlist',
                 wrap: true,
+                title: 'Userlist'
             },
+        },
+        config: {
+            group: 'layout',
+            values: [{
+                title: 'Enable layout',
+                key: 'layout'
+            }]
         },
         stylesheet: null,
         playlist: false,
@@ -79,7 +74,6 @@ function load() {
                     id: key,
                     wrap: true,
                     selector: selector,
-                    title: value.title,
                     classes: [],
                 }
 
@@ -91,7 +85,7 @@ function load() {
                     id: key, 
                     title: value.title, 
                     callbacks: {
-                        'click': () => {self.__windows.show(key, true)}
+                        'click': () => {self.__windows.show({name: key, show: true})}
                     }
                 }
 
@@ -150,10 +144,9 @@ function load() {
         enable: () => {
             let loaded = false;
 
-            self.interval = setInterval(() => { 
-                //if (self.maltweaks)
-                //  loaded = self.utilities.linearCheck(window.MT, window.MT.loaded);
+            SmidqeTweaks.patch({container: {obj: SmidqeTweaks.modules.windows, name: 'layout'}, name: 'show', after: true, callback: self.updatePlaylistPosition});
 
+            self.interval = setInterval(() => { 
                 if (self.maltweaks && window.MT)
                     loaded = window.MT.loaded;
 
@@ -167,7 +160,7 @@ function load() {
                     clearInterval(self.interval);
             }, 500);
 
-            SmidqeTweaks.settings.set('layout', true, true);
+            SmidqeTweaks.modules.settings.set('layout', true, true);
         },
         disable: () => {
             self.setup();
@@ -176,7 +169,13 @@ function load() {
                 self.__windows.remove(window);
             })
 
-            SmidqeTweaks.settings.set('layout', false, true);
+            SmidqeTweaks.modules.settings.set('layout', false, true);
+        },
+        updatePlaylistPosition: (key) => {
+            if (key !== 'playlist')
+                return;
+
+            SmidqeTweaks.get('modules', 'playlist').refresh();
         },
         init: () => {
             //add menu group
@@ -184,11 +183,15 @@ function load() {
             self.__windows = SmidqeTweaks.modules.windows;
             self.__toolbar = SmidqeTweaks.modules.toolbar;
 
-            //add the necessary groups
-            self.__menu.add([{type: 'group', id: 'berrytube', title: 'Berrytube'}, {type: 'group', id: 'windows', title: 'Windows'}])
+            self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css"/>').attr("href", "http://smidqe.github.io/js/berrytube/css/stweaks.css");
+            self.maltweaks = SmidqeTweaks.get('modules','settings').get('maltweaks');
             
+            if (SmidqeTweaks.get('modules','settings').get('development'))
+                self.stylesheet.attr("href", "http://localhost/smidqetweaks/css/stweaks.css");
+            
+            self.__menu.add([{type: 'group', id: 'berrytube', title: 'Berrytube'}, {type: 'group', id: 'windows', title: 'Windows'}])
             self.__menu.add({
-                group: 'berrytube', 
+                group: 'layout', 
                 id: 'layout', 
                 title: 'Disable layout', 
                 callbacks: {
@@ -206,19 +209,6 @@ function load() {
                     'click': () => {self.enable()}
                 }
             });
-
-            self.stylesheet = $('<link id="st-stylesheet" rel="stylesheet" type="text/css"/>').attr("href", "http://smidqe.github.io/js/berrytube/css/stweaks.css");
-            self.maltweaks = SmidqeTweaks.settings.get('maltweaks');
-
-            if (SmidqeTweaks.settings.get('development'))
-                self.stylesheet.attr("href", "http://localhost/smidqetweaks/css/stweaks.css");
-
-            SmidqeTweaks.patch(self.__windows, 'show', (key) => {
-                if (key !== 'playlist')
-                    return;
-                
-                SmidqeTweaks.modules.playlist.refresh();
-            })
         }
     }
 

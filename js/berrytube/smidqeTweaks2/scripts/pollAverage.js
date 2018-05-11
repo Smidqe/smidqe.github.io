@@ -1,7 +1,9 @@
 /*
 	TODO:
 	- Add separate input to give the amount of buttons/values in the poll to trigger the
-	script. Since some mods have polls that start from 1 and not from zero.
+    script. Since some mods have polls that start from 1 and not from zero. ???
+    
+    -> Add a clamp to final result
 	
 */
 
@@ -9,10 +11,11 @@ function load() {
     const self = {
         meta: {
             group: 'scripts',
-            name: 'pollAverage'
+            name: 'pollAverage',
+            requires: ['settings', 'chat']
         },
         name: 'pollAverage',
-        settings: { 
+        config: { 
             group: 'poll',
             values: [{
                 title: "Calculate episode average",
@@ -27,16 +30,14 @@ function load() {
                 key: 'statsAverage',
                 sub: true,
                 depends: ['pollAverage']
-            }, {
-                title: 'Show previous averages',
-                key: 'historyAverage',
-                sub: true,
-                depends: ['pollAverage']
             }],
         },
         enabled: false,
         calculate: function(data) {
-            if (data.votes.length < 10) //to take into account that some mods don't use 0..10 scale, instead there's 1..10
+            if (!self.enabled)
+                return;
+
+            if (data.votes.length < 10 || data.votes.length > 11) //to take into account that some mods don't use 0..10 scale, instead there's 1..10
                 return;
 
             let total = 0;
@@ -61,33 +62,20 @@ function load() {
             //don't show invalid values
             if (isNaN(average))
                 return;
-
-            //not functional yet
-            if (self.main.get('statsAverage'))
-                self.save();
             
             self.chat.add("Episode ", msg, 'rcv', false);
         },
-        save: (value) => {
-
-        },
         enable: () => {
             self.enabled = true;
+            socket.on('clearPoll', self.calculate);
         },
         disable: () => {
             self.enabled = false;
+            socket.removeListener('clearPoll', self.calculate)
         },
         init: () => {
-            self.stats = SmidqeTweaks.modules.stats;
             self.chat = SmidqeTweaks.modules.chat;
             self.main = SmidqeTweaks.settings;
-
-            socket.on('clearPoll', (data) => {
-                if (!self.enabled)
-                    return;
-
-                self.calculate(data);
-            })
         },
     }
     return self;

@@ -4,7 +4,6 @@ function load() {
             group: 'modules',
             name: 'playlist'
         },
-        started: true,
         duration: (str) => {
             let values = str.split(":").reverse();
             let ms = 0;
@@ -36,10 +35,7 @@ function load() {
                 return 0;
 
             //if we haven't set the next video, compare to current active video
-            if (!comp)
-                current = self.get('title', window.ACTIVE.videotitle);
-            else
-                current = self.get('title', comp);
+            current = self.get('title', comp || window.ACTIVE.videotitle);
 
             return search.pos - current.pos;
         },
@@ -68,11 +64,7 @@ function load() {
             smartRefreshScrollbar();
             scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2), 0);
             realignPosHelper();
-        },
-        loaded: () => {
-            //check if the playlist has loaded
-        },
-        
+        },   
     }
 
     return self;

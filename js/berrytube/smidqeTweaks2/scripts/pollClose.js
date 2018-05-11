@@ -2,33 +2,40 @@ function load() {
     const self = {
         meta: {
             group: 'scripts',
-            name: 'pollClose'
+            name: 'pollClose',
+            depends: ['chat', 'settings']
         },
-        settings: {
+        config: {
             group: 'poll',
             values:[{
                 title: 'Show poll closures in chat',
-                type: 'checkbox',
                 key: 'pollClose',
+            }, {
+                title: 'Squee upon closure',
+                key: 'squeeClose',
+                sub: true,
+                depends: ['pollClose'],
             }]
         },
         enabled: false,
+        notify: () => {
+            let title = $(".poll:first:not(.active)").find('.title').text();
+            let msg = "'" + title + "' was closed";
+
+            if (SmidqeTweaks.get('modules', 'settings').get('squeeClose'))
+                doSqueeNotify();
+
+            SmidqeTweaks.modules.chat.add('Poll', msg, 'act', false);
+        },
         enable: () => {
             self.enabled = true;
+
+            socket.on('clearPoll', self.notify);
         },
         disable: () => {
             self.enabled = false;
-        },
-        init: () => {
-            socket.on('clearPoll', (data) => {
-                if (!self.enabled)
-                    return;
 
-                let title = $(".poll:first:not(.active)").find('.title').text();
-                let msg = "'" + title + "' was closed";
-
-                SmidqeTweaks.modules.chat.add('Poll', msg, 'act', false);
-            })
+            socket.removeListener('clearPoll', self.notify);
         },
     }
 

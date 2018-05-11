@@ -2,13 +2,13 @@ function load() {
     const self = {
         meta: {
             group: 'modules',
-            name: 'chat'
+            name: 'chat',
         },
         add: (nick, text, type, hideNick) => {
             var time = new Date();
 
             //utilise Berrytweaks to get consistent time, there is variability between local and server times \\fsnotmad
-            if (SmidqeTweaks.settings.get('berrytweaks') && window.BerryTweaks)
+            if (window.BerryTweaks)
                 time = BerryTweaks.getServerTime();
 
             addChatMsg({
@@ -35,36 +35,27 @@ function load() {
             //prevent tabcomplete on non existant/wrong users
             delete CHATLIST[nick];
         },
+        users: () => {
+            let users = $('#chatlist li');
+            let result = [];
 
-        get: (type, data) => {
-            switch(type)
-            {
-                case 'usercounts': return self.usercount(); 
-                case 'users': return self.users(data); //list of users
-                case 'emotes': return self.emotes(data);//used emotes
-                case 'rcv': return self.rcv(data);  //rcv's
-                default:
-                    return undefined;
-            }
-        },
-        users: (data) => {
-            /*
-                What data do we need?
-                data:
-                {
-                    filters: {
-                        users: [],
-                        groups: [],
-                    }, 
+            $.each(users, (index, obj) => {
+                let filters = ['admin', 'assistant', 'user', 'anon'];
+                let attrs = $(obj).attr('class').split(' ');
 
-                    keepGroup: false //if this is enabled return value will have group (user, anon, admin etc)
-                }
-            */
+                result.push({
+                    name: attrs.filter(name => filters.indexOf(name) === -1)[0],
+                    group: attrs.filter(name => filters.indexOf(name) !== -1),
+                    me: attrs.indexOf('me') !== -1,
+                })
+            })
+
+            return result;
         },
-        emotes: (data) => {
+        emotes: () => {
             return $('.berryemote');
         },
-        rcv: (data) => {
+        rcv: () => {
             return $('.rcv');
         },
         usercount: () => {

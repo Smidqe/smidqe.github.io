@@ -3,9 +3,9 @@ function load() {
         meta: {
 			group: 'scripts',
 			name: 'showTime',
-			requires: ['toolbar'],
+			requires: ['time', 'toolbar', 'settings'],
 		},
-        settings: {
+        config: {
 			group: 'time',
 			values: [{
 				title: 'Show time in toolbar',
@@ -27,47 +27,54 @@ function load() {
 			tooltip: 'Current time',
 		},
 		enabled: false,
+		update: () => {
+			if (!self.enabled)
+				return;
+
+			let time = self.time.get();
+			let half = self.settings.get({which: 'setting', key:'12hour'});
+
+			if (half)
+				time = self.time.convert('12h', time);
+			
+			let text = '';
+			let skip = ['format', 'suffix'];
+			
+			$.each(time, (key, val) => {
+				if (skip.indexOf(key) !== -1)
+					return;
+				
+				if (key === 's' && !self.settings.get({which: 'setting', key: 'showSeconds'}))
+					return;
+
+				if (key !== 'h')
+					text += ':';
+
+				text += val;
+			})
+
+			if (half)
+				text += " " + time.suffix;
+
+			self.toolbar.update('time', text);
+		},
 		enable: () => {
-			SmidqeTweaks.modules.toolbar.add(self.element);
+			self.toolbar.add(self.element);
+
+			self.updater = setInterval(self.update, 1000);
 			self.enabled = true;
 		},
 		disable: () => {
-			SmidqeTweaks.modules.toolbar.remove('time');
+			self.toolbar.remove('time');
+
+			clearInterval(self.updater);
 			self.enabled = false;
 		},
-        init: () => {
-			setInterval(() => {
-				if (!self.enabled)
-					return;
-
-				let time = SmidqeTweaks.modules.time.get();
-				let half = SmidqeTweaks.settings.get('12hour');
-
-				if (half)
-					time = SmidqeTweaks.modules.time.convert('12h', time);
-				
-				let text = '';
-				let skip = ['format', 'suffix'];
-				
-				$.each(time, (key, val) => {
-					if (skip.indexOf(key) !== -1)
-						return;
-					
-					if (key === 's' && !SmidqeTweaks.settings.get('showSeconds'))
-						return;
-
-					if (key !== 'h')
-						text += ':';
-
-					text += val;
-				})
-
-				if (half)
-					text += " " + time.suffix;
-
-				SmidqeTweaks.modules.toolbar.update('time', text);
-			}, 1000)
-        },
+		init: () => {
+			self.toolbar = SmidqeTweaks.get('modules', 'toolbar');
+			self.time = SmidqeTweaks.get('modules', 'time');
+			self.settings = SmidqeTweaks.get('modules', 'settings');
+		}
     }
     return self;
 }

@@ -1,12 +1,6 @@
-/*
-    TODO:
-        - rewrite some parts 
-        
-*/
-
 function load() {
     const self = {
-        settings: {
+        config: {
             group: 'playlist',
             values: [{
                 title: 'Track changes',
@@ -43,23 +37,23 @@ function load() {
                 sub: true,
             },]
         },
-        //this might be the future
         meta: {
             group: 'scripts',
             name: 'trackPlaylist',
-            requires: ['playlist', 'chat'],
+            requires: ['playlist', 'chat', 'settings'],
         },
         shuffle: false,
         tracking: {},
         playlist: null,
-        track: (video) => {
-            var title = decodeURIComponent(video.videotitle);
-            var pos = self.playlist.get('title', title).pos;
+        patch: ['remove', 'insertAfter', 'append', 'insertBefore'],
+        track: (video, pos) => {
+            let title = decodeURIComponent(video.videotitle);
+            let position = pos || self.playlist.get('title', title).pos;
 
-            var object = {
+            let object = {
                 videoid: video.videoid,
                 title: title,
-                pos: pos,
+                pos: position,
                 volat: video.volat,
                 videolength: video.videolength,
                 videotype: video.videotype,
@@ -85,36 +79,24 @@ function load() {
                 msg += ' was added to playlist';
 
 
-            if (data.changes.length > 0)
-            {
-                $.each(data.changes, (key, value) => {
+            $.each(data.changes, (key, value) => {
+                if (value.key === 'volat')
+                    msg += ' was set to ' + value.new === true ? ' volatile ' : ' permanent';
 
-                    switch (value.key) {
-                        case 'volat':
-                            {
-                                //possibly separate these to vol -> non vol && non vol -> vol
-                                msg += ' was set to ' + value.new === true ? ' volatile ' : ' permanent';
-                                break;
-                            };
-                        case 'pos':
-                            {
-                                msg += ' was moved';
+                if (value.key === 'pos')
+                {
+                    msg += ' was moved';
 
-                                if (SmidqeTweaks.settings.get('trackPosition'))
-                                    msg += ' (' + value.old + ' -> ' + value.new + ')';
+                    if (self.settings.get('trackPosition'))
+                        msg += ' (' + value.old + ' -> ' + value.new + ')';
 
-                                if (SmidqeTweaks.settings.get('trackCurrent'))
-                                    msg += ' Current: ' + self.playlist.get('title', decodeURIComponent(window.ACTIVE.videotitle)).pos;
-
-                                break;
-                            };
-                    }
-                })
-            }
+                    if (self.settings.get('trackCurrent'))
+                        msg += ' Current: ' + self.playlist.get('title', decodeURIComponent(window.ACTIVE.videotitle)).pos;
+                }
+            })
 
 
             SmidqeTweaks.modules.chat.add('Playlist', msg, 'act', true);
-
             data.changes = [];
         },
         action: (data, action) => {
@@ -123,134 +105,133 @@ function load() {
 
             let volatile = action.id === 'volatile';
             let object = self.tracking[data.videoid];
-            let video = volatile ? self.playlist.get('index', data.pos) : null;
+            let video = volatile ? self.playlist.get('index', data.pos).value : null;
             let message = false;
-
-            if (volatile)
-                object = self.tracking[video.videoid];
 
             if (!object && !volatile)
                 object = self.track(data);
 
             if (!object && volatile)
-                object = self.track(video);
+                object = self.tracking[video.videoid] || self.track(video);
 
             switch (action.id) {
                 case 'add': message = true; break;
                 case 'remove':
-                    {
-                        object.timeout = setTimeout(() => {
-                            //this covers the move (removed and readded)
-                            if (SmidqeTweaks.settings.get('trackRemove'))
-                                self.message(object, 'remove');
+                {
+                    object.timeout = setTimeout(() => {
+                        if (self.settings.get('trackRemove'))
+                            self.message(object, 'remove');
 
-                            delete self.tracking[object.videoid];
-                        }, 1000);
+                        delete self.tracking[object.videoid];
+                    }, 1000);
 
-                        break;
-                    }
+                    break;
+                }
                 case 'modify':
+                {
+                    //a move happened
+                    if (object.timeout)
                     {
-                        //a move happened
-                        if (object.timeout)
-                        {
-                            clearTimeout(object.timeout);
-                            object.timeout = null;
-                        }
-                        //add position to the data
-                        data.pos = self.playlist.get('title', object.title).pos;
-                        
-                        //check values
-                        $.each(data, (key, value) => {
-                            //don't check values that are non existant in the our end
-                            if (!object[key])
-                                return;
+                        clearTimeout(object.timeout);
+                        object.timeout = null;
+                    }
+                    //add position to the data
+                    data.pos = self.playlist.get('title', object.title).pos;
+                    
+                    //check values
+                    $.each(data, (key, value) => {
+                        //don't check values that are non existant in the our end
+                        if (!object[key])
+                            return;
 
-                            if (object[key] === value)
-                                return;
+                        if (object[key] === value)
+                            return;
 
-                            object.changes.push({
-                                key: key,
-                                old: object[key],
-                                new: value
-                            })
-
-                            object[key] = value; //store new value
-                            
+                        object.changes.push({
+                            key: key,
+                            old: object[key],
+                            new: value
                         })
 
-                        break;
-                    }
+                        object[key] = value; //store new value
+                    })
+
+                    break;
+                }
 
                 case 'volatile':
-                    {
-                        object.changes.push({
-                            key: 'volat',
-                            old: !data.volat,
-                            new: data.volat
-                        })
+                {
+                    object.changes.push({
+                        key: 'volat',
+                        old: !data.volat,
+                        new: data.volat
+                    })
 
-                        object.remove = data.volat;
+                    //remove from tracking if set to permanent, on nonvol -> vol it'll be removed after it has played triggering 'remove'
+                    object.remove = !data.volat;
 
-                        break;
-                    }
+                    break;
+                }
             }
 
-            console.log(message, object.changes, data, action);
-
-            if ((message || object.changes.length > 0) && SmidqeTweaks.settings.get(action.setting))
+            if ((message || object.changes.length > 0) && self.settings.get(action.setting))
                 self.message(object, action.id);
 
             if (object.remove)
                 delete self.tracking[object.videoid];
         },
         enable: () => {
+            $.each(self.patch, (index, value) => {
+                SmidqeTweaks.patch({container: {obj: window.PLAYLIST.__proto__, name: 'playlist'}, name: value, callback: self.proto, after: value === 'remove' ? false : true})
+            })
+
+            $.each(self.socket, (key, val) => {
+                socket.on(key, val);
+            })
+
             self.enabled = true;
         },
         disable: () => {
             self.enabled = false;
+
+            $.each(self.patch, (index, value) => {
+                SmidqeTweaks.unpatch({container: 'playlist', name: value, callback: self.proto});
+            })
+
+            $.each(self.socket, (key, val) => {
+                socket.removeListener(key, val);
+            })
         },
         toggle: () => {
             self.enabled = SmidqeTweaks.settings.get('trackPlaylist')
         },
+        proto: (node, newNode) => {
+            let conf = {id: 'modify', setting: 'trackMove'}
+            
+            if (!newNode)
+                conf = {id: 'remove', setting: 'trackRemove'}
+
+            self.action(newNode || node, conf);
+        },
         init: () => {
-            self.playlist = SmidqeTweaks.get('playlist', 'modules');
+            self.playlist = SmidqeTweaks.get('modules', 'playlist');
+            self.settings = SmidqeTweaks.get('modules', 'settings');
 
-            socket.on('addVideo', (data) => {
-                self.action(data.video, { id: 'add', setting: 'trackAdd' })
-            })
-
-            socket.on('randomizeList', () => {
-                SmidqeTweaks.modules.chat.add('Playlist', 'Playlist has been shuffled', 'rcv', true);
-                self.shuffle = true;
-            })
-
-            //this needs testing eventually (need to have a method to figure out if playlist has been shuffled)
-            socket.on('recvNewPlaylist', () => {
-                self.shuffle = false;
-            })
-
-            socket.on('setVidVolatile', (data) => {
-                self.action(data, { id: 'volatile', setting: 'trackVolatile' })
-            })
-
-            //this is the only one that I want to prepend the callback, due to position, if the callback is appended that data is lost and cause undefined value (not a huge issue but meh)
-            SmidqeTweaks.patch(PLAYLIST.__proto__, 'remove', (node) => {
-                self.action(node, { id: 'remove', setting: 'trackRemove' });
-            }, true);
-
-            //these have the full node of data, so we can just change the values that have changed
-            SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertAfter', (node, newNode) => {
-                self.action(newNode, { id: 'modify', setting: 'trackMove' })
-            }, false);
-
-            SmidqeTweaks.patch(PLAYLIST.__proto__, 'append', (node, newNode) => {
-                self.action(newNode, { id: 'modify', setting: 'trackMove' })
-            }, false);
-
-            SmidqeTweaks.patch(PLAYLIST.__proto__, 'insertBefore', (node, newNode) => {
-                self.action(newNode, { id: 'modify', setting: 'trackMove' })
-            }, false);
+            self.socket = {
+                addVideo: (data) => {
+                    self.action(data.video, {id: 'add', setting: 'trackAdd'})
+                },
+                randomizeList: () => {
+                    SmidqeTweaks.modules.chat.add('Playlist', 'Playlist has been shuffled', 'rcv', true);
+                    self.shuffle = true;
+                },
+                setVidVolatile: (data) => {
+                    self.action(data, { id: 'volatile', setting: 'trackVolatile' })
+                },
+                recvNewPlaylist: () => {
+                    self.shuffle = false;
+                },
+            }
         },
     }
     return self;

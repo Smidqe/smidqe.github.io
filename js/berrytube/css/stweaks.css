@@ -34,6 +34,7 @@
     width: 100%;
     height: 100%;
     background-color: #444;
+    overflow-y: auto;
 }
 
 .st-window-users {
@@ -112,6 +113,11 @@
     height: 400px;
     overflow: auto;
     resize: vertical;
+}
+
+#st-window-container-playlistControls {
+    width: 350px;
+    height: 250px;
 }
 
 #pollControl .mainbtns {
@@ -462,3 +468,22 @@ body #leftpane {
     top: 30px;
 }
 
+#chatControls.st-controls-hidden > .settings, #chatControls.st-controls-hidden > .berrymotes_button {
+    display: none;
+}
+
+#st-users-container {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    left: 0px;
+    text-align: left;
+    padding-left: 5px;
+    justify-items: start;
+    gap: 0px;
+    right: 150px;
+}
+
+.st-window-container-usercount {
+    width: 200px;
+    height: 200px;
+}

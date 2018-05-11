@@ -1,6 +1,5 @@
 function load() {
     const self = {
-        started: false,
         meta: {
             group: 'modules',
             name: 'time'

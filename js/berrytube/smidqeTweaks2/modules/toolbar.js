@@ -30,19 +30,15 @@ function load() {
             if (data.text)
                 element.text(data.text);
 
-            if (data.classes)
-                $.each(data.classes, (c) => {
-                    element.addClass(c);
-                })
+            $.each(data.classes || [], (c) => {
+                element.addClass(c);
+            })
 
             //add possibility to different types? dropdowns and such?
 
             self.bar.append(element);
 
-            if (!data.callbacks)
-                return;
-
-            $.each(data.callbacks, (key, value) => {
+            $.each(data.callbacks || [], (key, value) => {
                 element.on(key, value);
             })            
         },

@@ -1,193 +1,29 @@
-/*
-    TODO:
-        - Integration with wutShot
-            * Show the amount of shots taken
-            * Squee when button is ready for another shot
-            * ???
-
-        - New setting data structure
-            - group
-            - values
-                - title
-                - key
-                - reload (requires a reload to take effect (alert!))
-                - requires (requires other settings)
-                - group ()
-
-
-        - Possibly rework the settings
-            - Allow dependencies of certain settings
-        
-*/
 const self = {
     modules: {}, //has multifunctional modules, meant for use for scripts
     scripts: {}, //simplistic methods
-    check: null,
-    queue: {},
+    callbacks: {},
+    dependencies: {},
+    queue: [],
+    update: false,
     names: { //holds the names for modules, scripts and groups
-        modules: ['toolbar', 'windows', 'playlist', 'menu', 'stats', 'time', 'chat', 'utilities'],
-        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'playlistControls', 'pollControls'],
-        groups: ['dependencies', 'time', 'chat', 'playlist', 'poll'],
+        modules: ['settings', 'toolbar', 'windows', 'playlist', 'menu', 'stats', 'time', 'chat', 'utilities'],
+        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'berryControls', 'hideOriginals', 'usercount'],
+        groups: ['time', 'chat', 'playlist', 'polls', 'berry', 'patches'],
+        enabled: [],
     },
-    //will hold all depedencies
-    config: {
-        group: 'dependencies',
-        values: [{
-            title: 'Using MalTweaks',
-            key: 'maltweaks',
-        }, {
-            title: 'Using BerryTweaks',
-            key: 'berrytweaks',
-        }]
-    },
-    //possiblity to move this into a module or scatter it to this file??
-    settings: {
-        dependencies: {},
-        container: null,
-        storage: {},
-        group: (method, name) => {
-            if (method === 'get')
-                return self.settings.container.find('#st-settings-group-' + name);
-
-            if (method === 'create' && name)
-            {
-                let title = name[0].toUpperCase() + name.slice(1);
-                let label = $('<label>', {class: 'st-settings-group-label', text: title});
-                let wrap = $('<div>', {id: 'st-settings-group-' + name, class: 'st-settings-group'});
-
-                return wrap.append(label);
-            }
-        },
-        get: (key) => {
-            return self.settings.storage[key];
-        },
-        set: (key, value, save) => {
-            self.settings.storage[key] = value;
-
-            if (save)
-                self.settings.save();
-        },
-        load: () => {
-            self.settings.storage = JSON.parse(localStorage.SmidqeTweaks || '{}')
-        },
-        save: () => {
-            localStorage.SmidqeTweaks = JSON.stringify(self.settings.storage);
-        },
-        create: (data) => {
-            const wrap = $('<div>', { class: 'st-settings-wrap' }).append($('<label>', { text: data.title }));
-            const element = $('<input>', {
-                    type: data.type ? data.type : 'checkbox',
-                    checked: self.settings.get(data.key),
-                    'data-key': data.key,
-                    'data-reload': data.reload,
-                    'data-others': data.depends
-                })
-                .change(function() {
-                    let checked = $(this).prop('checked');
-                    let key = $(this).data('key');
-                    let reload = $(this).data('reload');
-
-                    self.settings.set(key, checked, true);
-
-                    if (self.settings.dependencies[key])
-                        self.settings.show(false);
-                
-                    if (self.names.scripts.indexOf(key) !== -1)
-                        (checked ? self.scripts[key].enable : self.scripts[key].disable)();
-                    
-                    if (reload)
-                        alert('Refresh is needed to take effect');
-                })
-
-            if (data.sub)
-                wrap.addClass('st-setting-sub');
-
-            return wrap.append(element);
-        },
-        append: (cont, settings) => {
-            if (!settings)
-                return;
-
-            const group = self.settings.group('get', settings.group);
-            
-            $.each(settings.values, (key, val) => {
-                if (!self.settings.check(val.depends))
-                    return;
-
-                let setting = self.settings.create(val);
-                
-                if (val.group)
-                    self.settings.group('get', val.group).append(setting);
-                else
-                    group.append(setting);
-            })
-
-            return group;
-        },
-        check: (list) => {
-            if (!list)
-                return true;
-
-            let result = true;
-
-            $.each(list, (index, key) => {
-                if (!result)
-                    return;
-
-                if (!self.settings.get(key))
-                    result = false;
-            })
-
-            return result;
-        },
-        show: (append = true) => {
-            let cont = self.settings.container || $('<fieldset>');
-
-            if (!self.settings.container)
-                self.settings.container = cont;
-            else
-                cont = self.settings.container;
-
-            cont.empty();
-            cont.append($('<legend>', { text: 'SmidqeTweaks' }));
-
-            //create the groups
-            $.each(self.names.groups, (key, grp) => {
-                cont.append(self.settings.group('create', grp));
-            })
-
-            self.settings.append(cont, self.config);
-
-            $.each(self.names, (key) => {
-                if (key === 'groups')
-                    return;
-
-                $.each(self.names[key], (index, mod) => {
-                    self.settings.append(cont, self[key][mod].settings);
-                })
-            })
-
-            //use the names defined in self.names, to ensure same order everytime
-            if (append)
-                $("#settingsGui > ul").append($('<li>').append(cont));
-        },
-        updateDependencies: (settings) => {
-            if (!settings)
-                return;
-
-            let deps = self.settings.dependencies
-            $.each(settings.values, (index, value) => {
-                if (!value.depends)
-                    return;
-
-                $.each(value.depends, (index, key) => {
-                    if (!deps[key])
-                        deps[key] = [];
-
-                    deps[key].push(value.key);
-                })
-            })
-        }
+    descriptions: {
+        maltweaks: 'Maltweaks made by Malsententia',
+        berrytweaks: 'BerryTweaks, made by Atte',
+        layout: 'Custom layout for Berrytube',
+        pollAverage: 'Calculate episode average when poll closes',
+        rcvSquee: 'Squee when RCV message is received',
+        titleWrap: 'Wrap BerryTweaks videotitle to a separate line',
+        showDrinks: 'Show the amount of drinks in chat',
+        trackPlaylist: 'Track playlist changes',
+        showTime: 'Show time in toolbar',
+        berryControls: 'Modularize playlist and poll controls when given berry',
+        hideOriginals: 'Hide the original emote/settings buttons (needs layout enabled)',
+        usercount: 'Show usercount in the userlist window (needs layout enabled)'
     },
     add: (mod) => {
         if (!mod.meta)
@@ -195,128 +31,172 @@ const self = {
 
         self[mod.meta.group][mod.meta.name] = mod;
 
-        //don't init twice those that are core modules (is this required anymore???)
-        if (mod.init && (self.names.modules.indexOf(mod.meta.name) == -1))
-            self.queue[mod.meta.name] = mod;
-    },
-    remove: (title, _from) => {
-        delete self[_from][title];
-    },
-    get: (title, _from) => {
-        return self[_from][title];
-    },
-    //Credits to Atte and BerryTweaks, I just split them
-    appendCallback: (container, func, callback) => {
-        var original = container[func];
-        var patch = function() {
-            const before = original.apply(this, arguments);
-            callback.apply(this, arguments);
-            return before;
-        }
-
-        container[func] = patch;
-    },
-    prependCallback: (container, func, callback) => {
-        var original = container[func];
-        var patch = function() {
-            if (callback.apply(this, arguments) !== false)
-                return original.apply(this, arguments);
-
-            return undefined;
-        }
-
-        container[func] = patch;
-    },
-    patch: (container, func, callback, prepend) => {
-        if (!container[func])
-            return;
-
-        if (prepend)
-            self.prependCallback(container, func, callback);
-        else
-            self.appendCallback(container, func, callback);
-    },
-    checkRequired: (mod) => {
-        if (!mod.meta.requires)
-            return true;
-
-        let result = true;
-        let list = mod.meta.requires;
-
-        $.each(list, (index) => {
-            if (!result)
-                return;
-
-            let check = self.modules[list[index]];
-
-            if (!check)
-                result = false;
-            else 
-                result = !!check.init ? check.started : true;
+        $.each(mod.meta.requires || [], (index, value) => {
+            self.dependencies[value].push(mod.meta.name);
         })
 
-        return result;
+        self.start(mod);
     },
+    load: (data, callback) => {
+        if (self[data.dir][data.name] || self.queue.indexOf(data.name) !== -1)
+            return;
 
-    startModule: (mod, src) => {
-        //if something need to be initialised
+        let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/${data.dir}/${data.name}.js`
 
-        self.settings.updateDependencies(mod.settings);
+        //this will be gone at some point
+        if (JSON.parse(localStorage.SmidqeTweaks).development)
+            path = `http://localhost/smidqetweaks/${data.dir}/${data.name}.js`
 
-        if (mod.init)
-            mod.init();
+        if (data.path)
+            path = data.path;
 
-        //enable script according to settings
-        if (mod.meta.group === 'scripts' && self.settings.get(mod.meta.name))
-            mod.enable();
+        self.queue.push(data.name);
 
-        delete src[mod.meta.name];
+        $.ajax(path, {
+            cache: false,
+            dataType: "script",
+        })
     },
-    load: () => {
-        self.settings.load();
+    unload: (data) => {
+        let values = [];
+        let mod = self[data.dir][data.name]
 
-        $.each(self.names, (key) => {
-            if (key === 'groups')
-                return;
+        if (!mod)
+            return;
 
-            $.each(self.names[key], (index, name) => {
-                let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/${key}/${name}.js`
+        if (data.dir === 'scripts')
+            values = mod.meta.requires;
 
-                if (self.settings.get('development'))
-                    path = `http://localhost/smidqetweaks/${key}/${name}.js`;
+        if (mod.disable)
+            mod.disable();
 
-                $.getScript(path, () => {
-                    self.queue[name] = self[key][name];
-                })
+        $.each(values, (index, val) => {
+            self.dependencies[val] = self.dependencies[val].filter(script => script !== data.name)
+
+            //unload the module since it's no longer needed
+            if (self.dependencies[val].length === 0)
+                self.unload({dir: 'modules', name: val});
+        })
+
+        delete self[data.dir][data.name];
+    },
+    get: (_from, title) => {
+        return self[_from][title];
+    },
+    unpatch: (data) => {
+        if (data instanceof Array)
+        {
+            $.each(data, sub => self.unpatch(sub))
+            return;
+        }
+
+        self.callbacks[data.container][data.name] = self.callbacks[data.container][data.name].filter((value) => {
+            return data.callback !== value.callback
+        })
+    },
+    patch: (data) => {
+        if (data instanceof Array)
+        {
+            $.each(data, index => self.patch(data[index]));
+            return;
+        }
+        
+        if (!self.callbacks[data.container.name])
+            self.callbacks[data.container.name] = {};
+        
+        if (!self.callbacks[data.container.name][data.name])
+            self.callbacks[data.container.name][data.name] = [];
+
+        let original = data.container.obj[data.name];
+        let cont = self.callbacks[data.container.name];
+
+        if (cont[data.name].length === 0)
+            cont[data.name] = [original];
+
+        if (data.after)
+            cont[data.name].push(data.callback);
+        else
+            cont[data.name].unshift(data.callback);
+
+        let patch = function () {
+            let result = undefined;
+
+            for (let f of cont[data.name])
+            {
+                try {
+                    if (f === original)
+                        result = f.apply(this, arguments)
+                    else
+                        f.apply(this, arguments);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            return result;
+        }
+
+        data.container.obj[data.name] = patch;
+    },
+    notify: (data) => {}, // \\ppcute
+    start: (mod) => {
+        if (!mod.meta)
+            return;
+
+        let interval = setInterval(() => {
+            let start = true;
+            $.each(mod.meta.requires || [], (index, key) => {                
+                if (self.queue.indexOf(key) !== -1)
+                {
+                    start = false;
+                    return;
+                }
+
+                if (!self.modules[key] && self.queue.indexOf(key) === -1)    
+                {
+                    start = false;
+                    self.load({dir: 'modules', name: key});
+                    return;
+                }
+
+                if (self.modules[key].init && start)
+                    start = self.modules[key].started;
             })
+
+            if (start && mod.init)
+                mod.init();
+
+            if (start)
+            {
+                self.notify({key: mod.meta.name, mod: mod});
+
+                self.queue.splice(self.queue.indexOf(mod.meta.name), 1);
+                clearInterval(interval);
+            }
+        }, 1500);
+    },
+    update: () => {
+        $.each(self.names.enabled, (index, key) => {
+            if (!self.scripts[key])
+                self.load({dir: 'scripts', name: key});
         })
     },
     init: () => {
         console.log("Loading Smidqetweaks");
 
-        self.load();
+        $.each(self.names.modules, (index, val) => {
+            self.dependencies[val] = [];
+        })
+
+        //this prevents the settings module from being unloaded if las 
+        self.dependencies['settings'].push('main');
 
         //append the min-css file
-        if (self.settings.get('development'))
+        //if (true)
             $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks-min.css"/>'))
-        else
-            $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    
-
-        self.check = setInterval(() => {
-            if ($.isEmptyObject(self.queue))
-                return;
-
-            $.each(self.queue, (key, mod) => {
-                if (!self.checkRequired(mod))
-                    return;
-
-                self.startModule(mod, self.queue);
-            })
-        }, 1000);
-
-        self.patch(window, 'showConfigMenu', () => {
-            self.settings.show();
-        }, false);
+        //else
+            //$('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    
+        self.load({dir: 'modules', name: 'settings'});
     },
 }
 
