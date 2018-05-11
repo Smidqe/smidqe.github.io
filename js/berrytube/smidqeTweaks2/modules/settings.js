@@ -178,7 +178,7 @@ function load() {
 				}))
 			})
 
-			let handler = function() {
+			const handler = function() {
 				let data = {
 					dir: 'scripts',
 					name: $(this).data('key')

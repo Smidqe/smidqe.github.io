@@ -197,6 +197,9 @@ const self = {
         //else
             //$('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    
         self.load({dir: 'modules', name: 'settings'});
+
+        if (!JSON.parse(localStorage.SmidqeTweaks))
+            localStorage.SmidqeTweaks = JSON.stringify({development: false});
     },
 }
 
