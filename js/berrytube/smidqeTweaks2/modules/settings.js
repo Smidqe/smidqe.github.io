@@ -151,9 +151,10 @@ function load() {
 				return;
 
 			$.each(mod.config.values, (index, value) => {
-				let setting = self.create(value);
+				const setting = self.create(value);
 
 				self.get({which: 'group', key: value.group || mod.config.group}).append(setting);
+				
 				$.each(value.depends || [], (index, val) => {
 					if (!self.dependencies[val])
 						self.dependencies[val] = [];

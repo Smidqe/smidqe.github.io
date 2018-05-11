@@ -6,7 +6,7 @@ function load() {
             depends: ['chat', 'settings']
         },
         config: {
-            group: 'poll',
+            group: 'polls',
             values:[{
                 title: 'Show poll closures in chat',
                 key: 'pollClose',

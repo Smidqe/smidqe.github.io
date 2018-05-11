@@ -16,7 +16,7 @@ function load() {
         },
         name: 'pollAverage',
         config: { 
-            group: 'poll',
+            group: 'polls',
             values: [{
                 title: "Calculate episode average",
                 key: "pollAverage",
