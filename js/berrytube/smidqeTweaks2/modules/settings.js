@@ -43,7 +43,7 @@ function load() {
 	
 			if (data.which === 'setting')
 			{
-				let input = $('<input>', {
+				const input = $('<input>', {
 					type: data.type || 'checkbox',
 					checked: data.script ? self.storage.enabled.indexOf(data.key) !== -1 : self.storage[data.key],
 					'data-key': data.key,
@@ -51,7 +51,7 @@ function load() {
 					'data-script': data.script || false,
 				})
 
-				let element = $('<div>', {id: 'st-setting-' + data.key, class: 'st-setting-wrap'})
+				const element = $('<div>', {id: 'st-setting-' + data.key, class: 'st-setting-wrap'})
 					.append($('<label>', {text: data.title}))
 					.append(input);
 
@@ -165,10 +165,10 @@ function load() {
 			self.save();
 		},
 		createScriptContainer: () => {
-			let deps = $('<fieldset>', {})
+			const deps = $('<fieldset>', {})
 				.append($('<legend>', {text: '3rd-party scripts/dependencies'}))
 			
-			let scripts = $('<fieldset>', {})
+			const scripts = $('<fieldset>', {})
 				.append($('<legend>', {text: 'Select scripts to enable'}));
 
 			$.each(['maltweaks', 'berrytweaks'], (index, key) => {
@@ -199,7 +199,7 @@ function load() {
 			}
 
 			$.each(SmidqeTweaks.names.scripts, (index, key) => {
-				let setting = self.create({
+				const setting = self.create({
 					default: false,
 					callback: handler,
 					key: key,
