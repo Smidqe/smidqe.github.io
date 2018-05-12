@@ -25,7 +25,7 @@ function load() {
             if (SmidqeTweaks.get('modules', 'settings').get('squeeClose'))
                 doSqueeNotify();
 
-            SmidqeTweaks.modules.chat.add('Poll', msg, 'act', false);
+            SmidqeTweaks.get('modules', 'chat').add('Poll', msg, 'act', false);
         },
         enable: () => {
             self.enabled = true;

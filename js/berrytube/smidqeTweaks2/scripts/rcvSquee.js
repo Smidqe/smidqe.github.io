@@ -24,7 +24,7 @@ function load() {
 
             doSqueeNotify();
 
-            if (SmidqeTweaks.settings.get('highlightRCV'))
+            if (SmidqeTweaks.get('modules', 'settings').get('highlightRCV'))
                 $('.msg-' + data.msg.nick + ':last-child > .rcv').addClass('highlight');
         },
         disable: () => {
