@@ -103,6 +103,9 @@ function load() {
             if (!self.enabled || self.shuffle || !data)
                 return;
 
+            if (action.id === 'remove' && self.playlist.get('title', decodeURIComponent(data.videotitle)).pos !== -1)
+                return;            
+
             let volatile = action.id === 'volatile';
             let object = self.tracking[data.videoid];
             let video = volatile ? self.playlist.get('index', data.pos).value : null;
@@ -230,7 +233,14 @@ function load() {
                 },
                 recvNewPlaylist: () => {
                     self.shuffle = false;
+                    console.log('recvNewPlaylist');
                 },
+                sortPlaylist: () => {
+                    console.log('sortPlaylist');
+                },
+                refreshMyPlaylist: () => {
+                    console.log('refreshMyPlaylist');
+                }
             }
         },
     }

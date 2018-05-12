@@ -38,7 +38,7 @@ function load() {
         },
         enable: () => {
             self.enabled = true;
-            SmidqeTweaks.patch({container: {obj: window, name: 'chatmessage'}, name: 'addChatMsg', callback: self.show})
+            SmidqeTweaks.patch({container: {obj: window, name: 'chatmessage'}, name: 'addChatMsg', after: true, callback: self.show})
         },
     }
 

@@ -164,6 +164,7 @@ function load() {
 			})
 
 			self.save();
+			self.refresh();
 		},
 		createScriptContainer: () => {
 			const deps = $('<fieldset>', {})
