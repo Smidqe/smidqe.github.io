@@ -171,8 +171,8 @@ function load() {
 
             SmidqeTweaks.modules.settings.set('layout', false, true);
         },
-        updatePlaylistPosition: (key) => {
-            if (key !== 'playlist')
+        updatePlaylistPosition: (data) => {
+            if (data.name !== 'playlist')
                 return;
 
             SmidqeTweaks.get('modules', 'playlist').refresh();

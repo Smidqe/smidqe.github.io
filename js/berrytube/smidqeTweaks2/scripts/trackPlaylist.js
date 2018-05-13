@@ -103,9 +103,6 @@ function load() {
             if (!self.enabled || self.shuffle || !data)
                 return;
 
-            if (action.id === 'remove' && self.playlist.get('title', decodeURIComponent(data.videotitle)).pos !== -1)
-                return;            
-
             let volatile = action.id === 'volatile';
             let object = self.tracking[data.videoid];
             let video = volatile ? self.playlist.get('index', data.pos).value : null;
@@ -122,7 +119,7 @@ function load() {
                 case 'remove':
                 {
                     object.timeout = setTimeout(() => {
-                        if (self.settings.get('trackRemove'))
+                        if (self.settings.get('trackRemove') && self.playlist.get('title', object.title).pos === -1)
                             self.message(object, 'remove');
 
                         delete self.tracking[object.videoid];
@@ -222,18 +219,20 @@ function load() {
 
             self.socket = {
                 addVideo: (data) => {
+                    console.log('add');
                     self.action(data.video, {id: 'add', setting: 'trackAdd'})
                 },
-                randomizeList: () => {
-                    SmidqeTweaks.modules.chat.add('Playlist', 'Playlist has been shuffled', 'rcv', true);
+                randomizeList: (data) => {
+                    console.log(data);
                     self.shuffle = true;
                 },
                 setVidVolatile: (data) => {
                     self.action(data, { id: 'volatile', setting: 'trackVolatile' })
                 },
-                recvNewPlaylist: () => {
+                recvNewPlaylist: (data) => {
+                    console.log(data);
                     self.shuffle = false;
-                    console.log('recvNewPlaylist');
+                    SmidqeTweaks.modules.chat.add('Playlist', 'Playlist was shuffled', 'act', true);
                 },
                 sortPlaylist: () => {
                     console.log('sortPlaylist');

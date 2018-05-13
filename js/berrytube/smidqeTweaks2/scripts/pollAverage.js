@@ -25,18 +25,9 @@ function load() {
                 key: 'ignoreZero',
                 sub: true,
                 depends: ['pollAverage']
-            }, {
-                title: 'Show average in stats',
-                key: 'statsAverage',
-                sub: true,
-                depends: ['pollAverage']
             }],
         },
-        enabled: false,
         calculate: function(data) {
-            if (!self.enabled)
-                return;
-
             if (data.votes.length < 10 || data.votes.length > 11) //to take into account that some mods don't use 0..10 scale, instead there's 1..10
                 return;
 
@@ -45,7 +36,7 @@ function load() {
 
             $.each(data.votes, (index, value) => {
                 //only ignore zeros when there are 11 values (0..10), and not when (1..10)
-                if (self.main.get('ignoreZero') && index == 0 && data.votes.length == 11)
+                if (SmidqeTweaks.get('modules', 'settings').get('ignoreZero') && index == 0 && data.votes.length == 11)
                     return;
 
                 //add one to index if we only have 10 options (1..10)

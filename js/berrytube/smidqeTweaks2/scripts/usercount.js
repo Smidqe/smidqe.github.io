@@ -1,8 +1,5 @@
 /*
-    Instead of putting them to the stats window (which is not going anywhere)
-    put the users to the userlist window header 
-
-    
+    Rework this to 
 */
 function load() {
     const self = {
@@ -40,7 +37,7 @@ function load() {
         },
         disable: () => {
             self.enabled = false;
-            SmidqeTweaks.patch({container: 'usercount', name: 'handleNumCount', callback: self.update});
+            SmidqeTweaks.unpatch({container: 'usercount', name: 'handleNumCount', callback: self.update});
         },
         //create the listeners
         init: () => {
