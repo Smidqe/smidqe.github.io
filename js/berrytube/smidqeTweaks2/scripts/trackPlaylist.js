@@ -3,39 +3,39 @@ function load() {
         config: {
             group: 'playlist',
             values: [{
-                title: 'Track changes',
+                title: 'Show playlist changes',
                 key: 'trackPlaylist',
             }, {
-                title: 'Show video additions',
+                title: 'Additions',
                 key: 'trackAdd',
                 depends: ['trackPlaylist'],
                 sub: true,
             }, {
-                title: 'Show video removals',
+                title: 'Removals',
                 key: 'trackRemove',
                 depends: ['trackPlaylist'],
                 sub: true,
             }, {
-                title: 'Show video moves',
+                title: 'Moves',
                 key: 'trackMove',
                 depends: ['trackPlaylist'],
                 sub: true,
             }, {
-                title: 'Show video index',
+                title: 'Position',
                 key: 'trackPosition',
                 sub: true,
                 depends: ['trackPlaylist'],
             }, {
-                title: 'Show current index',
+                title: 'Current position',
                 key: 'trackCurrent',
                 sub: true,
                 depends: ['trackPlaylist', 'trackPosition'],
             }, {
-                title: 'Show volatile changes',
+                title: 'Volatiles',
                 key: 'trackVolatile',
                 depends: ['trackPlaylist'],
                 sub: true,
-            },]
+            }]
         },
         meta: {
             group: 'scripts',
@@ -81,7 +81,10 @@ function load() {
 
             $.each(data.changes, (key, value) => {
                 if (value.key === 'volat')
-                    msg += ' was set to ' + value.new === true ? ' volatile ' : ' permanent';
+                {
+                    msg += ' was set to ';
+                    msg += value.new ? ' volatile ' : ' permanent';
+                }
 
                 if (value.key === 'pos')
                 {
@@ -100,7 +103,7 @@ function load() {
             data.changes = [];
         },
         action: (data, action) => {
-            if (!self.enabled || self.shuffle || !data)
+            if (!self.enabled || !data)
                 return;
 
             let volatile = action.id === 'volatile';

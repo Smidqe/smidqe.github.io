@@ -11,7 +11,7 @@ function load() {
         config: {
             group: 'chat',
             values: [{
-                title: 'Show usercounts in the titlebar in userlist window',
+                title: 'Show usercounts in separate window',
                 key: 'usercount',
                 depends: ['layout']
             }]
@@ -67,7 +67,7 @@ function load() {
             self.menu.add({
                 id: 'usercount',
                 group: 'usercount',
-                title: 'Show usercounts',
+                title: 'Show',
                 callbacks: {
                     click: self.show
                 }

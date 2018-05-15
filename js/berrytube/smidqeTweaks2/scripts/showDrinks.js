@@ -10,7 +10,6 @@ function load() {
             group: 'chat',
             values: [{
                 title: 'Show drink count in chat',
-                type: 'checkbox',
                 key: 'showDrinks',
             }]
         },

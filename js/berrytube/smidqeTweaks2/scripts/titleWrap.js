@@ -16,7 +16,7 @@ function load() {
             values: [{
                 title: 'Wrap videotitle to separate line',
                 key: 'titleWrap',
-                depends: ['berrytweaks'],
+                depends: ['berrytweaks', 'layout'],
             }]
         },
         enable: () => {

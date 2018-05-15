@@ -1,8 +1,3 @@
-/*
-    TODO
-        - Do testing on this
-*/
-
 function load() {
     const self = {
         meta: {

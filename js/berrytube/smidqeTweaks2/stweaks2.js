@@ -1,11 +1,11 @@
 const self = {
-    modules: {}, //has multifunctional modules, meant for use for scripts
-    scripts: {}, //simplistic methods
+    modules: {}, 
+    scripts: {}, 
     callbacks: {},
     dependencies: {},
     queue: [],
     update: false,
-    names: { //holds the names for modules, scripts and groups
+    names: { 
         modules: ['settings', 'toolbar', 'windows', 'playlist', 'menu', 'stats', 'time', 'chat', 'utilities'],
         scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'berryControls', 'hideOriginals', 'usercount'],
         groups: ['time', 'chat', 'playlist', 'polls', 'berry', 'patches'],
@@ -101,19 +101,22 @@ const self = {
             return;
         }
         
-        if (!self.callbacks[data.container.name])
-            self.callbacks[data.container.name] = {};
-        
-        if (!self.callbacks[data.container.name][data.name])
-            self.callbacks[data.container.name][data.name] = [];
+        let container = data.container.name;
+        let name = data.name;
 
-        let original = data.container.obj[data.name];
-        let cont = self.callbacks[data.container.name];
+        if (!self.callbacks[container])
+            self.callbacks[container] = {};
+        
+        if (!self.callbacks[container][name])
+            self.callbacks[container][name] = [];
+
+        let original = data.container.obj[name];
+        let cont = self.callbacks[container];
 
         if (cont[data.name].length === 0)
             cont[data.name] = [original];
 
-        if (data.after)
+        if (data.after || (data.after === undefined))
             cont[data.name].push(data.callback);
         else
             cont[data.name].unshift(data.callback);
@@ -192,10 +195,9 @@ const self = {
         self.dependencies['settings'].push('main');
 
         //append the min-css file
-        //if (true)
-            $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks-min.css"/>'))
-        //else
-            //$('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    
+        //$('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks-min.css"/>'))
+
+        $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    
         self.load({dir: 'modules', name: 'settings'});
 
         if (!JSON.parse(localStorage.SmidqeTweaks))

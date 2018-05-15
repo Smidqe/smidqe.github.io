@@ -11,12 +11,12 @@ function load() {
 				title: 'Show time in toolbar',
 				key: 'showTime',
 			},{
-				title: 'Show time in 12h format',
+				title: '12H format',
 				key: '12hour',
 				depends: ['showTime'],
 				sub: true,
 			},{
-				title: 'Show seconds',
+				title: 'Seconds',
 				key: 'showSeconds',
 				depends: ['showTime'],
 				sub: true,
