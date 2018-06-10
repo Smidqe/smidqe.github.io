@@ -1,3 +1,15 @@
+/*
+    Will be a 2 column grid with x amount of rows
+
+    Every group will have
+        titlebar
+            modularise
+            collapse
+        pairs
+
+
+*/
+
 function load() {
     const self = {
         meta: {
@@ -7,6 +19,7 @@ function load() {
         },
         started: false,
         container: null,
+        modulars: {},
         add: (type, data) => {
             //don't add a duplicate value
             if (self.find(type, data.id))
@@ -14,28 +27,37 @@ function load() {
 
             if (type === 'block')
             {
-                self.container.append($('<div>', {class: 'st-stats-block', id: 'st-stats-block-' + data.id}));
+                let block = $('<div>', {class: 'st-stats-block', id: 'st-stats-block-' + data.id})
+                let titlebar = $('<div>', {class: 'st-titlebar', id: 'st-stats-titlebar-' + data.id});
 
-                //if the pairs are included on the block add them or exit if those don't exist
-                if (!data.pairs)
-                    return;
-                
-                $.each(data.pairs, (key, pair) => {
+                titlebar.append(
+                    $('<div>', {
+                        class: 'st-stats-titlebar-button',
+                        'data-key': data.id
+                    }).on('click', self.modularize)
+                ).append(
+                    $('<div>', {
+                        class: 'st-stats-titlebar-button',
+                        'data-key': data.id
+                    }).on('click', self.collapse)
+                )
+
+                block.append(titlebar);
+                self.container.find('.st-stats-container').append(block);
+
+                $.each(data.pairs || [], (key, pair) => {
                     self.add('pair', pair);
                 });
             }
 
             if (type === 'pair')
             {
-                let wrap = $('<div>', {class: 'st-stats-pair'});
-
-                let title = $('<span>', {}).text(data.title);
-                let value = $('<span>', {}).text(data.value ? data.value : 'Not set');
-
-                wrap.append(title, value);
-
                 if (!data.block)
                     return;
+
+                let wrap = $('<div>', {class: 'st-stats-pair', id: 'st-stats-pair-' + data.id})
+                    .append($('<span>', {class: 'st-stats-title'}).text(data.title))
+                    .append($('<span>', {class: 'st-stats-value'}).text(data.value ? data.value : 'Not set'))
 
                 let block = self.find('block', data.block);
                 
@@ -47,12 +69,12 @@ function load() {
             let select = null;
 
             if (type === 'block')
-                select = self.container.find('#st-stats-block-' + id);    
+                select = $(self.container).find('#st-stats-block-' + id);    
 
             if (type === 'pair')
-                select = self.container.find('#st-stats-pair-' + id);
+                select = $(self.container).find('#st-stats-pair-' + id);
         
-            return select[0] ? select[0] : undefined;
+            return select[0] ? select : undefined;
         },
         remove: (name) => {
             if (!self.find('pair', name))
@@ -63,20 +85,64 @@ function load() {
         update: (dest, value) => {
             let pair = self.find('pair', dest);
 
-            if (!pair)
+            if (pair)
+                $(pair).find('span:last-child').text(value);
+        },
+        modularize: function() {
+            let key = $(this).data('key');
+
+            if (self.modulars[key])
                 return;
 
-            $(pair).find('span:last-child').text(value);
+            self.modulars[key] = self.windows.create({
+                id: key,
+                wrap: false,
+                classes: ['st-stats-modular'],
+            })
+
+            self.windows.get(key).append($(this).parents().eq(1).find('[id*=st-stats-pair]').clone())
+            self.windows.modularize(key, true);
+            self.windows.show({name: key, show: true});
+            
+            self.windows.get(key).find('.st-titlebar-exit').on('click', () => {
+                self.unmodularize(key)
+            });
+            //self.collapse(key);
+        },
+        unmodularize: (key) => {            
+            self.windows.remove(key, true);
+            delete self.modulars[key];
+        },
+        collapse: function() {
+
+        },
+        uncollapse: function() {
+
+        },
+        show: () => {
+            self.windows.show({name:'stats', show: true});
         },
         init: () => {
             //create the stats window
-            self.container = SmidqeTweaks.modules.windows.create({
-                wrap: false, 
+            self.menu = SmidqeTweaks.get('menu');
+            self.windows = SmidqeTweaks.get('windows');
+
+            self.container = self.windows.create({
                 id: 'stats',
                 title: 'Statistics',
                 classes: ['st-window-container-stats', 'st-window-overlap'],
             });
 
+            self.menu.add({
+                id: 'stats',
+                group: 'berrytube',
+                title: 'Stats',
+                callbacks: {
+                    click: self.show
+                }
+            })
+
+            self.container.append($('<div>', {class: 'st-stats-container'}));
             self.started = true;
         }
     }

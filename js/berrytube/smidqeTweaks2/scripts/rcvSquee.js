@@ -3,7 +3,7 @@ function load() {
         meta: {
             group: 'scripts',
             name: 'rcvSquee',
-            requires: ['settings']
+            requires: ['settings', 'chat']
         },
         config: {
             group: 'chat',
@@ -17,23 +17,23 @@ function load() {
                 depends: ['rcvSquee']
             }]
         },
-        enabled: false,
         notify: (data) => {
-            if (!self.enabled || data.msg.emote !== 'rcv')
+            if (data.msg.emote !== 'rcv')
                 return;
 
-            doSqueeNotify();
+            window.doSqueeNotify();
 
-            if (SmidqeTweaks.get('modules', 'settings').get('highlightRCV'))
-                $('.msg-' + data.msg.nick + ':last-child > .rcv').addClass('highlight');
+            if (self.settings.get('highlightRCV'))
+                self.chat.rcv().last().addClass('highlight');
         },
         disable: () => {
-            self.enabled = false;
-            SmidqeTweaks.unpatch({container: 'window', name: 'addChatMsg', callback: self.notify})
+            self.chat.unpatch('addChatMsg', self.notify);
         },
         enable: () => {
-            self.enabled = true;
-            SmidqeTweaks.patch({container: {obj: window, name: 'window'}, name: 'addChatMsg', callback: self.notify, after: true})
+            self.chat = SmidqeTweaks.get('chat');
+            self.settings = SmidqeTweaks.get('settings');
+
+            self.chat.patch('addChatMsg', self.notify);
         },
     }
     return self;

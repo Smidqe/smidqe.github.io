@@ -1,9 +1,3 @@
-/*
-	Combination of playlistControls and pollControls
-	
-
-*/
-
 function load() {
 	const self = {
 		meta: {
@@ -16,24 +10,14 @@ function load() {
 			values: [{
 				key: 'berryControls',
 				title: 'Modularize controls when given berry'
-			}, {
-				key: 'playlistControls',
-				title: 'Modularize playlist controls',
-				sub: true,
-			}, {
-				key: 'pollControls',
-				title: 'Modularize poll controls',
-				sub: true,
 			}]
 		},
 		windowses: [{
 			id: 'pollControls',
-			selectors: ['#pollControl'],
-			wrap: false
+			selector: '#pollControl',
 		}, {
 			id: 'playlistControls',
-			selectors: ['#playlistAddControls'],
-			wrap: false
+			selector: '#playlistAddControls',
 		}],
 		locations: {},
 		elements: {},
@@ -51,7 +35,7 @@ function load() {
 		enable: () => {
 			self.enabled = true;
 
-			if (window.TYPE >= 1)
+			if (window.TYPE == 0)
 			{
 				self.create();
 				socket.on('setLeader', self.show);
@@ -72,10 +56,10 @@ function load() {
 			self.show(false);
 		},
 		init: () => {
-			self.windows = SmidqeTweaks.get('modules', 'windows');
+			self.windows = SmidqeTweaks.get('windows');
 		
 			$.each(self.windowses, (index, val) => {
-				let element = $(val.selectors[0]);
+				let element = $(val.selector);
 
 				self.elements[val.id] = element;
 				self.locations[val.id] = element.parent();

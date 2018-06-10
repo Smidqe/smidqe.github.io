@@ -10,7 +10,6 @@ function load() {
             group: 'modules',
             name: 'utilities'
         },
-
         enums: {
             //element sides
             ELEMENT_EDGE_TOP: 0,
@@ -18,7 +17,6 @@ function load() {
             ELEMENT_EDGE_BOTTOM: 2,
             ELEMENT_EDGE_LEFT: 3,
         },
-
         edge: (elem, mouse) => {
             //get the closest edge of the given element and mouse position
             let bounds = elem.getBoundingClientRect();
@@ -40,21 +38,44 @@ function load() {
 
             return result;
         },
-        linearCheck: (...booleans) => {
+        linearCheck: (...args) => {
             let result = true;
 
-            for (var i = 0; i < booleans.length; i++)
-            {
-                result = booleans[i];
-
+            $.each(args, index => {
                 if (!result)
-                    break;
-            }
+                    return;
+
+                result = !!args[index];
+            })
 
             return result;
         },
-        isMaltweaksLoaded: () => {
-            self.linearCheck(window.MT, window.MT.loaded)
+        waitFor: (selector, callback, time=500) => {
+            if (!(selector instanceof Array))
+                selector = [selector];
+
+            const interval = setInterval(() => {
+                let clear = true;
+
+                $.each(selector, (index, text) => {
+                    let elements = $(text);
+
+                    if (elements.length === 0)
+                        clear = false;    
+                })
+
+                if (clear && callback)
+                    callback();
+                
+                if (clear)
+                    clearInterval(interval);
+            }, time)
+        },
+        maltweaksLoaded: () => {
+            self.linearCheck(window.MT, window.MT.loaded);
+        },
+        emotesLoaded: () => {
+            self.linearCheck(window.Bem, window.Bem.emotes, window.Bem.emotes.length > 0);
         }
     }
 

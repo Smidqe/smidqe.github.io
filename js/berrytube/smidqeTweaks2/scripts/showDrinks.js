@@ -3,24 +3,24 @@ function load() {
         meta: {
             group: 'scripts',
             name: 'showDrinks',
-            requires: ['settings']
+            requires: ['settings', 'chat']
         },
-        config: 
-        {
+        config: {
             group: 'chat',
             values: [{
                 title: 'Show drink count in chat',
                 key: 'showDrinks',
             }]
         },
-        enabled: false,
+        chat: null,
         show: (data) => {
-            if (!self.enabled || data.msg.emote !== 'drink')
+            if (data.msg.emote !== 'drink')
                 return;
 
-            let last = $(".drink:last tr");
-
-            if (last.find('.st-chat-drinkcount')[0])
+            let last = self.chat.drinks().last().find('tr');
+        
+            //shouldn't trigger, but meh
+            if (last.find('.st-chat-drinkcount').length > 0)
                 return;
 
             last.prepend(
@@ -29,15 +29,16 @@ function load() {
                 }).append($("<span>", {
                     text: 'x' + $('#drinkCounter').text(),
                 }))
-            );
+            )
         },
         disable: () => {
-            self.enabled = false;
-            SmidqeTweaks.unpatch({container: 'chatmessage', name: 'addChatMsg', callback: self.show});
+            self.chat.unpatch('addChatMsg', self.show);
         },
         enable: () => {
-            self.enabled = true;
-            SmidqeTweaks.patch({container: {obj: window, name: 'chatmessage'}, name: 'addChatMsg', after: true, callback: self.show})
+            self.chat.patch('addChatMsg', self.show);
+        },
+        init: () => {
+            self.chat = SmidqeTweaks.get('chat');
         },
     }
 

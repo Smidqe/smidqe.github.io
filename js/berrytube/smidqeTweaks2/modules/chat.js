@@ -2,12 +2,22 @@ function load() {
     const self = {
         meta: {
             group: 'modules',
-            name: 'chat',
+            name: 'chat', 
+            //requires: ['colors']
         },
+        events: [
+            'chatMsg', 'setNick', 'setType', 'newChatList', 
+            'userJoin', 'fondleUser', 'userPart', 'shadowBan', 
+            'unShadowBan', 'drinkCount', 'numConnected', 'leaderIs'
+        ],
+        functions: [
+            'addChatMsg', 'handleNumCount'
+        ],
+        container: null,
+        started: false,
         add: (nick, text, type, hideNick) => {
-            var time = new Date();
+            let time = new Date();
 
-            //utilise Berrytweaks to get consistent time, there is variability between local and server times \\fsnotmad
             if (window.BerryTweaks)
                 time = BerryTweaks.getServerTime();
 
@@ -28,51 +38,73 @@ function load() {
                 ghost: false,
             }, "#chatbuffer");
 
-            //add option to hide the nick
             if (hideNick)
                 $('.msg-' + nick).last().find('.nick').css('display', 'none');
 
-            //prevent tabcomplete on non existant/wrong users
             delete CHATLIST[nick];
         },
         users: () => {
-            let users = $('#chatlist li');
-            let result = [];
+            return $('#chatlist li').map((index, data) => {
+                let classes = $(data).attr('class').split(' ');
+                let result = {
+                    name: $(data).find('.chatlistname').text(),
+                    me: classes.indexOf('me') !== -1,
+                } 
 
-            $.each(users, (index, obj) => {
-                let filters = ['admin', 'assistant', 'user', 'anon'];
-                let attrs = $(obj).attr('class').split(' ');
-
-                result.push({
-                    name: attrs.filter(name => filters.indexOf(name) === -1)[0],
-                    group: attrs.filter(name => filters.indexOf(name) !== -1),
-                    me: attrs.indexOf('me') !== -1,
-                })
-            })
-
-            return result;
+                result.group = classes.filter(value => value !== result.name)[0];
+                return result;
+            });
+        },
+        drinks: () => {
+            return self.container.find('.drink');
         },
         emotes: () => {
             return $('.berryemote');
         },
         rcv: () => {
-            return $('.rcv');
+            return self.messages().find('.rcv').parent();
+        },
+        messages: () => {
+            return self.container.find('[class*=msg-]');
         },
         usercount: () => {
-            const result = {};
-            const groups = $('#connectedCountWrapper').attr('title').split('<br />');
+            return window.CONNECTED;
+        },
+        patch: (key, callback, after=true) => {
+            if (self.functions.indexOf(key) === -1)
+                return;
 
-            //make sure the users is the top one
-            result.usercount = $('#connectedCount').text();
+            let data = {
+                container: {obj: window, name: 'chat'},
+                name: key,
+                after: after,
+                callback: callback
+            }
 
-            $.each(groups, (index, value) => {
-                if (value === "")
-                    return;
-
-                result[value.split(':')[0].toLowerCase()] = value.split(':')[1].trim();
+            SmidqeTweaks.patch(data);
+        },
+        unpatch: (key, callback) => {
+            SmidqeTweaks.unpatch({
+                container: 'chat',
+                name: key,
+                callback: callback
             })
+        },
+        listen: (key, callback) => {
+            if (self.events.indexOf(key) === -1)
+                return;
 
-            return result;
+            socket.on(key, callback);
+        },
+        unlisten: (key, callback) => {
+            if (self.events.indexOf(key) === -1)
+                return;
+
+            socket.removeListener(key, callback);
+        },
+        init: () => {
+            self.container = $('#chatbuffer');
+            self.started = true;
         },
     }
     return self;

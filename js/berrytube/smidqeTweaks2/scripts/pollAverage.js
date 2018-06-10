@@ -1,18 +1,9 @@
-/*
-	TODO:
-	- Add separate input to give the amount of buttons/values in the poll to trigger the
-    script. Since some mods have polls that start from 1 and not from zero. ???
-    
-    -> Add a clamp to final result
-	
-*/
-
 function load() {
     const self = {
         meta: {
             group: 'scripts',
             name: 'pollAverage',
-            requires: ['settings', 'chat']
+            requires: ['settings', 'chat', 'polls']
         },
         name: 'pollAverage',
         config: { 
@@ -27,46 +18,47 @@ function load() {
                 depends: ['pollAverage']
             }],
         },
-        calculate: function(data) {
-            if (data.votes.length < 10 || data.votes.length > 11) //to take into account that some mods don't use 0..10 scale, instead there's 1..10
-                return;
+        check: (votes) => {
+            if (votes.length < 10 || votes.length > 11)
+                return false;
 
+            if (votes.filter(vote => isNaN(parseInt(vote.text))).length > 0)
+                return false;
+
+            return true;
+        },
+        calculate: () => {
+            let options = self.polls.options(self.polls.first(false));
             let total = 0;
-            let count = 0;
 
-            $.each(data.votes, (index, value) => {
-                //only ignore zeros when there are 11 values (0..10), and not when (1..10)
-                if (SmidqeTweaks.get('modules', 'settings').get('ignoreZero') && index == 0 && data.votes.length == 11)
+            if (!self.check(options))
+                return;
+            
+            $.each(options, (index, value)  => {
+                if (self.settings.get('ignoreZero') && index == 0 && options.length == 11)
                     return;
 
-                //add one to index if we only have 10 options (1..10)
-                if (data.votes.length == 10)
+                if (options.length === 10)
                     index += 1;
 
                 total += value * index;
-                count += value;
             })
+            
+            let average = total / values.count.reduce((sum, val) => sum + val, 0);
+            let message = "average is " + average;
 
-            let average = total / count;
-            let msg = "average is " + average;
-            
-            //don't show invalid values
-            if (isNaN(average))
-                return;
-            
-            self.chat.add("Episode ", msg, 'rcv', false);
+            self.chat.add('Episode ', msg, 'rcv', false);
         },
         enable: () => {
-            self.enabled = true;
-            socket.on('clearPoll', self.calculate);
+            self.polls.listen('clearPoll', self.calculate);
         },
         disable: () => {
-            self.enabled = false;
-            socket.removeListener('clearPoll', self.calculate)
+            self.polls.unlisten('clearPoll', self.calculate);
         },
         init: () => {
-            self.chat = SmidqeTweaks.modules.chat;
-            self.main = SmidqeTweaks.settings;
+            self.chat = SmidqeTweaks.get('chat');
+            self.settings = SmidqeTweaks.get('settings');
+            self.polls = SmidqeTweaks.get('polls');
         },
     }
     return self;

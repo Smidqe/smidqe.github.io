@@ -17,25 +17,20 @@ function load() {
                 depends: ['pollClose'],
             }]
         },
-        enabled: false,
         notify: () => {
-            let title = $(".poll:first:not(.active)").find('.title').text();
-            let msg = "'" + title + "' was closed";
+            let poll = self.polls.first(false);
+            let message = "'" + poll.find('.title').text() + "' was closed"; 
+            
+            if (self.settings.get('squeeClose'))
+                window.doSqueeNotify();
 
-            if (SmidqeTweaks.get('modules', 'settings').get('squeeClose'))
-                doSqueeNotify();
-
-            SmidqeTweaks.get('modules', 'chat').add('Poll', msg, 'act', false);
+            self.chat.add('Poll', message, 'act', false);
         },
         enable: () => {
-            self.enabled = true;
-
-            socket.on('clearPoll', self.notify);
+            self.polls.listen('clearPoll', self.notify);
         },
         disable: () => {
-            self.enabled = false;
-
-            socket.removeListener('clearPoll', self.notify);
+            self.polls.unlisten('clearPoll', self.notify);
         },
     }
 

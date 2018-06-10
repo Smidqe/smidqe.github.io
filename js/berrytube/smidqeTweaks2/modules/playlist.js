@@ -4,11 +4,11 @@ function load() {
             group: 'modules',
             name: 'playlist'
         },
+        events: ['setVidVolatile', 'setVidColorTag', 'addVideo', 'addPlaylist', ],
         duration: (str) => {
             let values = str.split(":").reverse();
             let ms = 0;
 
-            //really shouldn't need days, because that would be just silly, also may cause overflow?
             if (values.length > 3)
                 return -1;
 
@@ -17,11 +17,11 @@ function load() {
             })
 
             if (isNaN(ms))
-                return -1;
+                ms = -1;
 
             return ms;
         },
-        exists: (title) => {
+        exists: (method, value) => {
             return self.get('title', title).pos !== -1;
         },
         amount: () => {
@@ -39,22 +39,24 @@ function load() {
 
             return search.pos - current.pos;
         },
+        position: (method, value) => {
+            return self.get(method, value).pos;
+        },
         get: (method, value) => {
             let obj = window.PLAYLIST.first;
             
             for (var i = 0; i < self.amount(); i++) {
                 let result = false;
 
-                if (method === 'title')
-                    result = (decodeURIComponent(obj.videotitle) === value);
-
-                if (method === 'index')
-                    result = (value === i);
+                switch (method) {
+                    case 'title': result = decodeURIComponent(obj.videotitle) === value;
+                    case 'index': result = value === i;
+                }
 
                 if (result)
                     return {value: obj, pos: i};
-
-                obj = obj.next;
+                else
+                    obj = obj.next;
             }
 
             //correct thing wasn't found
@@ -64,7 +66,39 @@ function load() {
             smartRefreshScrollbar();
             scrollToPlEntry(Math.max($(".overview > ul > .active").index() - 2), 0);
             realignPosHelper();
-        },   
+        },
+        listen: (key, callback) => {
+            if (self.events.indexOf(key) === -1)
+                return;
+
+            socket.on(key, callback);
+        },
+        unlisten: (key, callback) => {
+            socket.removeListener(key, callback);
+        },
+        patch: (key, callback, after=true) => {
+            if (Object.keys(window.PLAYLIST.__proto__).indexOf(key) === -1)
+                return;
+
+            let data = {
+                container: {obj: window.PLAYLIST.__proto__, name: 'playlist'},
+                name: key,
+                after: after,
+                callback: callback
+            }
+
+            SmidqeTweaks.patch(data);
+        },
+        unpatch: (key, callback) => {
+            if (Object.keys(window.PLAYLIST.__proto__).indexOf(key) === -1)
+                return;
+
+            SmidqeTweaks.unpatch({
+                container: 'playlist',
+                name: key,
+                callback: callback
+            });
+        },
     }
 
     return self;

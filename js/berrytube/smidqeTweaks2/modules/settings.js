@@ -5,258 +5,262 @@ function load() {
 			group: 'modules'
 		},
 		containers: {},
-		storage: {},
-		dependencies: {},
-		get: (data) => {
-			if (data.which === 'group')
-				return self.containers.main.find('#st-settings-group-' + data.key);
-
-			if (data.which === 'element')
-				return self.containers.main.find('#st-setting-' + data.key);
-
-			if (data.which === 'enabled')
-				return self.storage.enabled[data.key]
-
-			if (data.which === 'setting' || !(data instanceof Object))
-				return self.storage[data.key || data];
+		storage: {
+			values: {},
+			elements: {},
+			enabled: [],
 		},
-		set: (key, value, save) => { 
-			self.storage[key] = value;
+		started: false,
+		save: () => {
+			let data = {
+				enabled: self.storage.enabled,
+				values: self.storage.values
+			}
+	
+			$.each(self.storage.values || [], (key, setting) => {
+				data.values[key] = setting;
+			})
+	
+			localStorage.SmidqeTweaks = JSON.stringify(data);
+		},
+		load: () => {
+			let data = JSON.parse(localStorage.SmidqeTweaks || '{}');
+
+			self.storage.enabled = data.enabled || [];
+			self.storage.values = data.values || {};
+
+			if (self.storage.enabled.length > 0)
+			{
+				SmidqeTweaks.names.enabled = self.storage.enabled;
+				SmidqeTweaks.update();
+			}
+		},
+		create: (data) => {
+			const input = $('<input>', {
+				type: data.type || 'checkbox',
+				checked: self.storage.values[data.key] || false,
+				'data-key': data.key,
+				'data-toggle': data.toggle || false,
+				'data-script': data.script || false,
+			});
+
+			if (input.data('toggle'))
+				input.prop('checked', self.storage.enabled.indexOf(data.key) !== -1)
+
+			const element = $('<div>', {id: 'st-setting-' + data.key, class: 'st-setting-wrap'})
+				.append($('<label>', {text: data.title}))
+				.append(input);
+
+			if (data.sub)
+				element.addClass('st-setting-sub');
+
+			if (data.callback)
+				input.on('change', data.callback);
+
+			return element;
+		},
+		append: (config) => {
+			if (!config)
+				return;
+	
+			$.each(config.values, (index, setting) => {
+				let group = setting.group || config.group;
+				let object = {
+					depends: setting.depends || [],
+					element: self.create($.extend(setting, {callback: self.handle, script: SmidqeTweaks.names.scripts.indexOf(setting.key) !== -1})),
+					script: SmidqeTweaks.names.scripts.indexOf(setting.key) !== -1,
+				}
+
+				self.storage.elements[setting.key] = object;
+				self.containers.main.find('#st-settings-group-' + group).append(object.element);
+
+				self.refresh(setting.key);
+			})
+		},
+		handle: function() {
+			let key = $(this).data('key');
+			let checked = $(this).prop('checked')
+			let toggle = $(this).data('toggle');
+			let script = $(this).data('script');
+
+			if (script)
+			{
+				if (!toggle)
+				{
+					let script = SmidqeTweaks.get(key);
+					if (checked)
+						script.enable();
+					else
+						script.disable();
+
+					self.set(key, checked);
+				}
+				else
+				{
+					let data = {dir: 'scripts', name: key};
+
+					if (checked) 
+					{
+						SmidqeTweaks.load(data);
+						self.storage.enabled.push(key);
+					} 
+					else 
+					{
+						SmidqeTweaks.unload(data);
+						self.storage.enabled = self.storage.enabled.filter(value => value === key);
+					}
+				}
+
+				self.save();
+			}
+			else
+				self.set(key, checked);
+
+			self.refresh();
+		},
+		remove: (config) => {
+			if (!config)
+				return;
+
+			$.each(config.values, (index, setting) => {
+				self.storage.elements[setting.key].element.remove();
+				self.storage.enabled = self.storage.enabled.filter(value => value !== setting.key);
+
+				delete self.storage.elements[setting.key];
+
+				self.refresh(setting.key);
+			})
+		},
+		refresh: (key) => {
+			$.each(self.storage.elements, (key, setting) => { 
+				let show = true;
+	
+				$.each(setting.depends, (index, key) => {
+					if (!show)
+						return;
+	
+					if (!self.storage.values[key])
+						show = false;
+				})
+	
+				setting.element.css('display', show ? 'block' : 'none');
+			})
+
+			$.each(self.containers.main.find('.st-settings-group'), (index, group) => {
+				$(group).css('display', $(group).children().length <= 1 ? 'none' : 'block')
+			})
+		},
+		get: (key, which) => {
+			if (!which)
+				return self.storage.values[key];
+	
+			let element = self.storage.elements[key];
+	
+			switch(which) {
+				case 'script': return element.script;
+				case 'element': return element;
+				case 'dependencies': return element.depends;
+			}
+		},
+		set: (key, value, save=true) => {
+			self.storage.values[key] = value;
 
 			if (save)
 				self.save();
 
 			self.refresh();
 		},
-		create: (data) => {
-			if (!data.which)
-				data.which = 'setting';
-
-			if (data.which === 'group')
-			{
-				let title = data.key[0].toUpperCase() + data.key.slice(1);
-				let label = $('<label>', {class: 'st-settings-group-label', text: title});
-				let wrap = $('<div>', {id: 'st-settings-group-' + data.key, class: 'st-settings-group'});
-
-				return wrap.append(label);
+		patch: (key, callback) => {
+			let data = {
+				container: {obj: window, name: 'settings'},
+				name: key,
+				after: true,
+				callback: callback
 			}
 	
-			if (data.which === 'setting')
-			{
-				const input = $('<input>', {
-					type: data.type || 'checkbox',
-					checked: data.script ? self.storage.enabled.indexOf(data.key) !== -1 : self.storage[data.key],
-					'data-key': data.key,
-					'data-reload': data.reload || false,
-					'data-script': data.script || false,
-				})
-
-				const element = $('<div>', {id: 'st-setting-' + data.key, class: 'st-setting-wrap'})
-					.append($('<label>', {text: data.title}))
-					.append(input);
-
-				if (data.sub)
-					element.addClass('st-setting-sub');
-
-				if (data.default !== false)
-					input.on('change', self.handle);
-
-				if (data.callback)
-					input.on('change', data.callback);
-				
-				return element;
-			}
+			if (key === 'notify')
+				data.container = {obj: window.SmidqeTweaks, name: 'settings'}
+	
+			SmidqeTweaks.patch(data);
 		},
-		show: (data) => {
-			if (data.which === 'element')
-				self.get(data).css('display', 'block');
-
-			if (data.which === 'group')
-				self.get(data).css('display', 'block');
-		},
-		showWindow: () => {
-			self.containers.main.find('#btn_submenu').on('click', self.showSubMenu);
-
-			$("#settingsGui > ul").append($('<li>').append(self.containers.main));
-			
-			self.refresh();
-		},
-		hide: (data) => {
-			if (data.which === 'element')
-				self.get(data).css('display', 'none');
-
-			if (data.which === 'group')
-				self.get(data).css('display', 'none');
-		},
-		refresh: () => {
-			$.each(SmidqeTweaks.names.groups, (index, val) => {
-				let data = {which: 'group', key: val};
-				let children = self.get(data).children().length;
-
-				if (children <= 1)
-					self.hide(data);
-				else
-					self.show(data)
-			});
-
-			$.each(self.dependencies, (key, val) => {
-				let data = self.get({which: 'setting', key: key});
-
-				if (data)
-					$.each(val, index => self.show({which: 'element', key: val[index]}));
-				else
-					$.each(val, index => self.hide({which: 'element', key: val[index]}));
-			})
-		},
-		load: () => {
-			self.storage = JSON.parse(localStorage.SmidqeTweaks || '{}');
-			
-			if (!self.storage.enabled)
-				self.storage.enabled = [];
-
-			//update the names to SmidqeTweaks main file, since it handles 
-			SmidqeTweaks.names.enabled = self.storage.enabled || [];
-
-			if (self.storage.enabled.length > 0)
-				SmidqeTweaks.update();
-		},
-		save: () => {
-			localStorage.SmidqeTweaks = JSON.stringify(self.storage);
-		},
-		handle: function() {
-			let checked = $(this).prop('checked');
-			let key = $(this).data('key');
-
-			self.set(key, checked, true);
-
-			if (SmidqeTweaks.names.scripts.indexOf(key) !== -1)
-			{
-				let script = SmidqeTweaks.scripts[key]
-
-				if (checked)
-					script.enable();
-				else
-					script.disable();
-			}
-		},
-		showSubMenu: () => {
-			let window = $('body').dialogWindow({
+		showScriptMenu: () => {
+			$('body').dialogWindow({
 				title: 'SmidqeTweaks scripts',
 				uid: 'stscripts',
 				center: true,
 			}).append(self.containers.scripts);
+
+			self.containers.scripts.find('input').on('click', self.handle);
 		},
-		append: (mod) => {
-			if (!mod.config)
-				return;
+		showMenu: (sub) => {
+			$("#settingsGui > ul").append($('<li>').append(self.containers.main));
+			
+			self.containers.main.find('#btn_submenu').on('click', self.showScriptMenu);
+			self.containers.main.find('input').on('change', self.handle);
 
-			$.each(mod.config.values, (index, value) => {
-				const setting = self.create(value);
-
-				self.get({which: 'group', key: value.group || mod.config.group}).append(setting);
-				
-				$.each(value.depends || [], (index, val) => {
-					if (!self.dependencies[val])
-						self.dependencies[val] = [];
-
-					self.dependencies[val].push(value.key);
-				});
-			})
-
-			self.save();
 			self.refresh();
 		},
-		createScriptContainer: () => {
-			const deps = $('<fieldset>', {})
-				.append($('<legend>', {text: '3rd-party scripts/dependencies'}))
-			
-			const scripts = $('<fieldset>', {})
-				.append($('<legend>', {text: 'Select scripts to enable'}));
-
-			$.each(['maltweaks', 'berrytweaks'], (index, key) => {
-				deps.append(self.create({
-					key: key,
-					title: SmidqeTweaks.descriptions[key],
-				}))
-			})
-
-			const handler = function() {
-				let data = {
-					dir: 'scripts',
-					name: $(this).data('key')
-				}
-
-				if ($(this).prop('checked'))
-					SmidqeTweaks.load(data);
-				else
-					SmidqeTweaks.unload(data);
-
-				if ($(this).prop('checked'))
-					self.storage.enabled.push(data.name);
-				else
-					self.storage.enabled = self.storage.enabled.filter(val => val !== data.name);
-
-				SmidqeTweaks.names.enabled = self.storage.enabled;
-				self.save();
-			}
-
-			$.each(SmidqeTweaks.names.scripts, (index, key) => {
-				const setting = self.create({
-					default: false,
-					callback: handler,
-					key: key,
-					script: key,
-					title: SmidqeTweaks.descriptions[key],
-				})
-
-				scripts.append(setting);
-			})
-
-			self.containers.scripts.append(deps, scripts);
-		},
-		remove: (data) => {
-			if (data.dir === 'modules')
+		berrytweaks: (key) => {
+			if (!window.BerryTweaks)
 				return;
 
-			self.storage.enabled.filter(key => {key !== data.name});
-			
-			$.each(SmidqeTweaks.scripts[data.name].config.values, (index, val) => {
-				self.containers.main.find('#st-setting-' + val.key).remove();
-			})
-
-			self.save();
-			self.refresh();
-		},
-		start: (data) => {
-			if (!data.key || !data.mod)
-				return;
-
-			if (self.get({which: 'setting', key: data.key}))
-				data.mod.enable();
+			return BerryTweaks.loadSettings().enabled[key] || false;
 		},
 		init: () => {
 			self.load();
-
-			SmidqeTweaks.patch([
-				{container: {obj: window, name: 'window'}, name: 'showConfigMenu', after: true, callback: self.showWindow},
-				{container: {obj: window.SmidqeTweaks, name: 'smidqetweaks'}, name: 'notify', after: true, callback: self.start},
-				{container: {obj: window.SmidqeTweaks, name: 'smidqetweaks'}, name: 'start', after: false, callback: self.append},
-				{container: {obj: window.SmidqeTweaks, name: 'smidqetweaks'}, name: 'unload', after: false, callback: self.remove}
-			]);	
-			
-			self.containers = {
-				scripts: $('<div>'),
-				main: $('<fieldset>')
-					.append($('<legend>', { text: 'SmidqeTweaks' }))
-					.append($('<button>', {id: 'btn_submenu', text: 'Scripts'})),
-			}
-
-			$.each(SmidqeTweaks.names.groups, (index, key) => {
-				self.containers.main.append(self.create({which: 'group', key: key}))
-			})
-
-			self.createScriptContainer();
 	
+			self.patch('showConfigMenu', self.showMenu);
+			self.patch('notify', (data) => {
+				if (data.dir === 'modules')
+					return;
+	
+				if (data.id === 'moduleAdd') {
+					self.append(data.mod.config);
+
+					if (self.get(data.key))
+						data.mod.enable();
+				}
+
+				if (data.id === 'moduleUnload')
+					self.remove(data.data.config);
+			});
+
+			self.containers = { 
+				main: $('<fieldset>')
+					.append(
+						$('<legend>', {text: 'SmidqeTweaks'}),
+						$('<button>', {id: 'btn_submenu', text: 'Scripts'}),
+						SmidqeTweaks.names.groups.map(name => {
+							return $('<div>', {
+								id: 'st-settings-group-' + name, class: 'st-settings-group'
+							})
+							.append($('<label>', {
+								class: 'st-settings-group-label', text: name[0].toUpperCase() + name.slice(1)
+							}))
+						})
+					),
+				scripts: $('<div>')
+					.append($('<fieldset>').append(
+						SmidqeTweaks.names.others.map((key) => {
+							return self.create({
+								key: key,
+								title: SmidqeTweaks.descriptions[key],
+							})
+						})
+					))
+					.append($('<fieldset>').append(
+						SmidqeTweaks.names.scripts.map((key) => {
+
+							return self.create({
+								key: key,
+								script: key,
+								title: SmidqeTweaks.descriptions[key],
+								toggle: true,
+							})
+						})
+					)),
+			}
+			
 			self.started = true;
 		},
 	}

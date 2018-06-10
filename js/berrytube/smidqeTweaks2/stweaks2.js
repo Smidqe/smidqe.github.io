@@ -1,3 +1,8 @@
+/*
+    TODO:
+        Rework the stats window 
+*/
+
 const self = {
     modules: {}, 
     scripts: {}, 
@@ -6,14 +11,17 @@ const self = {
     queue: [],
     update: false,
     names: { 
-        modules: ['settings', 'toolbar', 'windows', 'playlist', 'menu', 'stats', 'time', 'chat', 'utilities'],
-        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'berryControls', 'hideOriginals', 'usercount'],
-        groups: ['time', 'chat', 'playlist', 'polls', 'berry', 'patches'],
+        modules: ['settings', 'toolbar', 'windows', 'playlist', 'menu', 'stats', 'time', 'chat', 'utilities', 'polls', 'colors'],
+        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'berryControls', 'hideOriginals', 'usercount', 'wutColorRefresh'],
+        groups: ['time', 'chat', 'playlist', 'polls', 'berry', 'patches', 'random'],
+        others: ['maltweaks', 'berrytweaks', 'wutcolors'],
         enabled: [],
     },
     descriptions: {
         maltweaks: 'Maltweaks made by Malsententia',
         berrytweaks: 'BerryTweaks, made by Atte',
+        wutcolors: 'Username colorisation by wut',
+        
         layout: 'Custom layout for Berrytube',
         pollAverage: 'Calculate episode average when poll closes',
         rcvSquee: 'Squee when RCV message is received',
@@ -23,7 +31,8 @@ const self = {
         showTime: 'Show time in toolbar',
         berryControls: 'Modularize playlist and poll controls when given berry',
         hideOriginals: 'Hide the original emote/settings buttons (needs layout enabled)',
-        usercount: 'Show usercount in the userlist window (needs layout enabled)'
+        usercount: 'Show usercount in the userlist window (needs layout enabled)',
+        wutColorRefresh: 'Move wutColors refresh button to titlebar'
     },
     add: (mod) => {
         if (!mod.meta)
@@ -38,14 +47,10 @@ const self = {
         self.start(mod);
     },
     load: (data, callback) => {
-        if (self[data.dir][data.name] || self.queue.indexOf(data.name) !== -1)
+        if (self[data.dir][data.name] || (self.queue.indexOf(data.name) !== -1))
             return;
 
-        let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/${data.dir}/${data.name}.js`
-
-        //this will be gone at some point
-        if (JSON.parse(localStorage.SmidqeTweaks).development)
-            path = `http://localhost/smidqetweaks/${data.dir}/${data.name}.js`
+        let path = `http://localhost/smidqetweaks/${data.dir}/${data.name}.js`
 
         if (data.path)
             path = data.path;
@@ -70,18 +75,25 @@ const self = {
         if (mod.disable)
             mod.disable();
 
+        self.notify({id: 'moduleUnload', data: Object.assign({}, mod)})
+
         $.each(values, (index, val) => {
             self.dependencies[val] = self.dependencies[val].filter(script => script !== data.name)
 
-            //unload the module since it's no longer needed
             if (self.dependencies[val].length === 0)
                 self.unload({dir: 'modules', name: val});
         })
 
         delete self[data.dir][data.name];
     },
-    get: (_from, title) => {
-        return self[_from][title];
+    get: (key) => {
+        if (self.names.modules.indexOf(key) !== -1)
+            return self.modules[key];
+
+        if (self.names.scripts.indexOf(key) !== -1)
+            return self.scripts[key];
+        
+        return undefined;
     },
     unpatch: (data) => {
         if (data instanceof Array)
@@ -171,9 +183,9 @@ const self = {
 
             if (start)
             {
-                self.notify({key: mod.meta.name, mod: mod});
-
+                self.notify({id: 'moduleAdd', key: mod.meta.name, mod: mod});
                 self.queue.splice(self.queue.indexOf(mod.meta.name), 1);
+
                 clearInterval(interval);
             }
         }, 1500);
@@ -194,14 +206,9 @@ const self = {
         //this prevents the settings module from being unloaded if las 
         self.dependencies['settings'].push('main');
 
-        //append the min-css file
-        //$('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks-min.css"/>'))
-
-        $('head').append($('<link id="st-stylesheet-min" rel="stylesheet" type="text/css" href="http://smidqe.github.io/js/berrytube/css/stweaks-min.css"/>'))    
+        $('head').append($('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="http://localhost/smidqetweaks/css/stweaks.css"/>'))    
+        
         self.load({dir: 'modules', name: 'settings'});
-
-        if (!JSON.parse(localStorage.SmidqeTweaks))
-            localStorage.SmidqeTweaks = JSON.stringify({development: false});
     },
 }
 

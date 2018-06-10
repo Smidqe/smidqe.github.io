@@ -8,7 +8,8 @@ function load() {
     const self = {
         meta: {
             group: 'modules',
-            name: 'windows'
+            name: 'windows',
+            requires: ['colors']
         },
         windows: {}, //container to hold all windows (all are jquery selectors)
         titlebar: (id) => {
@@ -16,9 +17,18 @@ function load() {
                 class: 'st-titlebar'
             }).append(
                 $('<div>', {
+                    class: 'st-titlebar-modularize',
+                    'data-id': id,
+                }).on('click', function() {
+                    self.modularize(id, true);
+                }),
+                $('<div>', {
                     class: 'st-titlebar-exit',
                     'data-id': id,
                 }).on('click', function() {
+                    if (self.modular(id))
+                        self.modularize(id, false);
+
                     self.show({name: $(this).data('id'), show: false});
                 })
             );
@@ -37,12 +47,17 @@ function load() {
             if (data.callback)
                 data.callback();
         },
-        remove: (name) => {
+        remove: (name, removeContents) => {
             let element = self.get(name);
             
             element.find('.st-titlebar').empty().remove();
-            element.contents().unwrap();
+            
+            if (removeContents)
+                element.contents().remove();
+            else
+                element.contents().unwrap();
 
+            element.remove();
             delete self.windows[name];
         },
         get: (name) => { 
@@ -110,6 +125,9 @@ function load() {
             if (data.wrap)
                 container = $(data.selector).wrap(container).parent();
 
+            self.windows[data.id] = container;
+
+
             if (data.wrap)
                 container.addClass('st-window-wrap');
 
@@ -129,9 +147,6 @@ function load() {
 
             if (!data.wrap) 
                 $('body').append(container);
-
-            //save the jquery object for further use
-            self.windows[data.id] = container;
 
             return container;
         },

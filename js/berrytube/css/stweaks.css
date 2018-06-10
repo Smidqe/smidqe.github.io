@@ -1,10 +1,3 @@
-/*
-    TODO:
-        Group the CSS into relevant categories/groups
-
-
-*/
-
 /* Windows css */
 .st-window-container {
     background-color: rgba(0, 0, 0, 0.6);
@@ -30,7 +23,7 @@
     width: 30% !important;
 }
 
-#st-window-container-polls #pollpane {
+#st-window-container-polls #pollbox {
     width: 100%;
     height: 100%;
     background-color: #444;
@@ -60,16 +53,15 @@
 }
 
 .st-titlebar {
+    display: flex;
+    flex-flow: row-reverse;
     width: 100%;
     align-self: flex-start;
-    height: fit-content;
     background-color: dimgrey;
-    text-align: center;
-    font-size: 25px;
+    border-bottom: 2px solid darkgoldenrod;
 }
 
 .st-titlebar-exit {
-    float: right;
     width: 20px;
     height: 20px;
     position: relative;
@@ -144,7 +136,7 @@
 }
 
 .st-menu-group-title:hover, .st-menu-element:hover {
-    background-color: #696868;
+    background-color: #696868 !important;
     color: #222222;
     box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
@@ -242,20 +234,18 @@
     height: 100%;
 }
 
-
-
-body #leftpane {
-    height: 100% !important;
+.st-chat #chatControls {
     width: 100%;
 }
 
-#playlist {
-    height: inherit !important;
-    resize: none;
+#chatpane.st-patch-berrytweaks .st-window-users,
+#chatpane.st-patch-berrytweaks #chatbuffer {
+    top: 40px;
+    max-height: calc(100% - 70px);
 }
 
-#chatControls {
-    width: 100%;
+.st-chat.st-patch-berrytweaks #rcvOverlay {
+    top: 40px;
 }
 
 /*Incase berrytweaks fails to load*/
@@ -271,12 +261,6 @@ body #leftpane {
 
 #chevronButtonDiv {
     display: none;
-}
-
-
-.st-window-users.st-patch-berrytweaks {
-    top: 40px;
-    max-height: calc(100% - 70px);
 }
 
 .st-window-users #chatlist {
@@ -301,7 +285,7 @@ body #leftpane {
 /*BerryTweaks patches*/
 
 #st-videotitle-window {
-    background-color: #474747;
+    background-color: inherit;
     height: auto;
     width: 100%;
     position: absolute;
@@ -309,8 +293,6 @@ body #leftpane {
     left: 0px;
     z-index: 5;
     top: 20px;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 
@@ -336,9 +318,10 @@ body #leftpane {
 
 .st-settings-group>label {
     font-weight: bold;
+    font-size: 15px;
 }
 
-#rcvOverlay {
+.st-chat #rcvOverlay {
     width: 100% !important;
 }
 
@@ -347,7 +330,7 @@ body #leftpane {
 }
 
 .st-setting-sub {
-    font-size: 14px;
+    font-size: 12px;
     margin-left: 2em;
 }
 
@@ -373,7 +356,7 @@ body #leftpane {
 
 .st-stats-block {
     display: grid;
-    width: 100%;
+    width: 50%;
     margin-bottom: 10px;
 }
 
@@ -382,11 +365,13 @@ body #leftpane {
 }
 
 .st-stats-pair>span:first-child {
+    margin-left: 5px;
     float: left;
 }
 
 .st-stats-pair>span:last-child {
     float: right;
+    margin-right: 5px;
 }
 
 .st-stats-pair-sub>span:first-child {
@@ -456,9 +441,9 @@ body #leftpane {
     max-width: fit-content;
 }
 
-#wutColorRefresh {
-    right: 22px !important;
-    margin-top: 3px;
+.st-titlebar #wutColorRefresh {
+    right: 30px !important;
+    margin-top: 4px;
 }
 
 /* Minor tweaks or patches */
@@ -487,3 +472,39 @@ body #leftpane {
     width: 200px;
     height: 200px;
 }
+
+.st-stats-container {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.st-stats-titlebar-button {
+    width: 20px;
+    height: 20px;
+    background: rgb(129, 98, 98);
+    float: right;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.st-stats-modular {
+    min-width: 15%;
+    width: auto;
+    height: auto;
+}
+
+#st-toolbar-element-layout {
+    float: left;
+}
+
+#playlist.st-window-playlist {
+    height: 100%;
+}
+
+.st-window-playlist #leftpane {
+    width: 100%;
+    height: 100% !important;
+}
+
+

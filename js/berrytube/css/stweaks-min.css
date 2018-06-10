@@ -3,10 +3,11 @@
 
 .st-settings-group>label {
     font-weight: bold;
+    font-size: 15px;
 }
 
 .st-setting-sub {
-    font-size: 14px;
+    font-size: 12px;
     margin-left: 2em;
 }
 

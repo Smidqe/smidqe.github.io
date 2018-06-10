@@ -6,72 +6,69 @@ function load() {
         meta: {
             name: 'usercount',
             group: 'scripts',
-            requires: ['chat', 'windows', 'menu'],
+            requires: ['chat', 'windows', 'menu', 'stats'],
         },
         config: {
             group: 'chat',
             values: [{
-                title: 'Show usercounts in separate window',
+                title: 'Track usercounts in stats window',
                 key: 'usercount',
                 depends: ['layout']
             }]
         },
         chat: null,
-        windows: null,
-        menu: null,
+        stats: null,
         enabled: false,
-        container: null,
         update: () => {
-            $.each(self.chat.usercount(), (key, val) => {
-                self.container.find('#st-count-' + key + ' .st-count-value').text(val);
+            self.stats.update('users', self.chat.usercount());
+
+            $.each(self.reduce(), (key, amount) => {
+                self.stats.update(key, amount);
             })
         },
         show: () => {
             self.windows.show({modular: true, name: 'usercount', show: true})
         },
         enable: () => {
-            self.enabled = true;
             self.update();
-            
-            SmidqeTweaks.patch({container: {obj: window, name: 'usercount'}, name: 'handleNumCount', callback: self.update})
+            self.chat.patch('handleNumCount', self.update);
         },
         disable: () => {
-            self.enabled = false;
-            SmidqeTweaks.unpatch({container: 'usercount', name: 'handleNumCount', callback: self.update});
+            self.chat.unpatch('handleNumCount', self.update);
         },
-        //create the listeners
+        reduce: () => {
+            let result = {};
+
+            $.each(self.chat.users(), (index, user) => {
+                if (!result[user.group])
+                    result[user.group] = 0;
+
+                result[user.group] += 1;
+            })
+
+            return result;
+        },
         init: () => {
-            self.chat = SmidqeTweaks.get('modules', 'chat');
-            self.windows = SmidqeTweaks.get('modules', 'windows');
-            self.container = $('<div>', {id: 'st-users-container'})
-            self.menu = SmidqeTweaks.get('modules', 'menu');
+            self.chat = SmidqeTweaks.get('chat');
+            self.stats = SmidqeTweaks.get('stats');
 
-            self.windows.create({
-                id: 'usercount',
-                wrap: false,
-                classes: ['st-window-container-usercount'],
+            self.stats.add('block', {
+                id: 'usercount'
             })
 
-            $.each(self.chat.usercount(), (key, val) => {
-                let element = $('<div>', {id: 'st-count-' + key});
-                let title = $('<div>').append(
-                    $('<span>', {class: 'st-count-title', text: key[0].toUpperCase() + key.slice(1) + ': '}),
-                    $('<span>', {class: 'st-count-value', text: val})
-                )                
-
-                self.container.append(element.append(title));
+            self.stats.add('pair', {
+                id: 'users',
+                title: 'Usercount',
+                block: 'usercount'
             })
 
-            self.windows.get('usercount').append(self.container);
-
-            self.menu.add({
-                id: 'usercount',
-                group: 'usercount',
-                title: 'Show',
-                callbacks: {
-                    click: self.show
-                }
-            })
+            $.each(self.reduce(), (key, amount) => {
+                self.stats.add('pair', {
+                    id: key,
+                    title: key[0].toUpperCase() + key.slice(1),
+                    block: 'usercount'
+                })
+            });
         }
     }
 

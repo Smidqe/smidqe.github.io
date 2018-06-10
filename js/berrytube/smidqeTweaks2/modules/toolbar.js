@@ -3,11 +3,7 @@
         - Modify the add() to be more uniform with the rest of the modules
         - Expand functionality
 
-    Data structure for a toolbar element
-        - id
-        - text
-        - tooltip
-        - callback(s)
+    
 */
 
 function load() {
@@ -45,6 +41,9 @@ function load() {
         get: (name) => {
             return self.bar.find('#st-toolbar-element-' + name);
         },
+        bar: () => {
+            return self.bar;
+        },
         remove: key => {
             let element = self.get(key);
             
@@ -63,8 +62,6 @@ function load() {
             self.bar.find('#st-toolbar-element-' + key).text(value);
         },
         init: () => {
-            console.log("Module[toolbar]: ", "Initialising");
-
             self.bar = $("<div>", { id: "st-toolbar-wrap" });
             self.bar.prependTo("#chatControls");
 

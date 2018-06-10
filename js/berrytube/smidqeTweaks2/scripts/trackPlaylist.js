@@ -6,35 +6,10 @@ function load() {
                 title: 'Show playlist changes',
                 key: 'trackPlaylist',
             }, {
-                title: 'Additions',
-                key: 'trackAdd',
-                depends: ['trackPlaylist'],
-                sub: true,
-            }, {
-                title: 'Removals',
-                key: 'trackRemove',
-                depends: ['trackPlaylist'],
-                sub: true,
-            }, {
-                title: 'Moves',
-                key: 'trackMove',
-                depends: ['trackPlaylist'],
-                sub: true,
-            }, {
-                title: 'Position',
-                key: 'trackPosition',
-                sub: true,
-                depends: ['trackPlaylist'],
-            }, {
-                title: 'Current position',
+                title: 'Show current position',
                 key: 'trackCurrent',
                 sub: true,
-                depends: ['trackPlaylist', 'trackPosition'],
-            }, {
-                title: 'Volatiles',
-                key: 'trackVolatile',
                 depends: ['trackPlaylist'],
-                sub: true,
             }]
         },
         meta: {
@@ -78,7 +53,6 @@ function load() {
             if (id === 'add')
                 msg += ' was added to playlist';
 
-
             $.each(data.changes, (key, value) => {
                 if (value.key === 'volat')
                 {
@@ -89,24 +63,21 @@ function load() {
                 if (value.key === 'pos')
                 {
                     msg += ' was moved';
-
-                    if (self.settings.get('trackPosition'))
-                        msg += ' (' + value.old + ' -> ' + value.new + ')';
+                    msg += ' (' + value.old + ' -> ' + value.new + ')';
 
                     if (self.settings.get('trackCurrent'))
-                        msg += ' Current: ' + self.playlist.get('title', decodeURIComponent(window.ACTIVE.videotitle)).pos;
+                        msg += ' Current: ' + self.playlist.position('title', decodeURIComponent(window.ACTIVE.videotitle));
                 }
             })
 
-
-            SmidqeTweaks.modules.chat.add('Playlist', msg, 'act', true);
+            self.chat.add('Playlist', msg, 'act', true);
             data.changes = [];
         },
         action: (data, action) => {
             if (!self.enabled || !data)
                 return;
 
-            let volatile = action.id === 'volatile';
+            let volatile = action === 'volatile';
             let object = self.tracking[data.videoid];
             let video = volatile ? self.playlist.get('index', data.pos).value : null;
             let message = false;
@@ -117,12 +88,12 @@ function load() {
             if (!object && volatile)
                 object = self.tracking[video.videoid] || self.track(video);
 
-            switch (action.id) {
+            switch (action) {
                 case 'add': message = true; break;
                 case 'remove':
                 {
                     object.timeout = setTimeout(() => {
-                        if (self.settings.get('trackRemove') && self.playlist.get('title', object.title).pos === -1)
+                        if (!self.playlist.exists('title', object.title))
                             self.message(object, 'remove');
 
                         delete self.tracking[object.videoid];
@@ -132,18 +103,10 @@ function load() {
                 }
                 case 'modify':
                 {
-                    //a move happened
-                    if (object.timeout)
-                    {
-                        clearTimeout(object.timeout);
-                        object.timeout = null;
-                    }
-                    //add position to the data
+                    clearTimeout(object.timeout);
+
                     data.pos = self.playlist.get('title', object.title).pos;
-                    
-                    //check values
                     $.each(data, (key, value) => {
-                        //don't check values that are non existant in the our end
                         if (!object[key])
                             return;
 
@@ -156,12 +119,11 @@ function load() {
                             new: value
                         })
 
-                        object[key] = value; //store new value
+                        object[key] = value; 
                     })
 
                     break;
                 }
-
                 case 'volatile':
                 {
                     object.changes.push({
@@ -170,26 +132,25 @@ function load() {
                         new: data.volat
                     })
 
-                    //remove from tracking if set to permanent, on nonvol -> vol it'll be removed after it has played triggering 'remove'
+                    object.volat = data.volat;
                     object.remove = !data.volat;
-
                     break;
                 }
             }
 
-            if ((message || object.changes.length > 0) && self.settings.get(action.setting))
-                self.message(object, action.id);
+            if (message || object.changes.length > 0)
+                self.message(object, action);
 
             if (object.remove)
                 delete self.tracking[object.videoid];
         },
         enable: () => {
             $.each(self.patch, (index, value) => {
-                SmidqeTweaks.patch({container: {obj: window.PLAYLIST.__proto__, name: 'playlist'}, name: value, callback: self.proto, after: value === 'remove' ? false : true})
+                self.playlist.patch(value, self.proto, value !== 'remove');
             })
 
             $.each(self.socket, (key, val) => {
-                socket.on(key, val);
+                self.playlist.listen(key, val);
             })
 
             self.enabled = true;
@@ -198,44 +159,42 @@ function load() {
             self.enabled = false;
 
             $.each(self.patch, (index, value) => {
-                SmidqeTweaks.unpatch({container: 'playlist', name: value, callback: self.proto});
+                self.playlist.unpatch(value, self.proto);
             })
 
             $.each(self.socket, (key, val) => {
-                socket.removeListener(key, val);
+                self.playlist.unlisten(key, val);
             })
         },
-        toggle: () => {
-            self.enabled = SmidqeTweaks.settings.get('trackPlaylist')
-        },
         proto: (node, newNode) => {
-            let conf = {id: 'modify', setting: 'trackMove'}
+            let action = 'modify';
             
             if (!newNode)
-                conf = {id: 'remove', setting: 'trackRemove'}
+                action = 'remove';
 
-            self.action(newNode || node, conf);
+            self.action(newNode || node, action);
         },
         init: () => {
-            self.playlist = SmidqeTweaks.get('modules', 'playlist');
-            self.settings = SmidqeTweaks.get('modules', 'settings');
+            self.playlist = SmidqeTweaks.get('playlist');
+            self.settings = SmidqeTweaks.get('settings');
+            self.chat = SmidqeTweaks.get('chat');
 
             self.socket = {
                 addVideo: (data) => {
-                    console.log('add');
-                    self.action(data.video, {id: 'add', setting: 'trackAdd'})
+                    self.action(data.video, 'add')
                 },
                 randomizeList: (data) => {
-                    console.log(data);
+                    console.log('randomize');
                     self.shuffle = true;
                 },
                 setVidVolatile: (data) => {
-                    self.action(data, { id: 'volatile', setting: 'trackVolatile' })
+                    self.action(data, 'volatile')
                 },
                 recvNewPlaylist: (data) => {
                     console.log(data);
                     self.shuffle = false;
-                    SmidqeTweaks.modules.chat.add('Playlist', 'Playlist was shuffled', 'act', true);
+                    
+                    self.chat.add('Playlist', 'Playlist was shuffled', 'act', true);
                 },
                 sortPlaylist: () => {
                     console.log('sortPlaylist');

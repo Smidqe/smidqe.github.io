@@ -16,54 +16,61 @@ function load() {
             values: [{
                 title: 'Wrap videotitle to separate line',
                 key: 'titleWrap',
-                depends: ['berrytweaks', 'layout'],
+                depends: ['berrytweaks'],
             }]
         },
-        enable: () => {
-            self.enabled = true;
-            
-            socket.on('forceVideoChange', self.grab);
-            socket.on('hbVideoDetail', self.grab);
-        },
-        disable: () => {
-            self.enabled = false;
-            
-            socket.removeListener('forceVideoChange', self.grab);
-            socket.removeListener('hbVideoDetail', self.grab);
+        elements: ['#rcvOverlay', '.st-window-users', '#chatbuffer'],
+        functions: ['forceVideoChange', 'hbVideoDetail'],
+        patch: () => {
+            let height = $('#st-videotitle-window').height();
 
-            if (self.container)
-            {
-                self.container.unwrap();
-                self.container = null;
-            }
-            
-            $('.st-window-users').removeClass('st-patch-berrytweaks');
+            $.each(self.elements, (index, key) => {
+                let changes = {
+                    'top': height + 20 + "px",
+                }
+
+                if (key !== '#rcvOverlay')
+                    changes['max-height'] = "calc(100% - " + 70 + "px)"
+
+                $(key).css(changes);
+            })
+        },
+        unpatch: () => {
+            $.each(self.elements, (index, key) => {
+                $(key).css({
+                    'top': 'none',
+                    'max-height': 'none'
+                })
+            })
         },
         grab: () => {
-            if (!self.enabled)
-                return;
-            
-            if (self.container)
-                return;
+            let title = $('#berrytweaks-video_title')
 
-            let title = $('#berrytweaks-video_title');
-            
-            if (self.enabled && title.length == 0)
+            if (title.parent().attr('id') === 'st-videotitle-window')
                 return;
 
-            self.container = title
-            self.container.wrap($('<div>', {id: 'st-videotitle-window'}));
+            self.container.appendTo($('#chatControls')).append(title);
+        },
+        update: () => {
+            self.grab();
+            self.patch();
+        },
+        enable: () => {
+            if (!self.settings.berrytweaks('videoTitle'))
+            {
+                self.settings.set('titleWrap', false, true);    
+                return;
+            }
             
-            let interval = setInterval(() => {
-                let element = $('.st-window-users')
-                
-                if (!element[0])
-                    return;
-
-                element.addClass('st-patch-berrytweaks');
-                clearInterval(interval);
-            }, 500)
-            
+            $.each(self.functions, (index, value) => socket.on(value, self.update));
+        },
+        disable: () => {
+            $.each(self.functions, (index, value) => socket.removeListener(value, self.update));
+            self.unpatch();
+        },
+        init: () => {
+            self.container = $('<div>', {id: 'st-videotitle-window'});
+            self.settings = SmidqeTweaks.get('settings');
         },
     }
 

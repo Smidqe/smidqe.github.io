@@ -26,13 +26,9 @@ function load() {
 			id: 'time',
 			tooltip: 'Current time',
 		},
-		enabled: false,
 		update: () => {
-			if (!self.enabled)
-				return;
-
 			let time = self.time.get();
-			let half = self.settings.get({which: 'setting', key:'12hour'});
+			let half = self.settings.get('12hour');
 
 			if (half)
 				time = self.time.convert('12h', time);
@@ -44,7 +40,7 @@ function load() {
 				if (skip.indexOf(key) !== -1)
 					return;
 				
-				if (key === 's' && !self.settings.get({which: 'setting', key: 'showSeconds'}))
+				if (key === 's' && !self.settings.get('showSeconds'))
 					return;
 
 				if (key !== 'h')
@@ -60,20 +56,16 @@ function load() {
 		},
 		enable: () => {
 			self.toolbar.add(self.element);
-
 			self.updater = setInterval(self.update, 1000);
-			self.enabled = true;
 		},
 		disable: () => {
-			self.toolbar.remove('time');
-
 			clearInterval(self.updater);
-			self.enabled = false;
+			self.toolbar.remove('time');
 		},
 		init: () => {
-			self.toolbar = SmidqeTweaks.get('modules', 'toolbar');
-			self.time = SmidqeTweaks.get('modules', 'time');
-			self.settings = SmidqeTweaks.get('modules', 'settings');
+			self.toolbar = SmidqeTweaks.get('toolbar');
+			self.time = SmidqeTweaks.get('time');
+			self.settings = SmidqeTweaks.get('settings');
 		}
     }
     return self;

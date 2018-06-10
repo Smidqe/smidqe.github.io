@@ -18,7 +18,7 @@ function load() {
         meta: {
             group: 'modules',
             name: 'menu',
-            requires: ['toolbar', 'windows', 'utilities'],
+            requires: ['toolbar', 'windows', 'utilities', 'colors'], //+ colors
         },
         started: false,
         button: {
@@ -55,6 +55,12 @@ function load() {
             if (type === 'main')
                 self.windows.show({name: 'menu', show: value});
         },
+        addGroup: (data) => {
+
+        },
+        addElement: (group, data) => {
+
+        },
         add: (data) => {
             //loop if array is present
             if (data instanceof Array)
@@ -66,7 +72,6 @@ function load() {
                 return;
             }
 
-            //default to element unless specified
             if (!data.type)
                 data.type = 'element';
 
@@ -75,7 +80,6 @@ function load() {
 
             let obj = self.find(data.type, data.id);
 
-            //don't add doubles
             if (obj && data.type !== 'callback')
                 return;
             
@@ -100,8 +104,8 @@ function load() {
                     elements.addClass('st-window-hidden');
                 })
 
-                //if there are elements included in the group (das a huge one)
-                //append those aswell, if not just jump out
+                self.colors.update();
+                
                 if (!data.elements)
                     return group;
 
@@ -126,6 +130,8 @@ function load() {
 
                 group.append(element);
                 
+                self.colors.update();
+
                 if (!data.callbacks)
                     return;
 
@@ -141,7 +147,6 @@ function load() {
                 if (!data.callbacks)
                     return;
 
-                //can have multiple callbacks
                 $.each(data.callbacks, (key, callback) => {
                     obj.on(key, callback);
                 })
@@ -154,18 +159,19 @@ function load() {
             let width = ($('.st-chat').width() / 5);
             let height = width;
 
-            //set title and group dimensions
             group.width(width).height(height);
-            
-            //set element width
             elements.width(width);
+        },
+        updateColors: () => {
+            
         },
         init: () => {
             console.log('Starting menu');
             
-            self.utilities = SmidqeTweaks.get('modules', 'utilities');
-            self.windows = SmidqeTweaks.get('modules', 'windows');
-            self.toolbar = SmidqeTweaks.get('modules', 'toolbar');
+            self.utilities = SmidqeTweaks.get('utilities');
+            self.windows = SmidqeTweaks.get('windows');
+            self.toolbar = SmidqeTweaks.get('toolbar');
+            self.colors = SmidqeTweaks.get('colors');
             self.enums = self.utilities.enums;
             //create the window using the windows module
 
@@ -199,6 +205,11 @@ function load() {
             //add a button to the toolbar
             self.toolbar.add(self.button);
             self.toolbar.hide(self.button.id);
+
+            
+            self.colors.attach('#chatpane', '.st-menu-group, .st-menu-element, .st-menu-group-title', ['background-color']);
+            self.colors.attach('#chatbuffer', '.st-menu-group, .st-menu-element, .st-menu-group-title', ['color']);
+
             self.started = true;
         },
     }
