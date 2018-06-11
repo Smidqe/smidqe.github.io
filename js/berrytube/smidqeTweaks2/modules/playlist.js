@@ -22,7 +22,7 @@ function load() {
             return ms;
         },
         exists: (method, value) => {
-            return self.get('title', title).pos !== -1;
+            return self.get(method, value).pos !== -1;
         },
         amount: () => {
             return window.PLAYLIST.length;
@@ -49,8 +49,8 @@ function load() {
                 let result = false;
 
                 switch (method) {
-                    case 'title': result = decodeURIComponent(obj.videotitle) === value;
-                    case 'index': result = value === i;
+                    case 'title': result = (decodeURIComponent(obj.videotitle) === value); break;
+                    case 'index': result = (value === i); break;
                 }
 
                 if (result)

@@ -30,7 +30,7 @@ function load() {
                 }
 
                 if (key !== '#rcvOverlay')
-                    changes['max-height'] = "calc(100% - " + 70 + "px)"
+                    changes['max-height'] = "calc(100% - " + (52 + height) + "px)" //52 == (20px for chatControls, 30 for input, 2 for borders)
 
                 $(key).css(changes);
             })

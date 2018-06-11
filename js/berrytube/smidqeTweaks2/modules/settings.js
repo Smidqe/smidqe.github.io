@@ -241,6 +241,7 @@ function load() {
 					),
 				scripts: $('<div>')
 					.append($('<fieldset>').append(
+						$('<legend>', {text: '3rd party scripts'}),
 						SmidqeTweaks.names.others.map((key) => {
 							return self.create({
 								key: key,
@@ -249,6 +250,7 @@ function load() {
 						})
 					))
 					.append($('<fieldset>').append(
+						$('<legend>', {text: 'Toggle to enable/disable a script'}),
 						SmidqeTweaks.names.scripts.map((key) => {
 
 							return self.create({

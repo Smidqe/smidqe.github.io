@@ -121,28 +121,26 @@
 /* Menu css */
 
 .st-menu-group {
-    background-color: #222222;
+    background-color: unset;
 }
 
 .st-menu-group-title {
-    background-color: #474747;
     display: flex;
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    color: #BBBBBB;
     width: 100%;
     height: 100%;
 }
 
 .st-menu-group-title:hover, .st-menu-element:hover {
+    cursor: pointer;
     background-color: #696868 !important;
     color: #222222;
     box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
 .st-menu-elements{
-    color: #BBBBBB;
     position: absolute;
 }
 
@@ -153,7 +151,6 @@
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    background-color: #474747;
 }
 
 /* Playlist css */
@@ -379,6 +376,7 @@
 }
 
 #st-toolbar-element-menu {
+    cursor: pointer;
     float: left;
     padding-left: 5px;
     font-size: 15px;
