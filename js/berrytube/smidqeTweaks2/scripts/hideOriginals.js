@@ -13,6 +13,7 @@ function load() {
                 depends: ['layout'],
             }]
         },
+        functions: ['prepare', 'unprepare'],
         buttons: {},
         interval: null,
         hide: () => {
@@ -30,35 +31,29 @@ function load() {
             })
         },
         enable: () => {
-            SmidqeTweaks.patch({
-				container: {obj: SmidqeTweaks.scripts.layout, name: 'originals'},
-				name: 'prepare',
-				after: true,
-                callback: self.hide,
-			})
-
-            SmidqeTweaks.patch({
-				container: {obj: SmidqeTweaks.scripts.layout, name: 'originals'},
-				name: 'unprepare',
-				after: true,
-				callback: self.unhide
+            $.each(self.functions, (index, value) => {
+                SmidqeTweaks.patch({
+                    container: {obj: SmidqeTweaks.scripts.layout, name: 'originals'},
+                    name: value,
+                    after: true,
+                    callback: index === 0 ? self.hide : self.unhide,
+                })
             })
 
             if (self.settings.get('layout'))
                 self.hide();
         },
         disable: () => {
-            SmidqeTweaks.unpatch({
-                container: 'originals',
-                name: 'prepare',
-                callback: self.hide
+            $.each(self.functions, (index, value) => {
+                SmidqeTweaks.unpatch({
+                    container: 'originals',
+                    name: value,
+                    callback: index === 0 ? self.hide : self.unhide,
+                })
             })
 
-            SmidqeTweaks.unpatch({
-                container: 'originals',
-                name: 'unprepare',
-                callback: self.unhide
-            })
+            if (self.settings.get('layout'))
+                self.unhide();
         },
         init: () => {
             self.utilities = SmidqeTweaks.get('utilities');

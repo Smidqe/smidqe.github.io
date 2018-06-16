@@ -101,8 +101,7 @@ function load() {
             })
 
             self.windows.get(key).append($(this).parents().eq(1).find('[id*=st-stats-pair]').clone())
-            self.windows.modularize(key, true);
-            self.windows.show({name: key, show: true});
+            self.windows.show({name: key, show: true, modular: true});
             
             self.windows.get(key).find('.st-titlebar-exit').on('click', () => {
                 self.unmodularize(key)

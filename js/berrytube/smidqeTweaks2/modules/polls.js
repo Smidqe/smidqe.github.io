@@ -5,7 +5,7 @@ function load() {
 			group: 'modules',
 		},
 		events: ['newPoll', 'updatePoll', 'clearPoll'],
-		functions: [],
+		functions: [], //?
 		container: null,
 		started: false,
 		options: (poll) => {
@@ -18,7 +18,7 @@ function load() {
 						count: $(data).find('.btn').text(),
 						text: $(data).find('.label').text(),
 					}
-				})
+				}).toArray();
 		},
 		polls: () => {
 			return self.container.find('.poll');

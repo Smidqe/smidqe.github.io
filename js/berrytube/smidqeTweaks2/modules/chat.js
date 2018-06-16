@@ -105,6 +105,11 @@ function load() {
         init: () => {
             self.container = $('#chatbuffer');
             self.started = true;
+
+            //just for curiosity
+			$.each(self.events, (index, value) => {
+				self.listen(value, data => console.log('Event: ' + value, data))
+			})
         },
     }
     return self;

@@ -43,6 +43,9 @@ function load() {
 				self.utilities.waitFor('#st-window-container-users > .st-titlebar', self.move);
 		},
 		disable: () => {
+			if (!($('#wutColorRefresh').parent().attr('id') === 'chatlist'))
+				self.remove();
+
 			SmidqeTweaks.unpatch({
                 container: 'wcr',
                 name: 'prepare',

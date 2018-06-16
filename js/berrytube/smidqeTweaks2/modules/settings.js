@@ -1,3 +1,8 @@
+/*
+	-> group
+		-> elems...
+*/
+
 function load() {
 	const self = {
 		meta: {
@@ -184,6 +189,17 @@ function load() {
 			SmidqeTweaks.patch(data);
 		},
 		showScriptMenu: () => {
+			/*
+			container = $()
+				.append(SmidqeTweaks.names.scripts.map((index, key) => {
+					if (SmidqeTweaks.names.enabled.indexOf(key) === -1)
+						return undefined;
+
+					return $()
+				})
+
+			*/
+
 			$('body').dialogWindow({
 				title: 'SmidqeTweaks scripts',
 				uid: 'stscripts',
