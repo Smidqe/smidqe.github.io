@@ -496,7 +496,7 @@
     float: left;
 }
 
-#playlist.st-window-playlist {
+.st-window-playlist #playlist {
     height: 100%;
 }
 
@@ -505,4 +505,6 @@
     height: 100% !important;
 }
 
-
+#wrapper:last-of-type {
+    display: none;
+}
