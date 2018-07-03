@@ -3,7 +3,7 @@ function load() {
         meta: {
             group: 'scripts',
             name: 'pollClose',
-            depends: ['chat', 'settings', 'polls']
+            requires: ['chat', 'settings', 'polls']
         },
         config: {
             group: 'polls',
