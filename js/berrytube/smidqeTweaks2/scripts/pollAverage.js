@@ -19,7 +19,7 @@ function load() {
             }],
         },
         check: (votes) => {
-            console.log('votes');
+            console.log(votes);
 
             if (votes.length < 10 || votes.length > 11)
                 return false;
