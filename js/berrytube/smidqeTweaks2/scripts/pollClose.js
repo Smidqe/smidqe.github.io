@@ -18,6 +18,7 @@ function load() {
             }]
         },
         polls: null,
+        settings: null,
         notify: () => {
             let poll = self.polls.first(false);
             let message = "'" + poll.find('.title').text() + "' was closed"; 
@@ -37,6 +38,7 @@ function load() {
         init: () => {
             self.chat = SmidqeTweaks.get('chat');
             self.polls = SmidqeTweaks.get('polls');
+            self.settings = SmidqeTweaks.get('settings');
         }
     };
 

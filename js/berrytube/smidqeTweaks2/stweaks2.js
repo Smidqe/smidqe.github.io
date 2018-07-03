@@ -38,7 +38,8 @@ const self = {
         berryControls: 'Modularize playlist and poll controls when given berry',
         hideOriginals: 'Hide the original emote/settings buttons (needs layout enabled)',
         usercount: 'Show usercount in the userlist window (needs layout enabled)',
-        wutColorRefresh: 'Move wutColors refresh button to titlebar'
+        wutColorRefresh: 'Move wutColors refresh button to titlebar',
+        preventVideoRefresh: 'Prevent refresh loops if video blocked when using Maltweaks'
     },
     add: (mod) => {
         if (!mod.meta)
