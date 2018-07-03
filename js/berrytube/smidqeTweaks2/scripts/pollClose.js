@@ -3,7 +3,7 @@ function load() {
         meta: {
             group: 'scripts',
             name: 'pollClose',
-            depends: ['chat', 'settings']
+            depends: ['chat', 'settings', 'polls']
         },
         config: {
             group: 'polls',
@@ -35,6 +35,7 @@ function load() {
         },
         init: () => {
             self.chat = SmidqeTweaks.get('chat');
+            self.polls = SmidqeTweaks.get('polls');
         }
     };
 
