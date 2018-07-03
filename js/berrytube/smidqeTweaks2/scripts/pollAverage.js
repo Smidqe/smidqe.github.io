@@ -18,6 +18,7 @@ function load() {
                 depends: ['pollAverage']
             }],
         },
+        polls: null,
         check: (votes) => {
             console.log(votes);
 

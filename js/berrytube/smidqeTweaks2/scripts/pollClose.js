@@ -17,6 +17,7 @@ function load() {
                 depends: ['pollClose'],
             }]
         },
+        polls: null,
         notify: () => {
             let poll = self.polls.first(false);
             let message = "'" + poll.find('.title').text() + "' was closed"; 
