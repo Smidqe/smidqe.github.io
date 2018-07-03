@@ -56,7 +56,7 @@ const self = {
         if (self[data.dir][data.name] || (self.queue.indexOf(data.name) !== -1))
             return;
 
-        let path = `https://localhost/smidqetweaks/${data.dir}/${data.name}.js`;
+        let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/${data.dir}/${data.name}.js`;
 
         if (data.path)
             path = data.path;
@@ -216,7 +216,7 @@ const self = {
 
         self.dependencies.settings.push('main');
 
-        $('head').append($('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="https://localhost/smidqetweaks/css/stweaks.css"/>'));
+        $('head').append($('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="https://smidqe.github.io/js/berrytube/css/stweaks.css"/>'));
         
         self.load({dir: 'modules', name: 'settings'});
     },
