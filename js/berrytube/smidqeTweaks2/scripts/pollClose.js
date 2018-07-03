@@ -24,6 +24,7 @@ function load() {
             if (self.settings.get('squeeClose'))
                 window.doSqueeNotify();
 
+            console.log(message);
             self.chat.add('Poll', message, 'act', false);
         },
         enable: () => {
@@ -32,9 +33,12 @@ function load() {
         disable: () => {
             self.polls.unlisten('clearPoll', self.notify);
         },
-    }
+        init: () => {
+            self.chat = SmidqeTweaks.get('chat');
+        }
+    };
 
     return self;
 }
 
-SmidqeTweaks.add(load())
+SmidqeTweaks.add(load());

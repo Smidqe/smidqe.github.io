@@ -9,10 +9,15 @@ const self = {
     callbacks: {},
     dependencies: {},
     queue: [],
-    update: false,
+    updater: false,
     names: { 
         modules: ['settings', 'toolbar', 'windows', 'playlist', 'menu', 'stats', 'time', 'chat', 'utilities', 'polls', 'colors'],
-        scripts: ['layout', 'pollAverage', 'rcvSquee', 'titleWrap', 'showDrinks', 'trackPlaylist', 'showTime', 'berryControls', 'hideOriginals', 'usercount', 'wutColorRefresh'],
+        scripts: [
+            'layout', 'pollAverage', 'rcvSquee', 'titleWrap', 
+            'showDrinks', 'trackPlaylist', 'showTime', 'berryControls', 
+            'hideOriginals', 'usercount', 'wutColorRefresh', 'pollClose',
+            'preventVideoRefresh'
+        ],
         groups: ['time', 'chat', 'playlist', 'polls', 'berry', 'patches', 'random'],
         others: ['maltweaks', 'berrytweaks', 'wutcolors'],
         enabled: [],
@@ -23,6 +28,7 @@ const self = {
         wutcolors: 'Username colorisation by wut',
         
         layout: 'Custom layout for Berrytube',
+        pollClose: 'Notify when the poll is closed',
         pollAverage: 'Calculate episode average when poll closes',
         rcvSquee: 'Squee when RCV message is received',
         titleWrap: 'Wrap BerryTweaks videotitle to a separate line',
@@ -42,7 +48,7 @@ const self = {
 
         $.each(mod.meta.requires || [], (index, value) => {
             self.dependencies[value].push(mod.meta.name);
-        })
+        });
 
         self.start(mod);
     },
@@ -50,7 +56,7 @@ const self = {
         if (self[data.dir][data.name] || (self.queue.indexOf(data.name) !== -1))
             return;
 
-        let path = `https://smidqe.github.io/js/berrytube/smidqeTweaks2/${data.dir}/${data.name}.js`
+        let path = `https://localhost/smidqetweaks/${data.dir}/${data.name}.js`;
 
         if (data.path)
             path = data.path;
@@ -60,11 +66,11 @@ const self = {
         $.ajax(path, {
             cache: false,
             dataType: "script",
-        })
+        });
     },
     unload: (data) => {
         let values = [];
-        let mod = self[data.dir][data.name]
+        let mod = self[data.dir][data.name];
 
         if (!mod)
             return;
@@ -75,14 +81,14 @@ const self = {
         if (mod.disable)
             mod.disable();
 
-        self.notify({id: 'moduleUnload', data: Object.assign({}, mod)})
+        self.notify({id: 'moduleUnload', data: Object.assign({}, mod)});
 
         $.each(values, (index, val) => {
-            self.dependencies[val] = self.dependencies[val].filter(script => script !== data.name)
+            self.dependencies[val] = self.dependencies[val].filter(script => script !== data.name);
 
             if (self.dependencies[val].length === 0)
                 self.unload({dir: 'modules', name: val});
-        })
+        });
 
         delete self[data.dir][data.name];
     },
@@ -98,13 +104,13 @@ const self = {
     unpatch: (data) => {
         if (data instanceof Array)
         {
-            $.each(data, sub => self.unpatch(sub))
+            $.each(data, sub => self.unpatch(sub));
             return;
         }
 
         self.callbacks[data.container][data.name] = self.callbacks[data.container][data.name].filter((value) => {
-            return data.callback !== value.callback
-        })
+            return data.callback !== value.callback;
+        });
     },
     patch: (data) => {
         if (data instanceof Array)
@@ -134,13 +140,13 @@ const self = {
             cont[data.name].unshift(data.callback);
 
         let patch = function () {
-            let result = undefined;
+            let result;
 
             for (let f of cont[data.name])
             {
                 try {
                     if (f === original)
-                        result = f.apply(this, arguments)
+                        result = f.apply(this, arguments);
                     else
                         f.apply(this, arguments);
                 } catch (error) {
@@ -149,7 +155,7 @@ const self = {
             }
 
             return result;
-        }
+        };
 
         data.container.obj[data.name] = patch;
     },
@@ -176,15 +182,21 @@ const self = {
 
                 if (self.modules[key].init && start)
                     start = self.modules[key].started;
-            })
+            });
 
             if (start && mod.init)
                 mod.init();
 
             if (start)
             {
-                self.notify({id: 'moduleAdd', key: mod.meta.name, mod: mod});
-                self.queue.splice(self.queue.indexOf(mod.meta.name), 1);
+                let data = {
+                    id: 'moduleAdd',
+                    key: mod.meta.name,
+                    mod: mod
+                };
+
+                self.notify(data);
+                self.queue.splice(self.queue.indexOf(data.key), 1);
 
                 clearInterval(interval);
             }
@@ -192,25 +204,23 @@ const self = {
     },
     update: () => {
         $.each(self.names.enabled, (index, key) => {
-            if (!self.scripts[key])
-                self.load({dir: 'scripts', name: key});
-        })
+            self.load({dir: 'scripts', name: key});
+        });
     },
     init: () => {
         console.log("Loading Smidqetweaks");
 
         $.each(self.names.modules, (index, val) => {
             self.dependencies[val] = [];
-        })
+        });
 
-        //this prevents the settings module from being unloaded if las 
-        self.dependencies['settings'].push('main');
+        self.dependencies.settings.push('main');
 
-        $('head').append($('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="https://smidqe.github.io/js/berrytube/css/stweaks.css"/>'))    
+        $('head').append($('<link id="st-stylesheet" rel="stylesheet" type="text/css" href="https://localhost/smidqetweaks/css/stweaks.css"/>'));
         
         self.load({dir: 'modules', name: 'settings'});
     },
-}
+};
 
 window.SmidqeTweaks = self;
 self.init();

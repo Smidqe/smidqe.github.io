@@ -35,7 +35,8 @@ function load() {
 
             self.chat.patch('addChatMsg', self.notify);
         },
-    }
+    };
+    
     return self;
 }
 SmidqeTweaks.add(load());

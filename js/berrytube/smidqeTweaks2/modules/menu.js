@@ -18,7 +18,7 @@ function load() {
         meta: {
             group: 'modules',
             name: 'menu',
-            requires: ['toolbar', 'windows', 'utilities', 'colors'], //+ colors
+            requires: ['toolbar', 'windows', 'utilities', 'colors'], 
         },
         started: false,
         button: {
@@ -55,22 +55,9 @@ function load() {
             if (type === 'main')
                 self.windows.show({name: 'menu', show: value});
         },
-        addGroup: (data) => {
-
-        },
-        addElement: (group, data) => {
-
-        },
         add: (data) => {
-            //loop if array is present
             if (data instanceof Array)
-            {
-                $.each(data, (index) => {
-                    self.add(data[index])
-                })
-
-                return;
-            }
+                return $.each(data, (index) => self.add(data[index]));
 
             if (!data.type)
                 data.type = 'element';
@@ -98,20 +85,20 @@ function load() {
                         return;
                     
                     elements.addClass('st-window-hidden');
-                })
+                });
 
                 elements.on('mouseleave', () => {
                     elements.addClass('st-window-hidden');
-                })
+                });
 
-                self.colors.update();
-                
+                self.updateColors();
+
                 if (!data.elements)
                     return group;
 
                 $.each(data.elements, (index, element) => {
                     self.add(element);
-                })
+                });
 
                 return group;
             }
@@ -123,21 +110,21 @@ function load() {
                 if (group.length === 0 && data.group)
                     group = self.add({type: 'group', id: data.group, title: data.group[0].toUpperCase() + data.group.slice(1)}).find('#st-menu-elements-' + data.group);
 
-                let element = $('<' + data.element + '>', {id: 'st-menu-element-' + data.id, class: 'st-menu-element'})
+                let element = $('<' + data.element + '>', {id: 'st-menu-element-' + data.id, class: 'st-menu-element'});
 
                 if (data.title)
                     element.text(data.title);
 
                 group.append(element);
                 
-                self.colors.update();
+                self.updateColors();
 
                 if (!data.callbacks)
                     return;
 
                 $.each(data.callbacks, (key, func) => {
                     element.on(key, func);
-                })
+                });
 
                 return element;
             }
@@ -149,7 +136,7 @@ function load() {
 
                 $.each(data.callbacks, (key, callback) => {
                     obj.on(key, callback);
-                })
+                });
             }
         },
         resize: () => {
@@ -163,7 +150,7 @@ function load() {
             elements.width(width);
         },
         updateColors: () => {
-            
+            self.colors.update(['menubackground', 'menutext']);
         },
         init: () => {
             console.log('Starting menu');
@@ -186,11 +173,11 @@ function load() {
 
             $(window).on('resize', () => {
                 self.resize();
-            })
+            });
 
             self.button.callbacks = {
                 'mouseenter': () => {
-                    self.show('main', true)
+                    self.show('main', true);
                 },
                 'mouseleave': (mouse) => {
                     if (self.utilities.edge(mouse.target, mouse).index == self.enums.ELEMENT_EDGE_BOTTOM)
@@ -198,7 +185,7 @@ function load() {
 
                     self.show('main', false);
                 }
-            }
+            };
 
             self.container.find('.st-titlebar').css('display', 'none');
 
@@ -207,12 +194,12 @@ function load() {
             self.toolbar.hide(self.button.id);
 
             
-            self.colors.attach('#chatpane', '.st-menu-group, .st-menu-element, .st-menu-group-title', ['background-color']);
-            self.colors.attach('#chatbuffer', '.st-menu-group, .st-menu-element, .st-menu-group-title', ['color']);
+            self.colors.attach('menubackground', '#chatpane', '.st-menu-group, .st-menu-element, .st-menu-group-title', ['background-color']);
+            self.colors.attach('menutext', '#chatbuffer', '.st-menu-group, .st-menu-element, .st-menu-group-title', ['color']);
 
             self.started = true;
         },
-    }
+    };
 
     return self;
 }

@@ -3,7 +3,6 @@ function load() {
         meta: {
             group: 'modules',
             name: 'chat', 
-            //requires: ['colors']
         },
         events: [
             'chatMsg', 'setNick', 'setType', 'newChatList', 
@@ -49,7 +48,7 @@ function load() {
                 let result = {
                     name: $(data).find('.chatlistname').text(),
                     me: classes.indexOf('me') !== -1,
-                } 
+                };
 
                 result.group = classes.filter(value => value !== result.name)[0];
                 return result;
@@ -79,7 +78,7 @@ function load() {
                 name: key,
                 after: after,
                 callback: callback
-            }
+            };
 
             SmidqeTweaks.patch(data);
         },
@@ -88,7 +87,7 @@ function load() {
                 container: 'chat',
                 name: key,
                 callback: callback
-            })
+            });
         },
         listen: (key, callback) => {
             if (self.events.indexOf(key) === -1)
@@ -108,10 +107,10 @@ function load() {
 
             //just for curiosity
 			$.each(self.events, (index, value) => {
-				self.listen(value, data => console.log('Event: ' + value, data))
-			})
+				self.listen(value, data => console.log('Event: ' + value, data));
+			});
         },
-    }
+    };
     return self;
 }
 SmidqeTweaks.add(load());

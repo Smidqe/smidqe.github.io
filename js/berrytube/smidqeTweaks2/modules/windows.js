@@ -17,19 +17,19 @@ function load() {
                 class: 'st-titlebar'
             }).append(
                 $('<div>', {
-                    class: 'st-titlebar-modularize',
-                    'data-id': id,
-                }).on('click', function() {
-                    self.modularize(id, true);
-                }),
-                $('<div>', {
-                    class: 'st-titlebar-exit',
+                    class: 'st-titlebar-exit st-titlebar-button',
                     'data-id': id,
                 }).on('click', function() {
                     if (self.modular(id))
                         self.modularize(id, false);
 
                     self.show({name: $(this).data('id'), show: false});
+                }),
+                $('<div>', {
+                    class: 'st-titlebar-modularize st-titlebar-button',
+                    'data-id': id,
+                }).on('click', function() {
+                    self.modularize(id, true);
                 })
             );
         },
@@ -41,7 +41,7 @@ function load() {
             else
                 window.addClass('st-window-hidden');
             
-            if (data.modular)
+            if (data.modular !== undefined)
                 self.modularize(data.name, data.modular);
 
             if (data.callback)
@@ -96,14 +96,21 @@ function load() {
         unmodularize: (name) => {
             let window = self.get(name);
 
+            //remove set inline css styles
+            window.css({
+                'right': '',
+                'left': '',
+                'bottom': '',
+                'top': '',
+                'width': '',
+                'height': '',
+            });
+
             window.removeClass('st-window-container-modular');
             window.draggable('destroy');
         },
         modular: (name) => {
             return self.get(name).hasClass('st-window-container-modular');
-        },
-        add: (name, what, value) => {
-            
         },
         create: (data) => {
             if (data instanceof Array)
@@ -111,8 +118,8 @@ function load() {
                 let result = [];
 
                 $.each(data, (index) => {
-                    result.push(self.create(data[index]))
-                })
+                    result.push(self.create(data[index]));
+                });
                 
                 return result;
             }
@@ -150,7 +157,7 @@ function load() {
 
             return container;
         },
-    }
+    };
 
     return self;
 }

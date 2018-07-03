@@ -1,9 +1,3 @@
-/*
-    Rewrite this one
-
-
-*/
-
 function load() {
     const self = {
         meta: {
@@ -27,24 +21,24 @@ function load() {
             $.each(self.elements, (index, key) => {
                 let changes = {
                     'top': height + 20 + "px",
-                }
+                };
 
                 if (key !== '#rcvOverlay')
-                    changes['max-height'] = "calc(100% - " + (52 + height) + "px)" //52 == (20px for chatControls, 30 for input, 2 for borders)
+                    changes['max-height'] = "calc(100% - " + (52 + height) + "px)"; //52 == (20px for chatControls, 30 for input, 2 for borders)
 
                 $(key).css(changes);
-            })
+            });
         },
         unpatch: () => {
             $.each(self.elements, (index, key) => {
                 $(key).css({
                     'top': 'none',
                     'max-height': 'none'
-                })
-            })
+                });
+            });
         },
         grab: () => {
-            let title = $('#berrytweaks-video_title')
+            let title = $('#berrytweaks-video_title');
 
             if (title.parent().attr('id') === 'st-videotitle-window')
                 return;
@@ -57,10 +51,7 @@ function load() {
         },
         enable: () => {
             if (!self.settings.berrytweaks('videoTitle'))
-            {
-                self.settings.set('titleWrap', false, true);    
-                return;
-            }
+                return self.settings.set('titleWrap', false, true);    
             
             $.each(self.functions, (index, value) => socket.on(value, self.update));
         },
@@ -72,7 +63,7 @@ function load() {
             self.container = $('<div>', {id: 'st-videotitle-window'});
             self.settings = SmidqeTweaks.get('settings');
         },
-    }
+    };
 
     return self;
 }

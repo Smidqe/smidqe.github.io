@@ -20,11 +20,11 @@ function load() {
 			let data = {
 				enabled: self.storage.enabled,
 				values: self.storage.values
-			}
+			};
 	
 			$.each(self.storage.values || [], (key, setting) => {
 				data.values[key] = setting;
-			})
+			});
 	
 			localStorage.SmidqeTweaks = JSON.stringify(data);
 		},
@@ -50,7 +50,7 @@ function load() {
 			});
 
 			if (input.data('toggle'))
-				input.prop('checked', self.storage.enabled.indexOf(data.key) !== -1)
+				input.prop('checked', self.storage.enabled.indexOf(data.key) !== -1);
 
 			const element = $('<div>', {id: 'st-setting-' + data.key, class: 'st-setting-wrap'})
 				.append($('<label>', {text: data.title}))
@@ -74,17 +74,17 @@ function load() {
 					depends: setting.depends || [],
 					element: self.create($.extend(setting, {callback: self.handle, script: SmidqeTweaks.names.scripts.indexOf(setting.key) !== -1})),
 					script: SmidqeTweaks.names.scripts.indexOf(setting.key) !== -1,
-				}
+				};
 
 				self.storage.elements[setting.key] = object;
 				self.containers.main.find('#st-settings-group-' + group).append(object.element);
 
 				self.refresh(setting.key);
-			})
+			});
 		},
 		handle: function() {
 			let key = $(this).data('key');
-			let checked = $(this).prop('checked')
+			let checked = $(this).prop('checked');
 			let toggle = $(this).data('toggle');
 			let script = $(this).data('script');
 
@@ -134,7 +134,7 @@ function load() {
 				delete self.storage.elements[setting.key];
 
 				self.refresh(setting.key);
-			})
+			});
 		},
 		refresh: (key) => {
 			$.each(self.storage.elements, (key, setting) => { 
@@ -146,14 +146,14 @@ function load() {
 	
 					if (!self.storage.values[key])
 						show = false;
-				})
+				});
 	
 				setting.element.css('display', show ? 'block' : 'none');
-			})
+			});
 
 			$.each(self.containers.main.find('.st-settings-group'), (index, group) => {
-				$(group).css('display', $(group).children().length <= 1 ? 'none' : 'block')
-			})
+				$(group).css('display', $(group).children().length <= 1 ? 'none' : 'block');
+			});
 		},
 		get: (key, which) => {
 			if (!which)
@@ -181,25 +181,14 @@ function load() {
 				name: key,
 				after: true,
 				callback: callback
-			}
+			};
 	
 			if (key === 'notify')
-				data.container = {obj: window.SmidqeTweaks, name: 'settings'}
+				data.container = {obj: window.SmidqeTweaks, name: 'settings'};
 	
 			SmidqeTweaks.patch(data);
 		},
 		showScriptMenu: () => {
-			/*
-			container = $()
-				.append(SmidqeTweaks.names.scripts.map((index, key) => {
-					if (SmidqeTweaks.names.enabled.indexOf(key) === -1)
-						return undefined;
-
-					return $()
-				})
-
-			*/
-
 			$('body').dialogWindow({
 				title: 'SmidqeTweaks scripts',
 				uid: 'stscripts',
@@ -252,7 +241,7 @@ function load() {
 							})
 							.append($('<label>', {
 								class: 'st-settings-group-label', text: name[0].toUpperCase() + name.slice(1)
-							}))
+							}));
 						})
 					),
 				scripts: $('<div>')
@@ -262,7 +251,7 @@ function load() {
 							return self.create({
 								key: key,
 								title: SmidqeTweaks.descriptions[key],
-							})
+							});
 						})
 					))
 					.append($('<fieldset>').append(
@@ -274,14 +263,14 @@ function load() {
 								script: key,
 								title: SmidqeTweaks.descriptions[key],
 								toggle: true,
-							})
+							});
 						})
 					)),
-			}
-			
+			};
+
 			self.started = true;
 		},
-	}
+	};
 
 	return self;
 }

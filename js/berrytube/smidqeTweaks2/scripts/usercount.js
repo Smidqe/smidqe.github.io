@@ -24,10 +24,10 @@ function load() {
 
             $.each(self.reduce(), (key, amount) => {
                 self.stats.update(key, amount);
-            })
+            });
         },
         show: () => {
-            self.windows.show({modular: true, name: 'usercount', show: true})
+            self.windows.show({modular: true, name: 'usercount', show: true});
         },
         enable: () => {
             self.update();
@@ -44,7 +44,7 @@ function load() {
                     result[user.group] = 0;
 
                 result[user.group] += 1;
-            })
+            });
 
             return result;
         },
@@ -54,24 +54,24 @@ function load() {
 
             self.stats.add('block', {
                 id: 'usercount'
-            })
+            });
 
             self.stats.add('pair', {
                 id: 'users',
                 title: 'Usercount',
                 block: 'usercount'
-            })
+            });
 
             $.each(self.reduce(), (key, amount) => {
                 self.stats.add('pair', {
                     id: key,
                     title: key[0].toUpperCase() + key.slice(1),
                     block: 'usercount'
-                })
+                });
             });
         }
-    }
+    };
 
     return self;
 }
-SmidqeTweaks.add(load())
+SmidqeTweaks.add(load());

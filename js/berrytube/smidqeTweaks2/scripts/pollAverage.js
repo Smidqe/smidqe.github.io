@@ -42,7 +42,7 @@ function load() {
                     index += 1;
 
                 total += value * index;
-            })
+            });
             
             let average = total / values.count.reduce((sum, val) => sum + val, 0);
             let message = "average is " + average;
@@ -60,7 +60,7 @@ function load() {
             self.settings = SmidqeTweaks.get('settings');
             self.polls = SmidqeTweaks.get('polls');
         },
-    }
+    };
     return self;
 }
 

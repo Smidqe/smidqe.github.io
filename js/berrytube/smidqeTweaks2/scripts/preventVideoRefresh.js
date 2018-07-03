@@ -1,5 +1,4 @@
 function load() {
-	//prevents maltweaks from refreshing (if used)
 	const self = {
 		meta: {
 			name: 'preventVideoRefresh',
@@ -9,7 +8,7 @@ function load() {
 			group: 'patches',
 			values: [{
 				key: 'preventVideoRefresh',
-				title: 'Prevent video refresh on YT error',
+				title: 'Prevent video refresh on YT error when using MalTweaks',
 				depends: ['maltweaks'],
 			}]
 		},
@@ -18,7 +17,8 @@ function load() {
 			if (!window.MT)
 				return SmidqeTweaks.get('settings').set('preventVideoRefresh', false, true);
 
-			window.onYTError = () => {return false};
+			self.backup = window.onYTError;
+			window.onYTError = () => false;
 		},
 		disable: () => {
 			if (!window.MT)
@@ -26,10 +26,9 @@ function load() {
 
 			window.onYTError = self.backup;
 		},
-		init: () => {
-			self.backup = window.onYTError;
-		}
-	}
+	};
 
 	return self;
 }
+
+SmidqeTweaks.add(load());

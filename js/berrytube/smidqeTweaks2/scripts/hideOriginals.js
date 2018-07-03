@@ -21,14 +21,14 @@ function load() {
 
             $.each(self.buttons, (key, value) => {
                 self.menu.add(value);
-            })
+            });
         },
         unhide: () => {
             $('#chatControls').removeClass('st-controls-hidden');
 
             $.each(self.buttons, key => {
                 self.menu.remove('element', key);
-            })
+            });
         },
         enable: () => {
             $.each(self.functions, (index, value) => {
@@ -37,8 +37,8 @@ function load() {
                     name: value,
                     after: true,
                     callback: index === 0 ? self.hide : self.unhide,
-                })
-            })
+                });
+            });
 
             if (self.settings.get('layout'))
                 self.hide();
@@ -49,8 +49,8 @@ function load() {
                     container: 'originals',
                     name: value,
                     callback: index === 0 ? self.hide : self.unhide,
-                })
-            })
+                });
+            });
 
             if (self.settings.get('layout'))
                 self.unhide();
@@ -77,9 +77,9 @@ function load() {
                         click: window.Bem.showBerrymoteSearch
                     }
                 }
-            }
+            };
         },
-    }
+    };
 
     return self;
 }

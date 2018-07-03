@@ -24,7 +24,7 @@ function load() {
 		disable: () => {
 
 		},
-	}
+	};
 
 	return self;
 }

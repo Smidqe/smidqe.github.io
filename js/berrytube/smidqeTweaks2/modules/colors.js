@@ -1,3 +1,7 @@
+/*
+	TODO:
+
+*/
 function load() {
 	const self = {
 		meta: {
@@ -14,24 +18,35 @@ function load() {
 					return;
 
 				$(dest).css(values[index], val);
-			})
+			});
 		},
-		attach: (src, dest, values) => {
+		attach: (key, src, dest, values) => {
 			self.attached.push({
+				key: key,
 				src: src,
 				dest: dest,
 				values: values,
-			})
+			});
 
-			self.update();
+			self.update(key);
 		},
-		update: () => {
-			$.each(self.attached, (index, value) => {
+		unattach: (key) => {
+			self.attached = self.attached.filter(value => value.key !== key);
+		},
+		update: (key) => {
+			if (key instanceof Array)
+				return key.forEach(value => self.update(value));
+
+			let elements = self.attached;
+
+			if (key)
+				elements = [self.attached.find((value) => value.key === key)];
+
+			$.each(elements, (index, value) => {
 				let source = $(value.src);
-				let dest = $(value.dest);
 				let time = 0;
 
-				//get the wait for transitions to happen if it exists
+				//get the wait for transitions to happen if it exists (bloody maltweaks)
 				time = source.css('transition-delay')
 					.split(',')
 					.reduce((sum, value) => 
@@ -40,8 +55,8 @@ function load() {
 				
 				setTimeout(() => {
 					self.copy(value.src, value.dest, value.values);
-				}, time * 1000 + 500)
-			})
+				}, time * 1000 + 500);
+			});
 		},
 		init: () => {
 			SmidqeTweaks.patch({
@@ -49,11 +64,11 @@ function load() {
 				name: 'setColorTheme',
 				callback: self.update,
 				after: true
-			})
+			});
 
 			self.started = true;
 		},
-	}
+	};
 
 	return self;
 }

@@ -4,7 +4,7 @@ function load() {
             group: 'modules',
             name: 'playlist'
         },
-        events: ['setVidVolatile', 'setVidColorTag', 'addVideo', 'addPlaylist', ],
+        events: ['setVidVolatile', 'setVidColorTag', 'addVideo', 'addPlaylist'],
         duration: (str) => {
             let values = str.split(":").reverse();
             let ms = 0;
@@ -13,8 +13,8 @@ function load() {
                 return -1;
 
             $.each(values, (index) => {
-                ms += Math.pow(60, index) * 1000 * parseInt(values[index])
-            })
+                ms += Math.pow(60, index) * 1000 * parseInt(values[index]);
+            });
 
             if (isNaN(ms))
                 ms = -1;
@@ -77,20 +77,20 @@ function load() {
             socket.removeListener(key, callback);
         },
         patch: (key, callback, after=true) => {
-            if (Object.keys(window.PLAYLIST.__proto__).indexOf(key) === -1)
+            if (Object.keys(Object.getPrototypeOf(window.PLAYLIST)).indexOf(key) === -1)
                 return;
 
             let data = {
-                container: {obj: window.PLAYLIST.__proto__, name: 'playlist'},
+                container: {obj: Object.getPrototypeOf(window.PLAYLIST), name: 'playlist'},
                 name: key,
                 after: after,
                 callback: callback
-            }
+            };
 
             SmidqeTweaks.patch(data);
         },
         unpatch: (key, callback) => {
-            if (Object.keys(window.PLAYLIST.__proto__).indexOf(key) === -1)
+            if (Object.keys(Object.getPrototypeOf(window.PLAYLIST)).indexOf(key) === -1)
                 return;
 
             SmidqeTweaks.unpatch({
@@ -99,7 +99,7 @@ function load() {
                 callback: callback
             });
         },
-    }
+    };
 
     return self;
 }

@@ -17,7 +17,7 @@ function load() {
 					return {
 						count: $(data).find('.btn').text(),
 						text: $(data).find('.label').text(),
-					}
+					};
 				}).toArray();
 		},
 		polls: () => {
@@ -25,12 +25,12 @@ function load() {
 		},
 		first: (active=true) => {
 			if (!active)
-				return self.polls().find('.poll:first:not(.active)');
+				return self.container.find('.poll:not(.active):first');
 			else
 				return self.current();
 		},
 		hidden: (poll) => {
-			return poll.find('.obscure').length > 0;
+			return (poll || self.current()).find('.obscure').length > 0;
 		},
 		current: () => {
 			return self.container.find('.poll:first');
@@ -53,7 +53,7 @@ function load() {
 		patch: () => {
 
 		},
-		unpatch: () => {
+		unpatch: () => {	
 
 		},
 		init: () => {
@@ -61,10 +61,10 @@ function load() {
 			self.started = true;
 
 			$.each(self.events, (index, value) => {
-				self.listen(value, data => console.log('Event: ' + value, data))
-			})
+				self.listen(value, data => console.log('Event: ' + value, data));
+			});
 		},
-	}
+	};
 
 	return self;
 }

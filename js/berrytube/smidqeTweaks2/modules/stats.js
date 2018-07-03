@@ -27,7 +27,7 @@ function load() {
 
             if (type === 'block')
             {
-                let block = $('<div>', {class: 'st-stats-block', id: 'st-stats-block-' + data.id})
+                let block = $('<div>', {class: 'st-stats-block', id: 'st-stats-block-' + data.id});
                 let titlebar = $('<div>', {class: 'st-titlebar', id: 'st-stats-titlebar-' + data.id});
 
                 titlebar.append(
@@ -40,7 +40,7 @@ function load() {
                         class: 'st-stats-titlebar-button',
                         'data-key': data.id
                     }).on('click', self.collapse)
-                )
+                );
 
                 block.append(titlebar);
                 self.container.find('.st-stats-container').append(block);
@@ -55,10 +55,11 @@ function load() {
                 if (!data.block)
                     return;
 
-                let wrap = $('<div>', {class: 'st-stats-pair', id: 'st-stats-pair-' + data.id})
-                    .append($('<span>', {class: 'st-stats-title'}).text(data.title))
-                    .append($('<span>', {class: 'st-stats-value'}).text(data.value ? data.value : 'Not set'))
-
+                let wrap = $('<div>', {class: 'st-stats-pair', id: 'st-stats-pair-' + data.id}).append(
+                    $('<span>', {class: 'st-stats-title'}).text(data.title),
+                    $('<span>', {class: 'st-stats-value'}).text(data.value ? data.value : 'Not set')
+                );
+                    
                 let block = self.find('block', data.block);
                 
                 if (block)
@@ -98,13 +99,13 @@ function load() {
                 id: key,
                 wrap: false,
                 classes: ['st-stats-modular'],
-            })
+            });
 
-            self.windows.get(key).append($(this).parents().eq(1).find('[id*=st-stats-pair]').clone())
+            self.windows.get(key).append($(this).parents().eq(1).find('[id*=st-stats-pair]').clone());
             self.windows.show({name: key, show: true, modular: true});
             
             self.windows.get(key).find('.st-titlebar-exit').on('click', () => {
-                self.unmodularize(key)
+                self.unmodularize(key);
             });
             //self.collapse(key);
         },
@@ -139,12 +140,12 @@ function load() {
                 callbacks: {
                     click: self.show
                 }
-            })
+            });
 
             self.container.append($('<div>', {class: 'st-stats-container'}));
             self.started = true;
         }
-    }
+    };
 
     return self;
 }

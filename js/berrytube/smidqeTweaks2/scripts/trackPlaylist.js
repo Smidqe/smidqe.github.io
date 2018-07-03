@@ -36,7 +36,7 @@ function load() {
                 changed: false,
                 changes: [],
                 remove: false,
-            }
+            };
 
             self.tracking[object.videoid] = object;
             return object;
@@ -68,7 +68,7 @@ function load() {
                     if (self.settings.get('trackCurrent'))
                         msg += ' Current: ' + self.playlist.position('title', decodeURIComponent(window.ACTIVE.videotitle));
                 }
-            })
+            });
 
             self.chat.add('Playlist', msg, 'act', true);
             data.changes = [];
@@ -117,10 +117,10 @@ function load() {
                             key: key,
                             old: object[key],
                             new: value
-                        })
+                        });
 
                         object[key] = value; 
-                    })
+                    });
 
                     break;
                 }
@@ -130,7 +130,7 @@ function load() {
                         key: 'volat',
                         old: !data.volat,
                         new: data.volat
-                    })
+                    });
 
                     object.volat = data.volat;
                     object.remove = !data.volat;
@@ -147,11 +147,11 @@ function load() {
         enable: () => {
             $.each(self.patch, (index, value) => {
                 self.playlist.patch(value, self.proto, value !== 'remove');
-            })
+            });
 
             $.each(self.socket, (key, val) => {
                 self.playlist.listen(key, val);
-            })
+            });
 
             self.enabled = true;
         },
@@ -160,11 +160,11 @@ function load() {
 
             $.each(self.patch, (index, value) => {
                 self.playlist.unpatch(value, self.proto);
-            })
+            });
 
             $.each(self.socket, (key, val) => {
                 self.playlist.unlisten(key, val);
-            })
+            });
         },
         proto: (node, newNode) => {
             let action = 'modify';
@@ -181,14 +181,14 @@ function load() {
 
             self.socket = {
                 addVideo: (data) => {
-                    self.action(data.video, 'add')
+                    self.action(data.video, 'add');
                 },
                 randomizeList: (data) => {
                     console.log('randomize');
                     self.shuffle = true;
                 },
                 setVidVolatile: (data) => {
-                    self.action(data, 'volatile')
+                    self.action(data, 'volatile');
                 },
                 recvNewPlaylist: (data) => {
                     console.log(data);
@@ -202,9 +202,9 @@ function load() {
                 refreshMyPlaylist: () => {
                     console.log('refreshMyPlaylist');
                 }
-            }
+            };
         },
-    }
+    };
     return self;
 }
 

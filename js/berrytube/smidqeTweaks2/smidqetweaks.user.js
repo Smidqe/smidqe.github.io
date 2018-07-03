@@ -1,10 +1,12 @@
 // ==UserScript==
+// @author      Smidqe
 // @name        SmidqeTweaks 2
-// @namespace   SS
+// @namespace   SmidqeTweaks
 // @description SmidqeTweaks 2 for BT
-// @include     http://berrytube.tv/
-// @include     http://www.berrytube.tv/
-// @version     1
+// @include     http://berrytube.tv/*
+// @include     http://www.berrytube.tv/*
+// @include     https://berrytube.tv/*
+// @version     1.1
 // @grant       none
 // ==/UserScript==
 

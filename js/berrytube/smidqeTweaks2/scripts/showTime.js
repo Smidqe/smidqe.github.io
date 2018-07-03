@@ -47,7 +47,7 @@ function load() {
 					text += ':';
 
 				text += val;
-			})
+			});
 
 			if (half)
 				text += " " + time.suffix;
@@ -67,7 +67,8 @@ function load() {
 			self.time = SmidqeTweaks.get('time');
 			self.settings = SmidqeTweaks.get('settings');
 		}
-    }
+	};
+	
     return self;
 }
 SmidqeTweaks.add(load());

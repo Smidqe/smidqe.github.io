@@ -37,7 +37,7 @@ function load() {
                 title: 'Messages'
             },
             login: {
-                selectors: [".wrapper #headbar"],
+                selectors: [".wrapper > #headbar"],
                 wrap: true,
                 title: 'Login'
             },
@@ -74,13 +74,13 @@ function load() {
                     wrap: true,
                     selector: selector,
                     classes: [],
-                }
+                };
 
                 if (value.classes)
                     window.classes.push(...value.classes);
 
                 result.push(window);
-            })
+            });
 
             self.windows.create(result);
         },
@@ -92,29 +92,30 @@ function load() {
                     id: key, 
                     title: value.title, 
                     callbacks: {
-                        'click': () => {self.windows.show({name: key, show: true})}
+                        'click': () => {self.windows.show({name: key, show: true});}
                     }
-                }
+                };
 
                 result.push(menuItem);
-            })
+            });
 
             self.menu.add(result);
         },
         prepare: () => {
             if (!self.maltweaks)
             {
-                $('#extras, #banner, #banner + .wrapper').wrapAll('<div id="st-wrap-header"></div>');
-                $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>')
+                $('#extras, #banner, #countdown-error, #countdown-timers, body > .wrapper:first').wrapAll('<div id="st-wrap-header"></div>');
+                $('#pollControl, #pollpane').wrapAll('<div id="pollbox"></div>');
+                $('#dyn_footer').wrapAll('<div id="st-wrap-footer"></div>');
                 $('#dyn_motd').wrapAll('<div id="st-wrap-motd"></div>').wrapAll('<div class="floatinner"></div>');
             }
 
             self.createWindows();
             self.createMenuItems();
 
+            //TODO: Remove these
             $("#chatpane").addClass("st-chat");
             $("#videowrap").addClass("st-video");
-            $("#playlist").addClass("st-window-playlist");
 
             SmidqeTweaks.patch({
                 container: {
@@ -137,7 +138,7 @@ function load() {
 
             $.each(self.values, (window, key) => {
                 self.windows.remove(window);
-            })
+            });
 
             SmidqeTweaks.unpatch({
                 container: 'layout', 
@@ -164,9 +165,9 @@ function load() {
                         self.prepare();
                         clearInterval(interval);
                     }
-                }, 500)
+                }, 500);
             } else
-                self.utilities.waitFor('#playlist', self.prepare)
+                self.utilities.waitFor('#playlist', self.prepare);
         },
         disable: () => {
             if (!SmidqeTweaks.get('settings').get('layout'))
@@ -192,8 +193,8 @@ function load() {
             
             self.menu.add([
                 {type: 'group', id: 'berrytube', title: 'Berrytube'}, {type: 'group', id: 'windows', title: 'Windows'},
-                {group: 'layout', id: 'layout', title: 'Disable layout', callbacks: {'click': () => {self.disable()}}}
-            ])
+                {group: 'layout', id: 'layout', title: 'Disable layout', callbacks: {'click': () => self.disable()}}
+            ]);
 
             self.toolbar.add({
                 id: 'layout',
@@ -204,10 +205,8 @@ function load() {
                     'click': () => self.enable()
                 }
             });
-
-            //SmidqeTweaks.get('colors').attach('#chatpane', '.st-titlebar', ['background-color', 'color', 'border']);
         }
-    }
+    };
 
     return self;
 }

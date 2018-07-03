@@ -29,7 +29,7 @@ function load() {
                 }).append($("<span>", {
                     text: 'x' + $('#drinkCounter').text(),
                 }))
-            )
+            );
         },
         disable: () => {
             self.chat.unpatch('addChatMsg', self.show);
@@ -40,7 +40,7 @@ function load() {
         init: () => {
             self.chat = SmidqeTweaks.get('chat');
         },
-    }
+    };
 
     return self;
 }

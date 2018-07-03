@@ -18,7 +18,7 @@ function load() {
                     return;
 
                 obj[key] = val < 10 ? "0" + val : val;
-            })
+            });
 
             obj.suffix = obj.h > 12 ? 'PM' : 'AM';
 
@@ -54,7 +54,7 @@ function load() {
 
                 $.each(values, (index, key) => {
                     value[key] = (value.ms / (1000 * (index + 1))) % 60;
-                })
+                });
 
                 value.suffix = value.h > 12 ? 'PM' : 'AM';
 
@@ -66,7 +66,7 @@ function load() {
 
             return value;
         }
-    }
+    };
 
     return self;
 }

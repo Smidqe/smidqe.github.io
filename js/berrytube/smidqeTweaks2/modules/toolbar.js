@@ -28,7 +28,7 @@ function load() {
 
             $.each(data.classes || [], (c) => {
                 element.addClass(c);
-            })
+            });
 
             //add possibility to different types? dropdowns and such?
 
@@ -36,13 +36,13 @@ function load() {
 
             $.each(data.callbacks || [], (key, value) => {
                 element.on(key, value);
-            })            
+            });
         },
         get: (name) => {
+            if (!name)
+                return self.bar;
+
             return self.bar.find('#st-toolbar-element-' + name);
-        },
-        bar: () => {
-            return self.bar;
         },
         remove: key => {
             let element = self.get(key);
@@ -67,7 +67,7 @@ function load() {
 
             self.started = true;
         }
-    }
+    };
 
     return self;
 }
