@@ -57,17 +57,36 @@ function load() {
         drinks: () => {
             return self.container.find('.drink');
         },
-        emotes: () => {
+        emotes: (nick) => {
+            if (!nick)
+                return $('.berryemote');
+            
+            let emotes = self.messages().filter((index, elem) => $(elem).find('.berryemote').length > 0);
+
+            if (nick)
+                emotes.filter((index, element) => $(element))
+
             return $('.berryemote');
         },
         rcv: () => {
             return self.messages().find('.rcv').parent();
         },
-        messages: () => {
-            return self.container.find('[class*=msg-]');
+        messages: (nick) => {
+            let selector = '[class*=msg-]';
+
+            if (nick)
+                selector = '.msg-' + nick;
+
+            return self.container.find(selector);
         },
         usercount: () => {
             return window.CONNECTED;
+        },
+        highlight: (post) => {
+            (post || self.last()).addClass('highlight');
+        },
+        last: () => {
+            return self.messages.last();
         },
         patch: (key, callback, after=true) => {
             if (self.functions.indexOf(key) === -1)

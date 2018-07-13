@@ -34,6 +34,9 @@ function load() {
 			self.attached = self.attached.filter(value => value.key !== key);
 		},
 		update: (key) => {
+			if (key.indexOf('/') !== -1)
+				return self.attached.forEach(value => self.update(value.key));
+
 			if (key instanceof Array)
 				return key.forEach(value => self.update(value));
 

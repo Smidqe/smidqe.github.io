@@ -1,8 +1,3 @@
-/*
-	-> group
-		-> elems...
-*/
-
 function load() {
 	const self = {
 		meta: {
@@ -69,7 +64,6 @@ function load() {
 				return;
 	
 			$.each(config.values, (index, setting) => {
-				let group = setting.group || config.group;
 				let object = {
 					depends: setting.depends || [],
 					element: self.create($.extend(setting, {callback: self.handle, script: SmidqeTweaks.names.scripts.indexOf(setting.key) !== -1})),
@@ -77,7 +71,7 @@ function load() {
 				};
 
 				self.storage.elements[setting.key] = object;
-				self.containers.main.find('#st-settings-group-' + group).append(object.element);
+				self.containers.main.find('#st-settings-group-' + (setting.group || config.group)).append(object.element);
 
 				self.refresh(setting.key);
 			});

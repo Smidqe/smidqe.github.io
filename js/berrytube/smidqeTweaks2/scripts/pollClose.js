@@ -25,8 +25,7 @@ function load() {
             
             if (self.settings.get('squeeClose'))
                 window.doSqueeNotify();
-
-            console.log(message);
+                
             self.chat.add('Poll', message, 'act', false);
         },
         enable: () => {

@@ -18,7 +18,7 @@ function load() {
             if (self.get(data.id)[0])
                 return;
 
-            let element = $('<' + ((data.element) ? data.element : 'div') + '>', {class: 'st-toolbar-element', id: 'st-toolbar-element-' + data.id});
+            let element = $('<' + (data.element || 'div') + '>', {class: 'st-toolbar-element', id: 'st-toolbar-element-' + data.id});
             
             if (data.tooltip)
                 element.attr('title', data.tooltip);

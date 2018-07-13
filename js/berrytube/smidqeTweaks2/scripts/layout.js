@@ -102,6 +102,8 @@ function load() {
             self.menu.add(result);
         },
         prepare: () => {
+            console.log('preparing');
+
             if (!self.maltweaks)
             {
                 $('#extras, #banner, #countdown-error, #countdown-timers, body > .wrapper:first').wrapAll('<div id="st-wrap-header"></div>');

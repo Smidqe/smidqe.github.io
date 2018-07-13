@@ -18,7 +18,8 @@ function load() {
 						count: $(data).find('.btn').text(),
 						text: $(data).find('.label').text(),
 					};
-				}).toArray();
+				})
+				.toArray();
 		},
 		polls: () => {
 			return self.container.find('.poll');
@@ -50,8 +51,11 @@ function load() {
 		active: (poll) => {
 			return (poll || self.current()).hasClass('active');
 		},
+		voted: () => {
+			return self.current().find('.voted').length > 0;
+		},
 		patch: () => {
-
+			
 		},
 		unpatch: () => {	
 

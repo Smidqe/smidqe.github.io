@@ -5,6 +5,7 @@ function load() {
             name: 'playlist'
         },
         events: ['setVidVolatile', 'setVidColorTag', 'addVideo', 'addPlaylist'],
+        functions: [],
         duration: (str) => {
             let values = str.split(":").reverse();
             let ms = 0;
@@ -73,11 +74,14 @@ function load() {
 
             socket.on(key, callback);
         },
+        current: () => {
+            return window.ACTIVE;
+        },
         unlisten: (key, callback) => {
             socket.removeListener(key, callback);
         },
         patch: (key, callback, after=true) => {
-            if (Object.keys(Object.getPrototypeOf(window.PLAYLIST)).indexOf(key) === -1)
+            if (self.functions.indexOf(key) === -1)
                 return;
 
             let data = {
@@ -90,7 +94,7 @@ function load() {
             SmidqeTweaks.patch(data);
         },
         unpatch: (key, callback) => {
-            if (Object.keys(Object.getPrototypeOf(window.PLAYLIST)).indexOf(key) === -1)
+            if (self.functions.indexOf(key) === -1)
                 return;
 
             SmidqeTweaks.unpatch({
@@ -99,6 +103,10 @@ function load() {
                 callback: callback
             });
         },
+        init: () => {
+            self.functions = Object.keys(Object.getPrototypeOf(window.PLAYLIST));
+            self.started = true;
+        }
     };
 
     return self;

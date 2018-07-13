@@ -3,7 +3,7 @@ function load() {
 		meta: {
 			name: 'wutColorRefresh',
 			group: 'scripts',
-			requires: ['utilities']
+			requires: ['utilities', 'windows']
 		},
 		config: {
 			group: 'patches',

@@ -30,9 +30,7 @@ function load() {
             let newms = self.convert('ms', current);
         
             //substract diff and abs it and convert back to 24h format (or 12h)
-            let diff = self.convert(format, {ms: abs(newms - oldms)});
-
-            return diff;
+            return self.convert(format, {ms: abs(newms - oldms)});
         },
         //rewrite this to something better???
         convert: (format, value) => {

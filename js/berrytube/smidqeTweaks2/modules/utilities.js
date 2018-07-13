@@ -55,9 +55,12 @@ function load() {
                 let clear = true;
 
                 $.each(selector, (index, text) => {
+                    if (!clear)
+                        return;
+
                     let elements = $(text);
 
-                    if (elements.length === 0)
+                    if (elements.length !== 0)
                         clear = false;    
                 });
 
@@ -66,6 +69,7 @@ function load() {
                 
                 if (clear)
                     clearInterval(interval);
+
             }, time);
         },
         maltweaksLoaded: () => {

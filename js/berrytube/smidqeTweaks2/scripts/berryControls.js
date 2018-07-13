@@ -22,12 +22,12 @@ function load() {
 		},
 		enable: () => {
 			if (window.TYPE == 0)
-				socket.on('setLeader', self.show);
+				socket.on('setLeader', self.modularize);
 
 			//create buttons if not a regular user
 		},
 		disable: () => {
-			socket.removeListener('setLeader', self.show);
+			socket.removeListener('setLeader', self.modularize);
 		},
 		init: () => {
 			self.windows = SmidqeTweaks.get('windows');
