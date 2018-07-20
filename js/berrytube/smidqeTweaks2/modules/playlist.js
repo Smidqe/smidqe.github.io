@@ -4,7 +4,7 @@ function load() {
             group: 'modules',
             name: 'playlist'
         },
-        events: ['setVidVolatile', 'setVidColorTag', 'addVideo', 'addPlaylist'],
+        events: ['setVidVolatile', 'setVidColorTag', 'addVideo', 'addPlaylist', 'forceVideoChange', 'hbVideoDetail'],
         functions: [],
         duration: (str) => {
             let values = str.split(":").reverse();

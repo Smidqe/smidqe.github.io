@@ -1,7 +1,3 @@
-/*
-	TODO:
-
-*/
 function load() {
 	const self = {
 		meta: {

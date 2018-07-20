@@ -3,7 +3,7 @@ function load() {
         meta: {
 			group: 'scripts',
 			name: 'showTime',
-			requires: ['time', 'toolbar', 'settings'],
+			requires: ['time', 'toolbar', 'settings', 'stats'],
 		},
         config: {
 			group: 'time',
@@ -20,6 +20,9 @@ function load() {
 				key: 'showSeconds',
 				depends: ['showTime'],
 				sub: true,
+			}, {
+				title: 'Show time spent since login',
+				key: 'timeStart',
 			}]
 		},
 		element: {
@@ -52,7 +55,7 @@ function load() {
 			if (half)
 				text += " " + time.suffix;
 
-			self.toolbar.update('time', text);
+			self.toolbar.get('time').text(text);
 		},
 		enable: () => {
 			self.toolbar.add(self.element);
@@ -66,6 +69,8 @@ function load() {
 			self.toolbar = SmidqeTweaks.get('toolbar');
 			self.time = SmidqeTweaks.get('time');
 			self.settings = SmidqeTweaks.get('settings');
+
+			self.start = new Date();
 		}
 	};
 	

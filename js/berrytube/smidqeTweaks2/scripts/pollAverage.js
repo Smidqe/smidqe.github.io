@@ -45,7 +45,7 @@ function load() {
                 total += value * index;
             });
             
-            let average = total / values.count.reduce((sum, val) => sum + val, 0);
+            let average = total / options.reduce((sum, option) => sum + option.count, 0);
             let message = "average is " + average;
 
             self.chat.add('Episode ', message, 'rcv', false);

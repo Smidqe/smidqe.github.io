@@ -44,7 +44,7 @@ function load() {
         message: (data, id) => {
             let msg = data.title;
 
-            if (data.volat)
+            if (data.volat && data.changes.filter(data => data.key === 'volat').length === 0)
                 msg += ' (volatile)';
 
             if (id === 'remove')

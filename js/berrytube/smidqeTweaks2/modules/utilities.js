@@ -62,8 +62,6 @@ function load() {
 
                     if (elements.length === 0)
                         clear = false;    
-
-                    console.log(clear, elements.length);
                 });
 
                 if (clear && callback)

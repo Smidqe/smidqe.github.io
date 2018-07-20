@@ -6,17 +6,12 @@ function load() {
 		backup: {},
 		hide: () => {
 			if (window.MT)
-			{
-				window.MT.disablePlayer();
-				return;
-			}
+				return window.MT.disablePlayer();
+
 		},
 		show: () => {
 			if (window.MT)
-			{
-				window.MT.restoreLocalPlayer();
-				return;
-			}
+				return window.MT.restoreLocalPlayer();
 		},
 		enable: () => {
 			

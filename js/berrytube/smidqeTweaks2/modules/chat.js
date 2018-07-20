@@ -38,7 +38,7 @@ function load() {
             }, "#chatbuffer");
 
             if (hideNick)
-                $('.msg-' + nick).last().find('.nick').css('display', 'none');
+                self.messages(nick).last().find('.nick').css('display', 'none');
 
             delete CHATLIST[nick];
         },
@@ -61,12 +61,13 @@ function load() {
             if (!nick)
                 return $('.berryemote');
             
-            let emotes = self.messages().filter((index, elem) => $(elem).find('.berryemote').length > 0);
+            let emotes = self
+                .messages(nick)
+                .filter((index, elem) => 
+                    $(elem).find('.berryemote').length > 0
+                );
 
-            if (nick)
-                emotes.filter((index, element) => $(element))
-
-            return $('.berryemote');
+            return emotes;
         },
         rcv: () => {
             return self.messages().find('.rcv').parent();

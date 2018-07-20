@@ -160,7 +160,6 @@ function load() {
             self.toolbar = SmidqeTweaks.get('toolbar');
             self.colors = SmidqeTweaks.get('colors');
             self.enums = self.utilities.enums;
-            //create the window using the windows module
 
             self.container = self.windows.create({
                 id: 'menu',
