@@ -522,3 +522,6 @@
     display: none;
 }
 
+.drinkWrap td {
+    word-wrap: normal;
+}
