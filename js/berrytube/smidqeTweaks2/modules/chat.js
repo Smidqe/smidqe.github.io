@@ -10,7 +10,7 @@ function load() {
             'unShadowBan', 'drinkCount', 'numConnected', 'leaderIs'
         ],
         functions: [
-            'addChatMsg', 'handleNumCount'
+            'addChatMsg', 'handleNumCount', 'addNewMailMessage'
         ],
         container: null,
         started: false,
@@ -54,20 +54,27 @@ function load() {
                 return result;
             });
         },
+        groups: () => {
+            let result = [];
+
+            self.users().map((index, elem) => {
+                if (result.indexOf(elem.group) !== -1)
+                    return;
+
+                result.push(elem.group);
+            });
+
+            return result;
+        },
         drinks: () => {
             return self.container.find('.drink');
         },
         emotes: (nick) => {
-            if (!nick)
-                return $('.berryemote');
-            
-            let emotes = self
+            return self
                 .messages(nick)
                 .filter((index, elem) => 
                     $(elem).find('.berryemote').length > 0
                 );
-
-            return emotes;
         },
         rcv: () => {
             return self.messages().find('.rcv').parent();
@@ -128,7 +135,7 @@ function load() {
             //just for curiosity
 			$.each(self.events, (index, value) => {
 				self.listen(value, data => console.log('Event: ' + value, data));
-			});
+            });
         },
     };
     return self;

@@ -1,3 +1,7 @@
+/*
+    TODO:
+        Follow when the vid was added
+*/
 function load() {
     const self = {
         meta: {
@@ -25,8 +29,13 @@ function load() {
         exists: (method, value) => {
             return self.get(method, value).pos !== -1;
         },
-        amount: () => {
-            return window.PLAYLIST.length;
+        amount: (info) => {
+            if (!info)
+                return window.PLAYLIST.length;
+        
+            return self.toArray().forEach(element => {
+
+            });
         },
         diff: (prev, comp) => {
             let current = null;
@@ -43,6 +52,21 @@ function load() {
         position: (method, value) => {
             return self.get(method, value).pos;
         },
+        toArray: () => {
+            let obj = window.PLAYLIST.first;
+            let result = [];
+
+            for (let i = 0; i < self.amount(); i++)
+            {
+                result.push(
+                    {
+                        type: obj.videotype
+                    }
+                );
+
+                obj = obj.next;
+            }
+        },
         get: (method, value) => {
             let obj = window.PLAYLIST.first;
             
@@ -52,6 +76,10 @@ function load() {
                 switch (method) {
                     case 'title': result = (decodeURIComponent(obj.videotitle) === value); break;
                     case 'index': result = (value === i); break;
+                    case 'title-partial': {
+                        result = (decodeURIComponent(obj.videotitle).match(new RegExp(value, 'g')));
+                        break;
+                    }
                 }
 
                 if (result)

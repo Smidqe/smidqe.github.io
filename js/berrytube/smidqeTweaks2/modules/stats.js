@@ -101,12 +101,22 @@ function load() {
                 classes: ['st-stats-modular'],
             });
 
+
+            /*
+                TODO:
+                
+                Rewrite this to just modularize the div instead of cloning everything
+                this is because the event listeners do not carry over :(
+            */
+
             self.windows.get(key).append($(this).parents().eq(1).find('[id*=st-stats-pair]').clone());
             self.windows.show({name: key, show: true, modular: true});
             
             self.windows.get(key).find('.st-titlebar-exit').on('click', () => {
                 self.unmodularize(key);
             });
+
+            //attach the listeners to the new window
             //self.collapse(key);
         },
         unmodularize: (key) => {            

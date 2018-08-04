@@ -8,6 +8,7 @@
 
 		-> chatStats
 			-> chatOnlyMe
+			-> save
 
 		-> trackMessages
 		-> trackCharacters
@@ -34,11 +35,15 @@ function load() {
 		values: ['', ''],
 		create: () => {
 
+			value.amount = 0;
 		},
 		remove: () => {
 
 		},
 		update: (data) => {
+			if (!window.NAME)
+				return;
+
 			if ((data.msg.nick !== window.NAME) && self.settings.get('chatOnlyMe'))
 				return;
 
@@ -52,10 +57,12 @@ function load() {
 						case 'trackMessages': value.amount += 1; break;
 						case 'trackCharacters':  value.amount += data.msg.msg.length; break;
 						case 'trackEmotes': value.amount += (data.msg.msg.match(/berryemote/g) || []).length; break;
-						case 'trackRCV': 
+						case 'trackRCV': value.amount += (data.msg.emote === 'rcv') | 0; break;
+						case 'trackDrink': value.amount += data.msg.emote === 'drink' | 0; break;
+						case 'trackRequest': value.amount += data.msg.emote === 'request' | 0; break;
 					}
 
-					self.stats.update(value.key, value.amount || 0);
+					self.stats.update(value.key, value.amount);
 				}
 			});
 

@@ -3,15 +3,13 @@ function load() {
 		meta: {
 			name: 'messageNotification',
 			group: 'scripts',
-			requires: ['settings', 'stats']
+			requires: []
 		},
 		config: {
 
 		},
 		update: () => {
-			$.each(self.values, () => {
 
-			});
 		},
 		enable: () => {
 

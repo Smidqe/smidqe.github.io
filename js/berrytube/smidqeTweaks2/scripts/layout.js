@@ -102,8 +102,6 @@ function load() {
             self.menu.add(result);
         },
         prepare: () => {
-            console.log('preparing');
-
             if (!self.maltweaks)
             {
                 $('#extras, #banner, #countdown-error, #countdown-timers, body > .wrapper:first').wrapAll('<div id="st-wrap-header"></div>');
@@ -118,6 +116,7 @@ function load() {
             //TODO: Remove these
             $("#chatpane").addClass("st-chat");
             $("#videowrap").addClass("st-video");
+            $('.wrapper').last().addClass('st-window-hidden');
 
             SmidqeTweaks.patch({
                 container: {
@@ -131,6 +130,7 @@ function load() {
 
             self.settings.set('layout', true, true);
             self.updateToolbar();
+            window.scrollBuffersToBottom();
         },
         unprepare: () => {
             $('#chatpane, #videowrap, #playlist').removeClass("st-chat st-video st-window-playlist");
@@ -138,7 +138,7 @@ function load() {
             if (!self.maltweaks)
                 $("#st-wrap-header, #st-wrap-footer, #st-wrap-motd").contents().unwrap();
 
-            $.each(self.values, (window, key) => {
+            $.each(self.values, (window) => {
                 self.windows.remove(window);
             });
 
@@ -150,6 +150,17 @@ function load() {
 
             self.settings.set('layout', false, true);
             self.updateToolbar();
+
+            SmidqeTweaks.get('chat').patch('addNewMailMessage', () => {
+                if (WINDOW_FOCUS)
+                    return;
+
+                $('#st-toolbar-element-menu, #st-menu-element-messages, #st-menu-elements-windows').addClass('st-message-new');
+            });
+
+            $('#st-menu-element-messages').on('click', () => {
+                $('#st-toolbar-element-menu, #st-menu-element-messages, #st-menu-elements-windows').removeClass('st-message-new');
+            });
         },
         updateToolbar: () => {
             let values = ['layout', 'menu'];

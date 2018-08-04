@@ -25,7 +25,7 @@ function load() {
             
             if (self.settings.get('squeeClose'))
                 window.doSqueeNotify();
-                
+
             if (self.settings.get('highlightClose'))
                 ;
 

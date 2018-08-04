@@ -35,17 +35,19 @@ function load() {
             if (!self.check(options))
                 return;
             
-            $.each(options, (index, value)  => {
+            $.each(options, (index, option) => {
                 if (self.settings.get('ignoreZero') && index == 0 && options.length == 11)
                     return;
 
                 if (options.length === 10)
                     index += 1;
 
-                total += value * index;
+                total += option.count * index;
+                console.log(total, option.count * index);
             });
             
-            let average = total / options.reduce((sum, option) => sum + option.count, 0);
+            console.log(options);
+            let average = total / options.reduce((sum, option) => sum + parseInt(option.count), 0);
             let message = "average is " + average;
 
             self.chat.add('Episode ', message, 'rcv', false);

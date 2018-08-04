@@ -42,6 +42,33 @@ function load() {
 
 			socket.on(key, callback);
 		},
+		get: (method, value) => {
+			let polls = self.polls();
+			let results;
+
+			switch(method) {
+				case 'title-partial':
+				case 'title': {
+					results = polls.map((index, video) => {
+						/*
+						let result = false;
+
+						if (method === 'title-partial')
+							result = video.match(new RegExp(value, 'g'))
+						
+
+							*/
+
+					}); 
+					
+					break;
+				}
+				case 'index': break;
+				case 'option-count': break;
+			}
+
+			return results;
+		},
 		unlisten: (key, callback) => {
 			if (self.events.indexOf(key) === -1)
 				return;
