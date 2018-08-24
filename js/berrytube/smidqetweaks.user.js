@@ -1,9 +1,12 @@
 // ==UserScript==
-// @name        SmidqeTweaks
-// @namespace   SS
-// @description SmidqeTweaks for BT
-// @include     http://berrytube.tv/
-// @version     1
+// @author      Smidqe
+// @name        SmidqeTweaks 2
+// @namespace   SmidqeTweaks
+// @description SmidqeTweaks 2 for BT
+// @include     http://berrytube.tv/*
+// @include     http://www.berrytube.tv/*
+// @include     https://berrytube.tv/*
+// @version     1.1
 // @grant       none
 // ==/UserScript==
 
@@ -12,7 +15,7 @@
     'use strict';
 
     var script = document.createElement("script");
-    script.setAttribute('src', 'https://smidqe.github.io/js/berrytube/stweaks.js');
+    script.setAttribute('src', 'https://smidqe.github.io/js/berrytube/smidqeTweaks2/stweaks2.js');
     document.head.appendChild(script);
 
 
